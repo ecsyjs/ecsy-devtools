@@ -1,47 +1,33 @@
-var verbose = false;
-
-var port = chrome.runtime.connect( { name: "content-script" } );
-
-// content-script => background-script
-port.postMessage( { method: 'ready' });
-
 function log() {
-	var args = Array.from( arguments );
- 	args.unshift( 'background: #9999ff; color: #ffffff;' );
-	args.unshift( `%c ECSY ContentScript ` );
+	var args = Array.from(arguments);
+ 	args.unshift('background: #9999ff; color: #ffffff;');
+	args.unshift(`%c ECSY ContentScript `);
 
 	console.log.apply( console, args );
 }
 
 log( 'content-script' );
 
-// content-script <= background-script
-port.onMessage.addListener( function( msg ) {
-	if( verbose ) log( msg );
+var port = chrome.runtime.connect({ name: "content-script" });
 
-	switch( msg.method ) {
-		case 'script': {
-			var source = '(function(){' + msg.script + '})();';
-			var script = document.createElement('script');
-			script.textContent = source;
-			(document.head||document.documentElement).appendChild(script);
+// content-script => background-script
+var script = '';
+fetch( browser.extension.getURL( 'src/content/index.js' ) )
+	.then(res => res.text())
+	.then(res => {
+		script = res;
+		var source = '(function(){' + script + '})();';
+		var script = document.createElement('script');
+		script.textContent = source;
+		script.onload = () => {
 			script.parentNode.removeChild(script);
-		} break;
-	}
-} );
-/*
-port.onDisconnect.addEventListener( function() {
-	port = null;
-	log( 'Port disconnected' );
-})
-*/
+		}
+		(document.head||document.documentElement).appendChild(script);
+	});
 
 // app(injected) => content-script
-window.addEventListener( 'ecsyinspector-view', e => {
+window.addEventListener('ecsyinspector-view', e => {
 	let message = e.detail;
 	log('ecsyinspector-view', message, e.detail.data);
-	//message.data = Array.prototype.slice.call( message.data );
-	// port.postMessage( message );
-	port.postMessage( { data: message } );
-
-} );
+	port.postMessage({ data: message });
+});
