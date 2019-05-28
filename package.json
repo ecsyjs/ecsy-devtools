@@ -1,0 +1,35 @@
+{
+  "name": "ecsy-stats",
+  "version": "1.0.0",
+  "description": "**Adds a new panel to the developer tools. The panel contains buttons that demonstrate various basic features of the devtools API.**",
+  "main": "content-script.js",
+  "scripts": {
+    "webpack": "webpack --progress",
+    "development": "webpack --mode development",
+    "production": "webpack --mode production",
+    "watch": "webpack --mode development --watch",
+    "sync": "webpack --mode development watch --sync"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fernandojsg/ecsy-stats.git"
+  },
+  "author": "Fernando Serrano <fernandojsg@gmail.com> (http://fernandojsg.com)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/fernandojsg/ecsy-stats/issues"
+  },
+  "homepage": "https://github.com/fernandojsg/ecsy-stats#readme",
+  "devDependencies": {
+    "@babel/core": "^7.4.5",
+    "@babel/preset-env": "^7.4.5",
+    "babel-loader": "^8.0.6",
+    "clean-webpack-plugin": "^2.0.2",
+    "vue": "^2.6.10",
+    "vue-loader": "^15.7.0",
+    "vue-template-compiler": "^2.6.10",
+    "webextension-polyfill": "^0.4.0",
+    "webpack": "^4.32.2",
+    "webpack-cli": "^3.3.2"
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "description": "Adds a new panel to the developer tools. The panel contains buttons that demonstrate various basic features of the devtools API.",
+  "manifest_version": 2,
+  "name": "devtools-panels",
+  "version": "1.0",
+  "author": "Fernando Serrano",
+  "homepage_url": "https://github.com/mdn/webextensions-examples/tree/master/devtools-panels",
+  "background": {
+    "scripts": [
+      "browser-polyfill.min.js",
+      "background.js"
+    ]
+  },
+  "content_scripts": [{
+    "matches": ["<all_urls>"],
+    "js": [
+      "browser-polyfill.min.js",
+      "content_script.js"
+    ],
+    "run_at": "document_start",
+    "all_frames": true
+  }],
+  "permissions": [
+      "<all_urls>"
+  ],
+	"web_accessible_resources": [
+		"*"
+	],
+  "browser_action" : {
+    "default_icon": {},
+    "default_title": "ECSY"
+  },
+  "devtools_page": "devtools/devtools.html",
+  "content_security_policy": "style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-eval'; connect-src *; frame-src *;"
+}
