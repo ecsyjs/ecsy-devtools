@@ -1,7 +1,8 @@
+// @todo Import browser polyfill
 browser.devtools.panels.create(
   "ECSY",
   "/assets/icon_128.png",
-  "/devtools/panel/panel.html"
+  "/src/app/index.html"
 ).then(panel => {
 	panel.onShown.addListener(function (wnd) {
 		browser.devtools.inspectedWindow.eval('console.log("onShow");')
@@ -23,7 +24,7 @@ var panelWindow = null;
 
 port.onMessage.addListener( function( msg ) {
 	if( msg.method === 'script' ) {
-		script = msg.script;
+		var script = msg.script;
 
 		browser.devtools.inspectedWindow.eval( 'window.__ECSY_INSPECTOR_INJECTED', function(result, isException) {
 		console.log( 'check:', result, isException );
@@ -37,14 +38,12 @@ port.onMessage.addListener( function( msg ) {
 				poll();
 			}
 		} )
-
 		return;
 	}
 
-	if( panelWindow ) {
+	if (panelWindow) {
 		panelWindow.processMessage(msg);
 	}
-
-} );
+});
 
 post( { method: 'ready' } );

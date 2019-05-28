@@ -25,7 +25,7 @@ const webpackConfig = (env, argv) => {
 
     const config = {
         entry: {
-            panel: `${paths.source}/devtools/panel/panel.js`,
+            panel: `${paths.source}/src/app/panel.js`,
         },
         output: {
             filename: `[name].${aliases.suffix}.js`,

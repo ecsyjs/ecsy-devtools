@@ -1,5 +1,4 @@
 // @todo import browser
-
 function log() {
 	var args = Array.from( arguments );
  	args.unshift( 'background: #9999ff; color: #ffffff;' );
@@ -55,9 +54,17 @@ browser.runtime.onConnect.addListener( function( port ) {
 	port.onDisconnect.addListener( function() {
 		if (name === 'devtools') devtools.delete(tabId);
 		if (name === 'content-script') scripts.delete(tabId);
-
 		port.onMessage.removeListener( listener );
-		log( name, 'disconnect (browser.runtime.onDisconnect)' );
 	} );
 	return true;
+});
+
+chrome.runtime.onMessage.addListener((request, sender) => {
+  if (sender.tab) {
+    const tabId = sender.tab.id;
+    if (connections.has(tabId)) {
+      connections.get(tabId).postMessage(request);
+    }
+  }
+  return true;
 });
