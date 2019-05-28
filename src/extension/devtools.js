@@ -1,6 +1,6 @@
 browser.devtools.panels.create(
   "ECSY",
-  "/icons/ecsy.png",
+  "/assets/icon_128.png",
   "/devtools/panel/panel.html"
 ).then(panel => {
 	panel.onShown.addListener(function (wnd) {

@@ -196,10 +196,6 @@ window.processMessage = function (msg) {
     document.getElementById(c).innerHTML = n; //browser.devtools.inspectedWindow.eval( 'console.log("asdfasfasdfasfsadf ' + n + '")');
 
     app.$children[0].components = components;
-    setInterval(function () {
-      browser.devtools.inspectedWindow.eval('console.log("asdfasfasdfasfsadf ' + n + '")');
-      app.$children[0].components = components;
-    }, 1000);
   }
 };
 
