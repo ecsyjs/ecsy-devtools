@@ -1,60 +1,60 @@
-// @todo import browser
+var globalBrowser =  chrome || browser;
+
 function log() {
-	var args = Array.from( arguments );
- 	args.unshift( 'background: #9999ff; color: #ffffff;' );
-	args.unshift( `%c ECSY Background ` );
+	var args = Array.from(arguments);
+ 	args.unshift('background: #9999ff; color: #ffffff;');
+	args.unshift(`%c ECSY Background `);
 
 	console.log.apply( console, args );
 }
 
-var devtools = new Map();
-var scripts = new Map();
-var connections = new Map();
+// background.js
+var connections = {};
 
-var script = '';
-
-// content-script => background
-// devtools => background
-browser.runtime.onConnect.addListener( function( port ) {
-
-	log( 'New connection (browser.runtime.onConnect) from', port.name, port );
-
-	var name = port.name;
-
-	const onMessage = (msg, sender) => {
-		var tabId;
-
-		if(msg.tabId) tabId = msg.tabId
-		else tabId = sender.sender.tab.id;
-
-		if (name === 'devtools') devtools.set(tabId, port);
-		if (name === 'content-script') scripts.set(tabId, port);
-
-		if( name === 'content-script' ) {
-			if ( devtools.has(tabId) ) {
-				devtools.get(tabId).postMessage( msg );
-			}
-		}
-	}
-
-	port.onMessage.addListener(onMessage);
-/*
-	port.onDisconnect.addListener( function() {
-		if (name === 'devtools') devtools.delete(tabId);
-		if (name === 'content-script') scripts.delete(tabId);
-		port.onMessage.removeListener( listener );
-	} );
-	*/
-	return true;
-});
-/*
-chrome.runtime.onMessage.addListener((request, sender) => {
-  if (sender.tab) {
-    const tabId = sender.tab.id;
-    if (connections.has(tabId)) {
-      connections.get(tabId).postMessage(request);
+chrome.runtime.onConnect.addListener(function (port) {
+  log('Incoming connection from', port.name);
+  var extensionListener = function (message, sender, sendResponse) {
+    // The original connection event doesn't include the tab ID of the
+    // DevTools page, so we need to send it explicitly.
+    if (message.name == "init") {
+      connections[message.tabId] = port;
+      return;
     }
+  }
+
+  // Listen to messages sent from the DevTools page
+  port.onMessage.addListener(extensionListener);
+
+  port.onDisconnect.addListener(function(port) {
+    log('ondisconnect');
+    port.onMessage.removeListener(extensionListener);
+
+      var tabs = Object.keys(connections);
+      for (var i=0, len=tabs.length; i < len; i++) {
+        if (connections[tabs[i]] == port) {
+          delete connections[tabs[i]]
+          break;
+        }
+      }
+  });
+});
+
+// Receive message from content script and relay to the devTools page for the
+// current tab
+chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+  log('Message coming from the content-script', request);
+
+  // Messages from content scripts should have sender.tab set
+  if (sender.tab) {
+    var tabId = sender.tab.id;
+    if (tabId in connections) {
+      log('Sending message to ', connections[tabId].name);
+      connections[tabId].postMessage(request);
+    } else {
+      console.log("Tab not found in connection list.");
+    }
+  } else {
+    console.log("sender.tab not defined.");
   }
   return true;
 });
-*/

@@ -9290,28 +9290,66 @@ var app = new vue__WEBPACK_IMPORTED_MODULE_0__["default"]({
 });
 var components = {};
 var systems = [];
-
-window.processMessage = function (msg) {
-  if (msg.data.method === 'registerComponent') {
-    registerComponent(msg.data.data);
-  } else if (msg.data.method === 'registerSystem') {
-    registerSystem(msg.data.data);
-  } else if (msg.data.method === 'createEntity') {
-    app.$children[0].numEntities++;
-  } else if (msg.data.method === 'addComponent') {
-    var c = msg.data.data;
-
-    if (typeof components[c] === 'undefined') {
-      components[c] = 0;
-    }
-
-    components[c]++;
-    var n = components[c];
-    document.getElementById(c).innerHTML = n; //browser.devtools.inspectedWindow.eval( 'console.log("asdfasfasdfasfsadf ' + n + '")');
-
-    app.$children[0].components = components;
+/*
+document.getElementById("button").addEventListener('click', () => {
+  document.getElementById("Rotating").innerHTML = '11111212112121';
+  app.$children[0].components = components;
+  for (var i in components) {
+    app.$children[0].components[i]--;
+    app.$children[0].components[i]++;
   }
-};
+
+})
+*/
+
+var globalBrowser = chrome || browser;
+var backgroundPageConnection = chrome.runtime.connect({
+  name: "devtools"
+});
+backgroundPageConnection.postMessage({
+  name: 'init',
+  tabId: chrome.devtools.inspectedWindow.tabId
+});
+/*
+backgroundPageConnection.onMessage.addEventListener(m => {
+  document.getElementById("Rotating").innerHTML = 'dddd3333';
+});
+*/
+
+backgroundPageConnection.onMessage.addListener(function (m) {
+  processMessage(m); //  document.getElementById("debug").innerHTML = JSON.stringify(m);
+});
+
+function processMessage(msg) {
+  if (msg.method === 'registerComponent') {
+    registerComponent(msg.data);
+  } else if (msg.method === 'registerSystem') {
+    registerSystem(msg.data);
+  } else if (msg.method === 'createEntity') {
+    app.$children[0].numEntities++;
+  } else if (msg.method === 'addComponent') {
+    var c = msg.data;
+    changeNumComponent(c, 1);
+  } else if (msg.method === 'removeComponent') {
+    var c = msg.data;
+    changeNumComponent(c, -1);
+  }
+}
+
+function changeNumComponent(c, inc) {
+  if (typeof components[c] === 'undefined') {
+    components[c] = 0;
+  }
+
+  components[c] += inc;
+  var n = components[c];
+  app.$children[0].components = components;
+
+  for (var i in components) {
+    app.$children[0].components[i]--;
+    app.$children[0].components[i]++;
+  }
+}
 
 function registerComponent(c) {
   return;

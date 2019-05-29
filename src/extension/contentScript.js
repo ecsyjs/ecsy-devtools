@@ -1,3 +1,5 @@
+var globalBrowser =  chrome || browser;
+
 function log() {
 	var args = Array.from(arguments);
  	args.unshift('background: #9999ff; color: #ffffff;');
@@ -6,17 +8,12 @@ function log() {
 	console.log.apply( console, args );
 }
 
-log( 'content-script' );
-
-var port = chrome.runtime.connect({ name: "content-script" });
-
 // content-script => background-script
 var script = '';
-fetch( browser.extension.getURL( 'src/content/index.js' ) )
+fetch( globalBrowser.extension.getURL( 'src/content/index.js' ) )
 	.then(res => res.text())
 	.then(res => {
-		script = res;
-		var source = '(function(){' + script + '})();';
+		var source = '(function(){' + res + '})();';
 		var script = document.createElement('script');
 		script.textContent = source;
 		script.onload = () => {
@@ -25,9 +22,13 @@ fetch( browser.extension.getURL( 'src/content/index.js' ) )
 		(document.head||document.documentElement).appendChild(script);
 	});
 
-// app(injected) => content-script
-window.addEventListener('ecsyinspector-view', e => {
-	let message = e.detail;
-	log('ecsyinspector-view', message, e.detail.data);
-	port.postMessage({ data: message });
+window.addEventListener('message', e => {
+	if (e.source !== window ||
+			typeof e.data !== 'object' ||
+			e.data.id !== 'ecsy-devtools') {
+				return;
+			}
+
+	let message = e.data;
+	chrome.runtime.sendMessage(message);
 });

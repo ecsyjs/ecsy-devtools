@@ -1,10 +1,17 @@
 'use strict';
 
-if( !window.__ECSY_INSPECTOR_INJECTED ) {
-	function sendMessage( type, obj ) {
-		var message = { source: 'ecsyinspector-script', method: type, data: obj };
+if( !window.__ECSY_DEVTOOLS_INJECTED ) {
+	function sendMessage( type, data ) {
+		/*
+		var message = { source: 'ecsyinspector-script', method: type, data: data };
 		var e = new CustomEvent( 'ecsyinspector-view', { detail: message } );
 		window.dispatchEvent( e );
+		*/
+		window.postMessage({
+			id: 'ecsy-devtools',
+			method: type,
+			data,
+		}, '*');
 	}
 
 	window.addEventListener('ecsy-world-created', e => {
@@ -12,24 +19,34 @@ if( !window.__ECSY_INSPECTOR_INJECTED ) {
 
 		var oriRegCen = world.createEntity;
 		world.createEntity = function() {
-			console.log('Create new entity');
 			sendMessage('createEntity');
 			return oriRegCen.apply(world, arguments);
 		}
 
-
 		var oriRegC = world.registerComponent;
 		world.registerComponent = function(Component) {
-			console.log('Registering component', Component.name);
 			sendMessage('registerComponent', Component.name);
 			return oriRegC.apply(world, arguments);
 		}
 
 		var oriAddC = world.entityManager.entityAddComponent;
 		world.entityManager.entityAddComponent = function(entity, Component, values) {
-			console.log('Adding component to entity', Component.name);
-			sendMessage('addComponent', Component.name);
-			return oriAddC.apply(world.entityManager, arguments);
+			var num = entity._ComponentTypes.length;
+			var result = oriAddC.apply(world.entityManager, arguments);
+			if (entity._ComponentTypes.length === num + 1) {
+				sendMessage('addComponent', Component.name);
+			}
+			return result;
+		}
+
+		var oriRemC = world.entityManager.entityRemoveComponent;
+		world.entityManager.entityRemoveComponent = function(entity, Component, values) {
+			var num = entity._ComponentTypes.length;
+			var result = oriRemC.apply(world.entityManager, arguments);
+			if (entity._ComponentTypes.length === num - 1) {
+				sendMessage('removeComponent', Component.name);
+			}
+			return result;
 		}
 	});
 
@@ -43,5 +60,5 @@ if( !window.__ECSY_INSPECTOR_INJECTED ) {
 
 	log( 'ECSYInspector injected', document.location.href );
 
-	window.__ECSY_INSPECTOR_INJECTED = true;
+	window.__ECSY_DEVTOOLS_INJECTED = true;
 }
