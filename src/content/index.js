@@ -2,11 +2,6 @@
 
 if( !window.__ECSY_DEVTOOLS_INJECTED ) {
 	function sendMessage( type, data ) {
-		/*
-		var message = { source: 'ecsyinspector-script', method: type, data: data };
-		var e = new CustomEvent( 'ecsyinspector-view', { detail: message } );
-		window.dispatchEvent( e );
-		*/
 		window.postMessage({
 			id: 'ecsy-devtools',
 			method: type,
