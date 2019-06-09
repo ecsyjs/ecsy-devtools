@@ -114,18 +114,68 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'App',
   data: function data() {
     return {
       components: {},
       systems: [],
+      queries: [],
       numEntities: 0
     };
   },
   methods: {
     updateComponents: function updateComponents(components) {
       this.components = components;
+    },
+    toggleSystem: function toggleSystem(system) {
+      window.toggleSystem(system);
+    },
+    stepSystem: function stepSystem(system) {
+      window.stepSystem(system);
+    },
+    toggleSystems: function toggleSystems() {
+      window.toggleSystems();
+    },
+    stepSystems: function stepSystems() {
+      window.stepSystems();
     }
   }
 });
@@ -615,8 +665,15 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", { attrs: { id: "app" } }, [
+    _c("pre", {
+      staticStyle: { "background-color": "#888" },
+      attrs: { id: "debug" }
+    }),
+    _vm._v(" "),
     _c("h3", [_vm._v("Entities")]),
-    _vm._v("\n  Num: " + _vm._s(_vm.numEntities) + "\n  "),
+    _vm._v(" "),
+    _c("ul", [_c("li", [_vm._v("Num: " + _vm._s(_vm.numEntities))])]),
+    _vm._v(" "),
     _c("h3", [_vm._v("Components")]),
     _vm._v(" "),
     _c(
@@ -629,12 +686,161 @@ var render = function() {
       0
     ),
     _vm._v(" "),
-    _c("h3", [_vm._v("Systems")]),
+    _c("h3", [_vm._v("Systems (" + _vm._s(_vm.systems.length) + ")")]),
+    _vm._v(" "),
+    _c(
+      "button",
+      {
+        on: {
+          click: function($event) {
+            return _vm.toggleSystems()
+          }
+        }
+      },
+      [_vm._v(_vm._s(true ? "stop" : undefined))]
+    ),
+    _vm._v(" "),
+    _c(
+      "button",
+      {
+        on: {
+          click: function($event) {
+            return _vm.stepSystems()
+          }
+        }
+      },
+      [_vm._v("step")]
+    ),
     _vm._v(" "),
     _c(
       "ul",
       _vm._l(_vm.systems, function(system) {
-        return _c("li", [_vm._v("\n      " + _vm._s(system) + "\n    ")])
+        return _c("li", [
+          _vm._v(
+            "\n      " +
+              _vm._s(system.name) +
+              " (" +
+              _vm._s(system.executeTime) +
+              "ms)"
+          ),
+          _c(
+            "button",
+            {
+              on: {
+                click: function($event) {
+                  return _vm.toggleSystem(system)
+                }
+              }
+            },
+            [_vm._v(_vm._s(system.enabled ? "stop" : "play"))]
+          ),
+          _vm._v(" "),
+          _c(
+            "button",
+            {
+              on: {
+                click: function($event) {
+                  return _vm.stepSystem(system)
+                }
+              }
+            },
+            [_vm._v("step")]
+          ),
+          _vm._v(" "),
+          _c("ul", [
+            _c("li", [_vm._v("queries:")]),
+            _vm._v(" "),
+            _c(
+              "ul",
+              _vm._l(system.queries, function(value, name) {
+                return _c("li", [
+                  _c("ul", [
+                    _c("li", [
+                      _vm._v(
+                        "\n                " +
+                          _vm._s(name) +
+                          ": " +
+                          _vm._s(value.key) +
+                          " " +
+                          _vm._s(
+                            _vm.queries.find(function(q) {
+                              return q.key === value.key
+                            }).numEntities
+                          ) +
+                          "\n              "
+                      )
+                    ]),
+                    _vm._v(" "),
+                    _c("li", [
+                      _vm._v("events:\n                "),
+                      _c(
+                        "ul",
+                        _vm._l(value.events, function(value, name) {
+                          return _c("li", [
+                            _vm._v(
+                              "\n                    " +
+                                _vm._s(name) +
+                                " <= " +
+                                _vm._s(value.eventName) +
+                                " " +
+                                _vm._s(
+                                  value.components
+                                    ? "(" + value.components.join(", ") + ")"
+                                    : ""
+                                ) +
+                                " " +
+                                _vm._s(value.numEntities) +
+                                "\n                  "
+                            )
+                          ])
+                        }),
+                        0
+                      )
+                    ])
+                  ])
+                ])
+              }),
+              0
+            ),
+            _vm._v(" "),
+            _c("li", [_vm._v("events:")]),
+            _vm._v(" "),
+            _c(
+              "ul",
+              _vm._l(system.events, function(value, name) {
+                return _c("li", [
+                  _vm._v(
+                    "\n            " +
+                      _vm._s(name) +
+                      " <= " +
+                      _vm._s(value.eventName) +
+                      "\n          "
+                  )
+                ])
+              }),
+              0
+            )
+          ])
+        ])
+      }),
+      0
+    ),
+    _vm._v(" "),
+    _c("h3", [_vm._v("Queries (" + _vm._s(_vm.queries.length) + ")")]),
+    _vm._v(" "),
+    _c(
+      "ul",
+      _vm._l(_vm.queries, function(query) {
+        return _c("li", [
+          _c("b", [_vm._v(_vm._s(query.key) + ":")]),
+          _vm._v(
+            " " +
+              _vm._s(query.numEntities) +
+              " (" +
+              _vm._s(query.components.join(", ")) +
+              ")\n    "
+          )
+        ])
       }),
       0
     )
@@ -9321,7 +9527,16 @@ backgroundPageConnection.onMessage.addListener(function (m) {
 });
 
 function processMessage(msg) {
-  if (msg.method === 'registerComponent') {
+  if (msg.method === 'reset') {
+    reset();
+  } else if (msg.method === 'refreshStats') {
+    for (var i = 0; i < app.$children[0].systems.length; i++) {
+      var system = msg.data.find(function (s) {
+        return s.name === app.$children[0].systems[i].name;
+      });
+      app.$children[0].systems[i].executeTime = app.$children[0].systems[i].enabled ? system.executeTime : 0;
+    }
+  } else if (msg.method === 'registerComponent') {
     registerComponent(msg.data);
   } else if (msg.method === 'registerSystem') {
     registerSystem(msg.data);
@@ -9333,6 +9548,19 @@ function processMessage(msg) {
   } else if (msg.method === 'removeComponent') {
     var c = msg.data;
     changeNumComponent(c, -1);
+  } else if (msg.method === 'addQuery') {
+    var c = msg.data;
+    app.$children[0].queries.push({
+      key: c.key,
+      numEntities: c.numEntities,
+      components: c.components
+    });
+  } else if (msg.method === 'refreshQueries') {
+    var c = msg.data;
+    app.$children[0].queries = c;
+  } else if (msg.method === 'refreshSystems') {
+    var c = msg.data;
+    app.$children[0].systems = c;
   }
 }
 
@@ -9362,12 +9590,35 @@ function registerComponent(c) {
 }
 
 function registerSystem(s) {
+  var systems = app.$children[0].systems;
+
   if (systems.indexOf(s) === -1) {
     systems.push(s);
   }
 
   app.$children[0].systems = systems;
 }
+
+function reset() {
+  app.$children[0].components = {};
+  components = {};
+  app.$children[0].systems = [];
+  app.$children[0].numEntities = 0;
+  app.$children[0].queries = [];
+}
+
+window.toggleSystem = function (system) {
+  var string = "world.systemManager.systems.find(s => s.constructor.name === '".concat(system.name, "').").concat(system.enabled ? 'stop' : 'play', "()");
+  system.enabled = !system.enabled;
+  system.executeTime = 0;
+  browser.devtools.inspectedWindow.eval(string);
+  console.log('Toggling', string, system);
+};
+
+window.stepSystem = function (system) {
+  var string = "\n    var system = world.systemManager.systems.find(s => s.constructor.name === '".concat(system.name, "');\n    system.execute(1/60);\n  ");
+  browser.devtools.inspectedWindow.eval(string);
+};
 
 /***/ })
 

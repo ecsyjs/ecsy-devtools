@@ -21,7 +21,6 @@ document.getElementById("button").addEventListener('click', () => {
 */
 var globalBrowser =  chrome || browser;
 
-
 var backgroundPageConnection = chrome.runtime.connect({
 	name: "devtools"
 });
@@ -45,7 +44,16 @@ backgroundPageConnection.onMessage.addListener(m => {
 
 
 function processMessage(msg) {
-  if (msg.method === 'registerComponent') {
+  if (msg.method === 'reset') {
+    reset();
+  }
+  else if (msg.method === 'refreshStats') {
+    for (var i=0; i< app.$children[0].systems.length; i++) {
+      var system = msg.data.find(s => s.name === app.$children[0].systems[i].name);
+      app.$children[0].systems[i].executeTime = app.$children[0].systems[i].enabled ? system.executeTime : 0;
+    }
+  }
+  else if (msg.method === 'registerComponent') {
     registerComponent(msg.data);
   }
   else if (msg.method === 'registerSystem') {
@@ -60,7 +68,20 @@ function processMessage(msg) {
   } else if (msg.method === 'removeComponent') {
     var c = msg.data;
     changeNumComponent(c, -1);
-  }
+  } else if (msg.method === 'addQuery') {
+    var c = msg.data;
+    app.$children[0].queries.push({
+      key: c.key,
+      numEntities: c.numEntities,
+      components: c.components,
+    });
+  } else if (msg.method === 'refreshQueries') {
+    var c = msg.data;
+    app.$children[0].queries = c;
+  } else if (msg.method === 'refreshSystems') {
+  var c = msg.data;
+  app.$children[0].systems = c;
+}
 }
 
 function changeNumComponent(c, inc) {
@@ -88,9 +109,33 @@ function registerComponent(c) {
 }
 
 function registerSystem(s) {
+  var systems = app.$children[0].systems;
   if (systems.indexOf(s) === -1) {
     systems.push(s);
   }
   app.$children[0].systems = systems;
 }
 
+function reset() {
+  app.$children[0].components = {};
+  components = {};
+  app.$children[0].systems = [];
+  app.$children[0].numEntities = 0;
+  app.$children[0].queries = [];
+}
+
+window.toggleSystem = function(system) {
+  var string = `world.systemManager.systems.find(s => s.constructor.name === '${system.name}').${(system.enabled ? 'stop' : 'play')}()`
+  system.enabled = !system.enabled;
+  system.executeTime = 0;
+  browser.devtools.inspectedWindow.eval(string);
+  console.log('Toggling', string, system)
+}
+
+window.stepSystem = function(system) {
+  var string = `
+    var system = world.systemManager.systems.find(s => s.constructor.name === '${system.name}');
+    system.execute(1/60);
+  `;
+  browser.devtools.inspectedWindow.eval(string);
+}
