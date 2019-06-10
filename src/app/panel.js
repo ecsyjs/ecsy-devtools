@@ -32,18 +32,7 @@ function processMessage(msg) {
     appData.systems = msg.data.systems;
     appData.queries = msg.data.queries;
     appData.components = msg.data.components;
-  }
-  else if (msg.method === 'registerComponent') {
-    registerComponent(msg.data);
-  }
-  else if (msg.method === 'registerSystem') {
-    registerSystem(msg.data);
-  } else if (msg.method === 'refreshQueries') {
-    var c = msg.data;
-    app.$children[0].queries = c;
-  } else if (msg.method === 'refreshSystems') {
-    var c = msg.data;
-    app.$children[0].systems = c;
+    appData.world = msg.data.world;
   }
 }
 
@@ -55,18 +44,29 @@ function reset() {
   app.$children[0].queries = [];
 }
 
-window.toggleSystem = function(system) {
-  var string = `world.systemManager.systems.find(s => s.constructor.name === '${system.name}').${(system.enabled ? 'stop' : 'play')}()`
-  system.enabled = !system.enabled;
-  system.executeTime = 0;
-  browser.devtools.inspectedWindow.eval(string);
-  console.log('Toggling', string, system)
+window.ecsyDevtools = {
+  toggleWorld: function (enabled) {
+    var string = `world.${(enabled ? 'stop' : 'play')}()`;
+    browser.devtools.inspectedWindow.eval(string);
+  },
+  stepWorld: function () {
+    var string = `
+      world.systemManager.execute(1/60, performance.now());
+      world.entityManager.processDeferredRemoval();
+    `;
+    browser.devtools.inspectedWindow.eval(string);
+  },
+  toggleSystem: function(system) {
+    var string = `world.systemManager.systems.find(s => s.constructor.name === '${system.name}').${(system.enabled ? 'stop' : 'play')}()`;
+    system.enabled = !system.enabled;
+    browser.devtools.inspectedWindow.eval(string);
+  },
+  stepSystem: function(system) {
+    var string = `
+      var system = world.systemManager.systems.find(s => s.constructor.name === '${system.name}');
+      system.execute(1/60, performance.now());
+    `;
+    browser.devtools.inspectedWindow.eval(string);
+  }
 }
 
-window.stepSystem = function(system) {
-  var string = `
-    var system = world.systemManager.systems.find(s => s.constructor.name === '${system.name}');
-    system.execute(1/60, performance.now());
-  `;
-  browser.devtools.inspectedWindow.eval(string);
-}

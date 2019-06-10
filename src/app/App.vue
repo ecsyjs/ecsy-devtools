@@ -14,7 +14,7 @@
     <pre style="background-color: #888" id="debug"></pre>
     <div class="column">
       <h3>Entities: {{numEntities}}</h3>
-      <h3>Components</h3>
+      <h3>Components: {{Object.keys(components).length}}</h3>
       <ul>
         <li v-for="(value, name) in components">
           <span>{{name}}: {{value}}</span>
@@ -29,10 +29,10 @@
     </div>
     <div class="column">
       <h3>Systems: {{systems.length}}</h3>
-      <button v-on:click='toggleSystems()'>{{true ? 'stop' : 'play'}}</button> <button v-on:click='stepSystems()'>step</button>
+      <button v-on:click='toggleWorld()'>{{world.enabled ? 'stop' : 'play'}}</button> <button v-on:click='stepWorld()'>step</button>
       <ul>
         <li v-for="system in systems">
-          <b>{{system.name}}</b> ({{system.executeTime.toFixed(2)}}ms / {{(100 * systemPerc(system)).toFixed(2)}}%)<button v-on:click='toggleSystem(system)'>{{system.enabled ? 'stop' : 'play'}}</button> <button v-on:click='stepSystem(system)'>step</button>
+          <b>{{system.name}}</b><button v-on:click='toggleSystem(system)'>{{system.enabled ? 'stop' : 'play'}}</button> <button v-on:click='stepSystem(system)'>step</button> ({{system.executeTime.toFixed(2)}}ms / {{(100 * systemPerc(system)).toFixed(2)}}%)
           <ul>
             <li>queries:
               <ul>
@@ -68,6 +68,7 @@ export default {
       components: {},
       systems: [],
       queries: [],
+      world: {enabled: true},
       numEntities: 0
     }
   },
@@ -82,20 +83,17 @@ export default {
     updateComponents(components) {
       this.components = components;
     },
-    toggleSystems(system) {
-      window.toggleSystems();
+    toggleWorld() {
+      window.ecsyDevtools.toggleWorld(this.world.enabled);
     },
     toggleSystem(system) {
-      window.toggleSystem(system);
+      window.ecsyDevtools.toggleSystem(system);
     },
     stepSystem(system) {
-      window.stepSystem(system);
+      window.ecsyDevtools.stepSystem(system);
     },
-    toggleSystems() {
-      window.toggleSystems();
-    },
-    stepSystems() {
-      window.stepSystems();
+    stepWorld() {
+      window.ecsyDevtools.stepWorld();
     }
   }
 }

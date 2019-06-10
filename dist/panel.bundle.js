@@ -95,10 +95,6 @@
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-var _methods;
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
 //
 //
 //
@@ -168,10 +164,13 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       components: {},
       systems: [],
       queries: [],
+      world: {
+        enabled: true
+      },
       numEntities: 0
     };
   },
-  methods: (_methods = {
+  methods: {
     totalSystemsTime: function totalSystemsTime() {
       return this.systems.reduce(function (acum, s) {
         return acum + s.executeTime;
@@ -184,20 +183,19 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     updateComponents: function updateComponents(components) {
       this.components = components;
     },
-    toggleSystems: function toggleSystems(system) {
-      window.toggleSystems();
+    toggleWorld: function toggleWorld() {
+      window.ecsyDevtools.toggleWorld(this.world.enabled);
     },
     toggleSystem: function toggleSystem(system) {
-      window.toggleSystem(system);
+      window.ecsyDevtools.toggleSystem(system);
     },
     stepSystem: function stepSystem(system) {
-      window.stepSystem(system);
+      window.ecsyDevtools.stepSystem(system);
+    },
+    stepWorld: function stepWorld() {
+      window.ecsyDevtools.stepWorld();
     }
-  }, _defineProperty(_methods, "toggleSystems", function toggleSystems() {
-    window.toggleSystems();
-  }), _defineProperty(_methods, "stepSystems", function stepSystems() {
-    window.stepSystems();
-  }), _methods)
+  }
 });
 
 /***/ }),
@@ -808,7 +806,9 @@ var render = function() {
     _c("div", { staticClass: "column" }, [
       _c("h3", [_vm._v("Entities: " + _vm._s(_vm.numEntities))]),
       _vm._v(" "),
-      _c("h3", [_vm._v("Components")]),
+      _c("h3", [
+        _vm._v("Components: " + _vm._s(Object.keys(_vm.components).length))
+      ]),
       _vm._v(" "),
       _c(
         "ul",
@@ -848,11 +848,11 @@ var render = function() {
         {
           on: {
             click: function($event) {
-              return _vm.toggleSystems()
+              return _vm.toggleWorld()
             }
           }
         },
-        [_vm._v(_vm._s(true ? "stop" : undefined))]
+        [_vm._v(_vm._s(_vm.world.enabled ? "stop" : "play"))]
       ),
       _vm._v(" "),
       _c(
@@ -860,7 +860,7 @@ var render = function() {
         {
           on: {
             click: function($event) {
-              return _vm.stepSystems()
+              return _vm.stepWorld()
             }
           }
         },
@@ -872,13 +872,6 @@ var render = function() {
         _vm._l(_vm.systems, function(system) {
           return _c("li", [
             _c("b", [_vm._v(_vm._s(system.name))]),
-            _vm._v(
-              " (" +
-                _vm._s(system.executeTime.toFixed(2)) +
-                "ms / " +
-                _vm._s((100 * _vm.systemPerc(system)).toFixed(2)) +
-                "%)"
-            ),
             _c(
               "button",
               {
@@ -902,7 +895,13 @@ var render = function() {
               },
               [_vm._v("step")]
             ),
-            _vm._v(" "),
+            _vm._v(
+              " (" +
+                _vm._s(system.executeTime.toFixed(2)) +
+                "ms / " +
+                _vm._s((100 * _vm.systemPerc(system)).toFixed(2)) +
+                "%)\n        "
+            ),
             _c("ul", [
               _c("li", [
                 _vm._v("queries:\n            "),
@@ -9967,16 +9966,7 @@ function processMessage(msg) {
     appData.systems = msg.data.systems;
     appData.queries = msg.data.queries;
     appData.components = msg.data.components;
-  } else if (msg.method === 'registerComponent') {
-    registerComponent(msg.data);
-  } else if (msg.method === 'registerSystem') {
-    registerSystem(msg.data);
-  } else if (msg.method === 'refreshQueries') {
-    var c = msg.data;
-    app.$children[0].queries = c;
-  } else if (msg.method === 'refreshSystems') {
-    var c = msg.data;
-    app.$children[0].systems = c;
+    appData.world = msg.data.world;
   }
 }
 
@@ -9988,17 +9978,24 @@ function reset() {
   app.$children[0].queries = [];
 }
 
-window.toggleSystem = function (system) {
-  var string = "world.systemManager.systems.find(s => s.constructor.name === '".concat(system.name, "').").concat(system.enabled ? 'stop' : 'play', "()");
-  system.enabled = !system.enabled;
-  system.executeTime = 0;
-  browser.devtools.inspectedWindow.eval(string);
-  console.log('Toggling', string, system);
-};
-
-window.stepSystem = function (system) {
-  var string = "\n    var system = world.systemManager.systems.find(s => s.constructor.name === '".concat(system.name, "');\n    system.execute(1/60, performance.now());\n  ");
-  browser.devtools.inspectedWindow.eval(string);
+window.ecsyDevtools = {
+  toggleWorld: function toggleWorld(enabled) {
+    var string = "world.".concat(enabled ? 'stop' : 'play', "()");
+    browser.devtools.inspectedWindow.eval(string);
+  },
+  stepWorld: function stepWorld() {
+    var string = "\n      world.systemManager.execute(1/60, performance.now());\n      world.entityManager.processDeferredRemoval();\n    ";
+    browser.devtools.inspectedWindow.eval(string);
+  },
+  toggleSystem: function toggleSystem(system) {
+    var string = "world.systemManager.systems.find(s => s.constructor.name === '".concat(system.name, "').").concat(system.enabled ? 'stop' : 'play', "()");
+    system.enabled = !system.enabled;
+    browser.devtools.inspectedWindow.eval(string);
+  },
+  stepSystem: function stepSystem(system) {
+    var string = "\n      var system = world.systemManager.systems.find(s => s.constructor.name === '".concat(system.name, "');\n      system.execute(1/60, performance.now());\n    ");
+    browser.devtools.inspectedWindow.eval(string);
+  }
 };
 
 /***/ })
