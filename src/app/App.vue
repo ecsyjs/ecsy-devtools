@@ -29,10 +29,10 @@
     </div>
     <div class="column">
       <h3>Systems: {{systems.length}}</h3>
-      <button v-on:click='toggleWorld()'>{{world.enabled ? 'stop' : 'play'}}</button> <button v-on:click='stepWorld()'>step</button>
+      <button v-on:click='toggleWorld()'>{{world.enabled ? 'stop' : 'play'}}</button> <button v-on:click='stepWorld()' :disabled="world.enabled">step</button>
       <ul>
         <li v-for="system in systems">
-          <b>{{system.name}}</b><button v-on:click='toggleSystem(system)'>{{system.enabled ? 'stop' : 'play'}}</button> <button v-on:click='stepSystem(system)'>step</button> ({{system.executeTime.toFixed(2)}}ms / {{(100 * systemPerc(system)).toFixed(2)}}%)
+          <b>{{system.name}}</b><button v-on:click='toggleSystem(system)'>{{system.enabled ? 'stop' : 'play'}}</button> <button v-on:click='stepSystem(system)' :disabled="system.enabled && world.enabled">step</button> ({{system.executeTime.toFixed(2)}}ms / {{(100 * systemPerc(system)).toFixed(2)}}%)
           <ul>
             <li>queries:
               <ul>

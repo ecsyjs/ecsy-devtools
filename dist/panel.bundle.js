@@ -858,6 +858,7 @@ var render = function() {
       _c(
         "button",
         {
+          attrs: { disabled: _vm.world.enabled },
           on: {
             click: function($event) {
               return _vm.stepWorld()
@@ -887,6 +888,7 @@ var render = function() {
             _c(
               "button",
               {
+                attrs: { disabled: system.enabled && _vm.world.enabled },
                 on: {
                   click: function($event) {
                     return _vm.stepSystem(system)
