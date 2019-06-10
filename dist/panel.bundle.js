@@ -161,10 +161,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
-//
-//
-//
-//
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'App',
   data: function data() {
@@ -182,7 +178,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       }, 0);
     },
     systemPerc: function systemPerc(system) {
-      return system.executeTime / this.totalSystemsTime();
+      var total = this.totalSystemsTime();
+      return total > 0 ? system.executeTime / total : 0;
     },
     updateComponents: function updateComponents(components) {
       this.components = components;
@@ -823,7 +820,7 @@ var render = function() {
         0
       ),
       _vm._v(" "),
-      _c("h3", [_vm._v("Queries (" + _vm._s(_vm.queries.length) + ")")]),
+      _c("h3", [_vm._v("Queries: " + _vm._s(_vm.queries.length))]),
       _vm._v(" "),
       _c(
         "ul",
@@ -844,7 +841,7 @@ var render = function() {
     ]),
     _vm._v(" "),
     _c("div", { staticClass: "column" }, [
-      _c("h3", [_vm._v("Systems (" + _vm._s(_vm.systems.length) + ")")]),
+      _c("h3", [_vm._v("Systems: " + _vm._s(_vm.systems.length))]),
       _vm._v(" "),
       _c(
         "button",
@@ -874,10 +871,9 @@ var render = function() {
         "ul",
         _vm._l(_vm.systems, function(system) {
           return _c("li", [
+            _c("b", [_vm._v(_vm._s(system.name))]),
             _vm._v(
-              "\n        " +
-                _vm._s(system.name) +
-                " (" +
+              " (" +
                 _vm._s(system.executeTime.toFixed(2)) +
                 "ms / " +
                 _vm._s((100 * _vm.systemPerc(system)).toFixed(2)) +
@@ -908,78 +904,74 @@ var render = function() {
             ),
             _vm._v(" "),
             _c("ul", [
-              _c("li", [_vm._v("queries:")]),
-              _vm._v(" "),
-              _c(
-                "ul",
-                _vm._l(system.queries, function(value, name) {
-                  return _c("li", [
-                    _c("ul", [
-                      _c("li", [
-                        _vm._v(
-                          "\n                  " +
-                            _vm._s(name) +
-                            ": " +
-                            _vm._s(value.key) +
-                            " " +
-                            _vm._s(
-                              _vm.queries.find(function(q) {
-                                return q.key === value.key
-                              }).numEntities
-                            ) +
-                            "\n                "
-                        )
-                      ]),
-                      _vm._v(" "),
-                      _c("li", [
-                        _vm._v("events:\n                  "),
-                        _c(
-                          "ul",
-                          _vm._l(value.events, function(value, name) {
-                            return _c("li", [
-                              _vm._v(
-                                "\n                      " +
-                                  _vm._s(name) +
-                                  " <= " +
-                                  _vm._s(value.eventName) +
-                                  " " +
-                                  _vm._s(
-                                    value.components
-                                      ? "(" + value.components.join(", ") + ")"
-                                      : ""
-                                  ) +
-                                  " " +
-                                  _vm._s(value.numEntities) +
-                                  "\n                    "
-                              )
-                            ])
-                          }),
-                          0
-                        )
-                      ])
+              _c("li", [
+                _vm._v("queries:\n            "),
+                _c(
+                  "ul",
+                  _vm._l(system.queries, function(value, name) {
+                    return _c("li", [
+                      _vm._v(
+                        "\n                " +
+                          _vm._s(name) +
+                          ": " +
+                          _vm._s(value.key) +
+                          " " +
+                          _vm._s(
+                            _vm.queries.find(function(q) {
+                              return q.key === value.key
+                            }).numEntities
+                          ) +
+                          "\n                "
+                      ),
+                      _c(
+                        "ul",
+                        _vm._l(value.events, function(value, name) {
+                          return _c("li", [
+                            _vm._v(
+                              "\n                    " +
+                                _vm._s(name) +
+                                " <= " +
+                                _vm._s(value.eventName) +
+                                " " +
+                                _vm._s(
+                                  value.components
+                                    ? "(" + value.components.join(", ") + ")"
+                                    : ""
+                                ) +
+                                " " +
+                                _vm._s(value.numEntities) +
+                                "\n                  "
+                            )
+                          ])
+                        }),
+                        0
+                      )
                     ])
-                  ])
-                }),
-                0
-              ),
+                  }),
+                  0
+                )
+              ]),
               _vm._v(" "),
-              _c("li", [_vm._v("events:")]),
-              _vm._v(" "),
-              _c(
-                "ul",
-                _vm._l(system.events, function(value, name) {
-                  return _c("li", [
-                    _vm._v(
-                      "\n              " +
-                        _vm._s(name) +
-                        " <= " +
-                        _vm._s(value.eventName) +
-                        "\n            "
+              Object.keys(system.events).length > 0
+                ? _c("li", [
+                    _vm._v("events:\n            "),
+                    _c(
+                      "ul",
+                      _vm._l(system.events, function(value, name) {
+                        return _c("li", [
+                          _vm._v(
+                            "\n                " +
+                              _vm._s(name) +
+                              " <= " +
+                              _vm._s(value.eventName) +
+                              "\n              "
+                          )
+                        ])
+                      }),
+                      0
                     )
                   ])
-                }),
-                0
-              )
+                : _vm._e()
             ])
           ])
         }),
