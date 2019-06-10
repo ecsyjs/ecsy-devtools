@@ -30,10 +30,11 @@
     <div class="column">
       <h3>Systems: {{systems.length}}</h3>
       <button v-on:click='toggleWorld()'>{{world.enabled ? 'stop' : 'play'}}</button> <button v-on:click='stepWorld()' :disabled="world.enabled">step</button>
+      <input type="checkbox" id="systems-verbose" v-model="showSystemsEvents"><label for="systems-verbose">show queries and events</label>
       <ul>
         <li v-for="system in systems">
           <b>{{system.name}}</b><button v-on:click='toggleSystem(system)'>{{system.enabled ? 'stop' : 'play'}}</button> <button v-on:click='stepSystem(system)' :disabled="system.enabled && world.enabled">step</button> ({{system.executeTime.toFixed(2)}}ms / {{(100 * systemPerc(system)).toFixed(2)}}%)
-          <ul>
+          <ul v-if="showSystemsEvents">
             <li>queries:
               <ul>
                 <li v-for="(value, name) in system.queries">
@@ -69,7 +70,8 @@ export default {
       systems: [],
       queries: [],
       world: {enabled: true},
-      numEntities: 0
+      numEntities: 0,
+      showSystemsEvents: true
     }
   },
   methods: {

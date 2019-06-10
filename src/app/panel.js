@@ -51,7 +51,7 @@ window.ecsyDevtools = {
   },
   stepWorld: function () {
     var string = `
-      world.systemManager.execute(1/60, performance.now());
+      world.systemManager.execute(1/60, performance.now() / 1000);
       world.entityManager.processDeferredRemoval();
     `;
     browser.devtools.inspectedWindow.eval(string);
@@ -64,7 +64,7 @@ window.ecsyDevtools = {
   stepSystem: function(system) {
     var string = `
       var system = world.systemManager.systems.find(s => s.constructor.name === '${system.name}');
-      system.execute(1/60, performance.now());
+      system.execute(1/60, performance.now() / 1000);
     `;
     browser.devtools.inspectedWindow.eval(string);
   }

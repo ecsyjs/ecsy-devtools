@@ -157,6 +157,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'App',
   data: function data() {
@@ -167,7 +168,8 @@ __webpack_require__.r(__webpack_exports__);
       world: {
         enabled: true
       },
-      numEntities: 0
+      numEntities: 0,
+      showSystemsEvents: true
     };
   },
   methods: {
@@ -868,6 +870,47 @@ var render = function() {
         [_vm._v("step")]
       ),
       _vm._v(" "),
+      _c("input", {
+        directives: [
+          {
+            name: "model",
+            rawName: "v-model",
+            value: _vm.showSystemsEvents,
+            expression: "showSystemsEvents"
+          }
+        ],
+        attrs: { type: "checkbox", id: "systems-verbose" },
+        domProps: {
+          checked: Array.isArray(_vm.showSystemsEvents)
+            ? _vm._i(_vm.showSystemsEvents, null) > -1
+            : _vm.showSystemsEvents
+        },
+        on: {
+          change: function($event) {
+            var $$a = _vm.showSystemsEvents,
+              $$el = $event.target,
+              $$c = $$el.checked ? true : false
+            if (Array.isArray($$a)) {
+              var $$v = null,
+                $$i = _vm._i($$a, $$v)
+              if ($$el.checked) {
+                $$i < 0 && (_vm.showSystemsEvents = $$a.concat([$$v]))
+              } else {
+                $$i > -1 &&
+                  (_vm.showSystemsEvents = $$a
+                    .slice(0, $$i)
+                    .concat($$a.slice($$i + 1)))
+              }
+            } else {
+              _vm.showSystemsEvents = $$c
+            }
+          }
+        }
+      }),
+      _c("label", { attrs: { for: "systems-verbose" } }, [
+        _vm._v("show queries and events")
+      ]),
+      _vm._v(" "),
       _c(
         "ul",
         _vm._l(_vm.systems, function(system) {
@@ -904,76 +947,80 @@ var render = function() {
                 _vm._s((100 * _vm.systemPerc(system)).toFixed(2)) +
                 "%)\n        "
             ),
-            _c("ul", [
-              _c("li", [
-                _vm._v("queries:\n            "),
-                _c(
-                  "ul",
-                  _vm._l(system.queries, function(value, name) {
-                    return _c("li", [
-                      _vm._v(
-                        "\n                " +
-                          _vm._s(name) +
-                          ": " +
-                          _vm._s(value.key) +
-                          " " +
-                          _vm._s(
-                            _vm.queries.find(function(q) {
-                              return q.key === value.key
-                            }).numEntities
-                          ) +
-                          "\n                "
-                      ),
-                      _c(
-                        "ul",
-                        _vm._l(value.events, function(value, name) {
-                          return _c("li", [
-                            _vm._v(
-                              "\n                    " +
-                                _vm._s(name) +
-                                " <= " +
-                                _vm._s(value.eventName) +
-                                " " +
-                                _vm._s(
-                                  value.components
-                                    ? "(" + value.components.join(", ") + ")"
-                                    : ""
-                                ) +
-                                " " +
-                                _vm._s(value.numEntities) +
-                                "\n                  "
-                            )
-                          ])
-                        }),
-                        0
-                      )
-                    ])
-                  }),
-                  0
-                )
-              ]),
-              _vm._v(" "),
-              Object.keys(system.events).length > 0
-                ? _c("li", [
-                    _vm._v("events:\n            "),
+            _vm.showSystemsEvents
+              ? _c("ul", [
+                  _c("li", [
+                    _vm._v("queries:\n            "),
                     _c(
                       "ul",
-                      _vm._l(system.events, function(value, name) {
+                      _vm._l(system.queries, function(value, name) {
                         return _c("li", [
                           _vm._v(
                             "\n                " +
                               _vm._s(name) +
-                              " <= " +
-                              _vm._s(value.eventName) +
-                              "\n              "
+                              ": " +
+                              _vm._s(value.key) +
+                              " " +
+                              _vm._s(
+                                _vm.queries.find(function(q) {
+                                  return q.key === value.key
+                                }).numEntities
+                              ) +
+                              "\n                "
+                          ),
+                          _c(
+                            "ul",
+                            _vm._l(value.events, function(value, name) {
+                              return _c("li", [
+                                _vm._v(
+                                  "\n                    " +
+                                    _vm._s(name) +
+                                    " <= " +
+                                    _vm._s(value.eventName) +
+                                    " " +
+                                    _vm._s(
+                                      value.components
+                                        ? "(" +
+                                            value.components.join(", ") +
+                                            ")"
+                                        : ""
+                                    ) +
+                                    " " +
+                                    _vm._s(value.numEntities) +
+                                    "\n                  "
+                                )
+                              ])
+                            }),
+                            0
                           )
                         ])
                       }),
                       0
                     )
-                  ])
-                : _vm._e()
-            ])
+                  ]),
+                  _vm._v(" "),
+                  Object.keys(system.events).length > 0
+                    ? _c("li", [
+                        _vm._v("events:\n            "),
+                        _c(
+                          "ul",
+                          _vm._l(system.events, function(value, name) {
+                            return _c("li", [
+                              _vm._v(
+                                "\n                " +
+                                  _vm._s(name) +
+                                  " <= " +
+                                  _vm._s(value.eventName) +
+                                  "\n              "
+                              )
+                            ])
+                          }),
+                          0
+                        )
+                      ])
+                    : _vm._e()
+                ])
+              : _vm._e()
           ])
         }),
         0
@@ -9986,7 +10033,7 @@ window.ecsyDevtools = {
     browser.devtools.inspectedWindow.eval(string);
   },
   stepWorld: function stepWorld() {
-    var string = "\n      world.systemManager.execute(1/60, performance.now());\n      world.entityManager.processDeferredRemoval();\n    ";
+    var string = "\n      world.systemManager.execute(1/60, performance.now() / 1000);\n      world.entityManager.processDeferredRemoval();\n    ";
     browser.devtools.inspectedWindow.eval(string);
   },
   toggleSystem: function toggleSystem(system) {
@@ -9995,7 +10042,7 @@ window.ecsyDevtools = {
     browser.devtools.inspectedWindow.eval(string);
   },
   stepSystem: function stepSystem(system) {
-    var string = "\n      var system = world.systemManager.systems.find(s => s.constructor.name === '".concat(system.name, "');\n      system.execute(1/60, performance.now());\n    ");
+    var string = "\n      var system = world.systemManager.systems.find(s => s.constructor.name === '".concat(system.name, "');\n      system.execute(1/60, performance.now() / 1000);\n    ");
     browser.devtools.inspectedWindow.eval(string);
   }
 };
