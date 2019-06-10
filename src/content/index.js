@@ -13,7 +13,7 @@ if( !window.__ECSY_DEVTOOLS_INJECTED ) {
 
 	window.addEventListener('ecsy-world-created', e => {
 		var world = e.detail;
-
+/*
 		var oriRegCen = world.createEntity;
 		world.createEntity = function() {
 			sendMessage('createEntity');
@@ -69,12 +69,13 @@ if( !window.__ECSY_DEVTOOLS_INJECTED ) {
 			}
 			return query;
 		}
-
+*/
 
 		var ori1 = world.execute;
 		world.execute = function() {
 			var result = ori1.apply(world, arguments);
 			refreshStats();
+			refreshStats2();
 			return result;
 		}
 
@@ -99,12 +100,32 @@ if( !window.__ECSY_DEVTOOLS_INJECTED ) {
 			var data = world.systemManager.systems.map(system => {
 				return {
 					name: system.constructor.name,
-					executeTime: system.executeTime
+					executeTime: system.executeTime,
 				};
 			});
 			sendMessage('refreshStats', data);
 		}
 
+
+		function refreshStats2() {
+			const systems = world.systemManager.systems.map(system => system.toJSON());
+			const queries = Object.values(world.entityManager._queryManager._queries).map(q => {
+				return {
+					key: q.key,
+					components: q.Components.map(C => C.name),
+					numEntities: q.entities.length
+				}
+			});
+
+			var components = world.componentsManager.numComponents;
+			var data = {
+				numEntities: world.entityManager._entities.length,
+				systems: systems,
+				queries: queries,
+				components: components
+			};
+			sendMessage('refreshData', data);
+		}
 	});
 
 	function log() {
