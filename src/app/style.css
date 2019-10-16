@@ -1,0 +1,26 @@
+#app {
+  display: flex;
+  /*
+  color: #AAA;
+  background-color: #AAA;
+  */
+}
+
+.column {
+  width: 50%;
+}
+
+li.active,
+li.systemQuery:hover,
+li.query:hover
+ {
+  background-color: #99f;
+}
+
+li.running {
+  background-color: #ff9;
+}
+
+li {
+  padding: 2px;
+}

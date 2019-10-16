@@ -28,6 +28,7 @@ function processMessage(msg) {
     reset();
   }
   else if (msg.method === 'refreshData') {
+    appData.data = msg.data;
     appData.numEntities = msg.data.numEntities;
     appData.systems = msg.data.systems;
     appData.queries = msg.data.queries;
@@ -37,36 +38,77 @@ function processMessage(msg) {
 }
 
 function reset() {
+  app.$children[0].data = {};
   app.$children[0].components = {};
-  components = {};
   app.$children[0].systems = [];
   app.$children[0].numEntities = 0;
   app.$children[0].queries = [];
 }
 
 window.ecsyDevtools = {
+
   toggleWorld: function (enabled) {
-    var string = `world.${(enabled ? 'stop' : 'play')}()`;
-    browser.devtools.inspectedWindow.eval(string);
+    var world = 'window.__ECSY_DEVTOOLS.worlds[0]';
+    var string = `${world}.${(enabled ? 'stop' : 'play')}()`;
+    globalBrowser.devtools.inspectedWindow.eval(string);
+  },
+  stepNextSystem: function() {
+    var world = 'window.__ECSY_DEVTOOLS.worlds[0]';
+    var string = `
+      var systemManager = ${world}.systemManager;
+      var nextSystem = systemManager._executeSystems[(systemManager._executeSystems.indexOf(systemManager.lastExecutedSystem)+1)%systemManager._executeSystems.length];
+      systemManager.executeSystem(nextSystem, 1/60, performance.now() / 1000);
+    `;
+    globalBrowser.devtools.inspectedWindow.eval(string);
   },
   stepWorld: function () {
+    var world = 'window.__ECSY_DEVTOOLS.worlds[0]';
     var string = `
-      world.systemManager.execute(1/60, performance.now() / 1000);
-      world.entityManager.processDeferredRemoval();
+      ${world}.systemManager.execute(1/60, performance.now() / 1000);
+      ${world}.entityManager.processDeferredRemoval();
     `;
-    browser.devtools.inspectedWindow.eval(string);
+    globalBrowser.devtools.inspectedWindow.eval(string);
+  },
+  soloPlaySystem: function(system) {
+    var world = 'window.__ECSY_DEVTOOLS.worlds[0]';
+    var string = `${world}.systemManager._systems.forEach(s => {
+      if (s.constructor.name === '${system.name}') {
+        if (!s.enabled) {
+          s.play();
+        }
+      } else {
+        s.stop();
+      }
+    })`;
+
+    globalBrowser.devtools.inspectedWindow.eval(string);
+
+    var string = `${world}.systemManager._systems.find(s => s.constructor.name === '${system.name}').play()`;
+    globalBrowser.devtools.inspectedWindow.eval(string);
   },
   toggleSystem: function(system) {
-    var string = `world.systemManager.systems.find(s => s.constructor.name === '${system.name}').${(system.enabled ? 'stop' : 'play')}()`;
-    system.enabled = !system.enabled;
-    browser.devtools.inspectedWindow.eval(string);
+    var world = 'window.__ECSY_DEVTOOLS.worlds[0]';
+    var string = `${world}.systemManager._systems.find(s => s.constructor.name === '${system.name}').${(system.enabled ? 'stop' : 'play')}()`;
+    //system.enabled = !system.enabled;
+    globalBrowser.devtools.inspectedWindow.eval(string);
   },
   stepSystem: function(system) {
+    debugger;
+    var world = 'window.__ECSY_DEVTOOLS.worlds[0]';
     var string = `
-      var system = world.systemManager.systems.find(s => s.constructor.name === '${system.name}');
-      system.execute(1/60, performance.now() / 1000);
+      var system = ${world}.systemManager._systems.find(s => s.constructor.name === '${system.name}');
+      ${world}.systemManager.executeSystem(system, 1/60, performance.now() / 1000);
     `;
-    browser.devtools.inspectedWindow.eval(string);
+    globalBrowser.devtools.inspectedWindow.eval(string);
+  },
+  playSystems: function() {
+    var world = 'window.__ECSY_DEVTOOLS.worlds[0]';
+    var string = `${world}.systemManager._systems.forEach(s => s.play());`;
+    globalBrowser.devtools.inspectedWindow.eval(string);
+  },
+  stopSystems: function() {
+    var world = 'window.__ECSY_DEVTOOLS.worlds[0]';
+    var string = `${world}.systemManager._systems.forEach(s => s.stop());`;
+    globalBrowser.devtools.inspectedWindow.eval(string);
   }
 }
-

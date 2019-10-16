@@ -95,6 +95,8 @@
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _style_css__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./style.css */ "./src/app/style.css");
+/* harmony import */ var _style_css__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_style_css__WEBPACK_IMPORTED_MODULE_0__);
 //
 //
 //
@@ -158,10 +160,13 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'App',
   data: function data() {
     return {
+      data: {},
       components: {},
       systems: [],
       queries: [],
@@ -169,10 +174,24 @@ __webpack_require__.r(__webpack_exports__);
         enabled: true
       },
       numEntities: 0,
-      showSystemsEvents: true
+      showSystemsEvents: true,
+      highlightedQueries: [],
+      highlightedComponents: [],
+      showDebugInfo: false
     };
   },
   methods: {
+    numSystems: function numSystems() {
+      return this.data.systems ? this.data.systems.length : 0;
+    },
+    numComponents: function numComponents() {
+      return this.data.components ? Object.keys(this.data.components).length : undefined;
+    },
+    numComponentInstances: function numComponentInstances() {
+      return this.components && Object.values(this.components).length > 0 ? Object.values(this.components).reduce(function (a, c) {
+        return a + c;
+      }) : undefined;
+    },
     totalSystemsTime: function totalSystemsTime() {
       return this.systems.reduce(function (acum, s) {
         return acum + s.executeTime;
@@ -188,6 +207,9 @@ __webpack_require__.r(__webpack_exports__);
     toggleWorld: function toggleWorld() {
       window.ecsyDevtools.toggleWorld(this.world.enabled);
     },
+    soloPlaySystem: function soloPlaySystem(system) {
+      window.ecsyDevtools.soloPlaySystem(system);
+    },
     toggleSystem: function toggleSystem(system) {
       window.ecsyDevtools.toggleSystem(system);
     },
@@ -196,28 +218,76 @@ __webpack_require__.r(__webpack_exports__);
     },
     stepWorld: function stepWorld() {
       window.ecsyDevtools.stepWorld();
+    },
+    stepNextSystem: function stepNextSystem() {
+      window.ecsyDevtools.stepNextSystem();
+    },
+    overSystemQuery: function overSystemQuery(queryKey) {
+      this.highlightedQueries = [queryKey];
+      var query = this.data.queries.find(function (q) {
+        return q.key === queryKey;
+      });
+      this.highlightedComponents = query.components;
+    },
+    overComponent: function overComponent(componentName) {
+      this.highlightedComponents = [componentName];
+      var queries = this.data.queries.filter(function (q) {
+        return q.components.indexOf(componentName) !== -1;
+      });
+      this.highlightedQueries = queries.map(function (q) {
+        return q.key;
+      });
+    },
+    playSystems: function playSystems() {
+      window.ecsyDevtools.playSystems();
+    },
+    stopSystems: function stopSystems() {
+      window.ecsyDevtools.stopSystems();
+    },
+    systemsEnabled: function systemsEnabled() {
+      return this.data.systems.reduce(function (a, c) {
+        return {
+          enabled: a.enabled && c.enabled
+        };
+      }).enabled;
+    },
+    systemsAnyEnabled: function systemsAnyEnabled() {
+      return this.data.systems.reduce(function (a, c) {
+        return {
+          enabled: a.enabled || c.enabled
+        };
+      }).enabled;
+    },
+    overSystem: function overSystem(system) {
+      this.highlightedQueries = [];
+      this.highlightedComponents = [];
+
+      for (var name in system.queries) {
+        var systemQuery = system.queries[name];
+        this.highlightedQueries.push(systemQuery.key);
+        var query = this.data.queries.find(function (q) {
+          return q.key === systemQuery.key;
+        });
+        this.highlightedComponents = this.highlightedComponents.concat(query.components);
+      }
     }
   }
 });
 
 /***/ }),
 
-/***/ "./node_modules/css-loader/dist/cjs.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/vue-loader/lib/index.js?!./src/app/App.vue?vue&type=style&index=0&lang=css&":
-/*!*********************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/css-loader/dist/cjs.js??ref--0-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/vue-loader/lib??vue-loader-options!./src/app/App.vue?vue&type=style&index=0&lang=css& ***!
-  \*********************************************************************************************************************************************************************************************************************/
+/***/ "./node_modules/css-loader/dist/cjs.js?!./src/app/style.css":
+/*!***************************************************************************!*\
+  !*** ./node_modules/css-loader/dist/cjs.js??ref--0-1!./src/app/style.css ***!
+  \***************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(/*! ../../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js")(false);
 // Module
-exports.push([module.i, "\n#app_1YHVAKXB {\n  background-color: #333;\n  display: flex;\n}\n.column_3RpDARLu {\n  width: 50%;\n}\n", ""]);
+exports.push([module.i, "#app {\n  display: flex;\n  /*\n  color: #AAA;\n  background-color: #AAA;\n  */\n}\n\n.column {\n  width: 50%;\n}\n\nli.active,\nli.systemQuery:hover,\nli.query:hover\n {\n  background-color: #99f;\n}\n\nli.running {\n  background-color: #ff9;\n}\n\nli {\n  padding: 2px;\n}", ""]);
 
-// Exports
-exports.locals = {
-	"app": "app_1YHVAKXB",
-	"column": "column_3RpDARLu"
-};
+
 
 /***/ }),
 
@@ -799,234 +869,361 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", { staticStyle: { display: "flex" }, attrs: { id: "app" } }, [
-    _c("pre", {
-      staticStyle: { "background-color": "#888" },
-      attrs: { id: "debug" }
-    }),
-    _vm._v(" "),
-    _c("div", { staticClass: "column" }, [
-      _c("h3", [_vm._v("Entities: " + _vm._s(_vm.numEntities))]),
-      _vm._v(" "),
-      _c("h3", [
-        _vm._v("Components: " + _vm._s(Object.keys(_vm.components).length))
-      ]),
-      _vm._v(" "),
-      _c(
-        "ul",
-        _vm._l(_vm.components, function(value, name) {
-          return _c("li", [
-            _c("span", [_vm._v(_vm._s(name) + ": " + _vm._s(value))])
-          ])
-        }),
-        0
-      ),
-      _vm._v(" "),
-      _c("h3", [_vm._v("Queries: " + _vm._s(_vm.queries.length))]),
-      _vm._v(" "),
-      _c(
-        "ul",
-        _vm._l(_vm.queries, function(query) {
-          return _c("li", [
-            _c("b", [_vm._v(_vm._s(query.key) + ":")]),
-            _vm._v(
-              " " +
-                _vm._s(query.numEntities) +
-                " (" +
-                _vm._s(query.components.join(", ")) +
-                ")\n      "
-            )
-          ])
-        }),
-        0
-      )
-    ]),
-    _vm._v(" "),
-    _c("div", { staticClass: "column" }, [
-      _c("h3", [_vm._v("Systems: " + _vm._s(_vm.systems.length))]),
-      _vm._v(" "),
-      _c(
-        "button",
+  return _vm.data.world
+    ? _c(
+        "div",
         {
-          on: {
-            click: function($event) {
-              return _vm.toggleWorld()
-            }
-          }
+          staticStyle: { display: "flex", "background-color": "#aaa" },
+          attrs: { id: "app" }
         },
-        [_vm._v(_vm._s(_vm.world.enabled ? "stop" : "play"))]
-      ),
-      _vm._v(" "),
-      _c(
-        "button",
-        {
-          attrs: { disabled: _vm.world.enabled },
-          on: {
-            click: function($event) {
-              return _vm.stepWorld()
-            }
-          }
-        },
-        [_vm._v("step")]
-      ),
-      _vm._v(" "),
-      _c("input", {
-        directives: [
-          {
-            name: "model",
-            rawName: "v-model",
-            value: _vm.showSystemsEvents,
-            expression: "showSystemsEvents"
-          }
-        ],
-        attrs: { type: "checkbox", id: "systems-verbose" },
-        domProps: {
-          checked: Array.isArray(_vm.showSystemsEvents)
-            ? _vm._i(_vm.showSystemsEvents, null) > -1
-            : _vm.showSystemsEvents
-        },
-        on: {
-          change: function($event) {
-            var $$a = _vm.showSystemsEvents,
-              $$el = $event.target,
-              $$c = $$el.checked ? true : false
-            if (Array.isArray($$a)) {
-              var $$v = null,
-                $$i = _vm._i($$a, $$v)
-              if ($$el.checked) {
-                $$i < 0 && (_vm.showSystemsEvents = $$a.concat([$$v]))
-              } else {
-                $$i > -1 &&
-                  (_vm.showSystemsEvents = $$a
-                    .slice(0, $$i)
-                    .concat($$a.slice($$i + 1)))
-              }
-            } else {
-              _vm.showSystemsEvents = $$c
-            }
-          }
-        }
-      }),
-      _c("label", { attrs: { for: "systems-verbose" } }, [
-        _vm._v("show queries and events")
-      ]),
-      _vm._v(" "),
-      _c(
-        "ul",
-        _vm._l(_vm.systems, function(system) {
-          return _c("li", [
-            _c("b", [_vm._v(_vm._s(system.name))]),
+        [
+          _c("div", [
             _c(
               "button",
               {
                 on: {
                   click: function($event) {
-                    return _vm.toggleSystem(system)
+                    _vm.showDebugInfo = !_vm.showDebugInfo
                   }
                 }
               },
-              [_vm._v(_vm._s(system.enabled ? "stop" : "play"))]
+              [_vm._v("Show debug info")]
+            ),
+            _vm._v(" "),
+            _vm.showDebugInfo
+              ? _c("pre", { staticStyle: { "background-color": "#999" } }, [
+                  _vm._v(_vm._s(_vm.data))
+                ])
+              : _vm._e()
+          ]),
+          _vm._v(" "),
+          _c("div", { staticClass: "column" }, [
+            _c("h3", [_vm._v("Entities: " + _vm._s(_vm.data.numEntities))]),
+            _vm._v(" "),
+            _c("h3", [
+              _vm._v(
+                "Components: " +
+                  _vm._s(_vm.numComponents()) +
+                  " (" +
+                  _vm._s(_vm.numComponentInstances()) +
+                  ")"
+              )
+            ]),
+            _vm._v(" "),
+            _c(
+              "ul",
+              _vm._l(_vm.data.components, function(value, name) {
+                return _c(
+                  "li",
+                  {
+                    staticClass: "query",
+                    class: {
+                      active: _vm.highlightedComponents.indexOf(name) !== -1
+                    },
+                    on: {
+                      mouseover: function($event) {
+                        return _vm.overComponent(name)
+                      }
+                    }
+                  },
+                  [
+                    _c("span", [_vm._v(_vm._s(name) + ": " + _vm._s(value))]),
+                    _vm._v(" "),
+                    _c("em", [_vm._v(_vm._s(_vm.data.componentsPools[name]))])
+                  ]
+                )
+              }),
+              0
+            ),
+            _vm._v(" "),
+            _c("h3", [_vm._v("Queries: " + _vm._s(_vm.data.queries.length))]),
+            _vm._v(" "),
+            _c(
+              "ul",
+              _vm._l(_vm.data.queries, function(query) {
+                return _c(
+                  "li",
+                  {
+                    staticClass: "query",
+                    class: {
+                      active: _vm.highlightedQueries.indexOf(query.key) !== -1
+                    },
+                    on: {
+                      mouseover: function($event) {
+                        return _vm.overSystemQuery(query.key)
+                      }
+                    }
+                  },
+                  [
+                    _c("b", [_vm._v(_vm._s(query.key) + ":")]),
+                    _vm._v(
+                      " " +
+                        _vm._s(query.numEntities) +
+                        " (" +
+                        _vm._s(query.components.join(", ")) +
+                        ")\n      "
+                    )
+                  ]
+                )
+              }),
+              0
+            )
+          ]),
+          _vm._v(" "),
+          _c("div", { staticClass: "column" }, [
+            _c("h3", [
+              _vm._v(
+                "Systems: " +
+                  _vm._s(_vm.numSystems()) +
+                  " (" +
+                  _vm._s(_vm.totalSystemsTime().toFixed(2)) +
+                  "ms)"
+              )
+            ]),
+            _vm._v(" "),
+            _c(
+              "button",
+              {
+                on: {
+                  click: function($event) {
+                    return _vm.toggleWorld()
+                  }
+                }
+              },
+              [
+                _vm._v(
+                  _vm._s(_vm.data.world.enabled ? "stop" : "play") + " world"
+                )
+              ]
             ),
             _vm._v(" "),
             _c(
               "button",
               {
-                attrs: { disabled: system.enabled && _vm.world.enabled },
+                attrs: { disabled: _vm.data.world.enabled },
                 on: {
                   click: function($event) {
-                    return _vm.stepSystem(system)
+                    return _vm.stepNextSystem()
                   }
                 }
               },
-              [_vm._v("step")]
+              [_vm._v("step next system")]
             ),
-            _vm._v(
-              " (" +
-                _vm._s(system.executeTime.toFixed(2)) +
-                "ms / " +
-                _vm._s((100 * _vm.systemPerc(system)).toFixed(2)) +
-                "%)\n        "
+            _vm._v(" "),
+            _c(
+              "button",
+              {
+                attrs: { disabled: _vm.data.world.enabled },
+                on: {
+                  click: function($event) {
+                    return _vm.stepWorld()
+                  }
+                }
+              },
+              [_vm._v("step all systems")]
             ),
-            _vm.showSystemsEvents
-              ? _c("ul", [
-                  _c("li", [
-                    _vm._v("queries:\n            "),
+            _vm._v(" "),
+            _c(
+              "button",
+              {
+                attrs: { disabled: _vm.systemsEnabled() },
+                on: {
+                  click: function($event) {
+                    return _vm.playSystems()
+                  }
+                }
+              },
+              [_vm._v("play all systems")]
+            ),
+            _vm._v(" "),
+            _c(
+              "button",
+              {
+                attrs: { disabled: !_vm.systemsAnyEnabled() },
+                on: {
+                  click: function($event) {
+                    return _vm.stopSystems()
+                  }
+                }
+              },
+              [_vm._v("stop all systems")]
+            ),
+            _vm._v(" "),
+            _c("input", {
+              directives: [
+                {
+                  name: "model",
+                  rawName: "v-model",
+                  value: _vm.showSystemsEvents,
+                  expression: "showSystemsEvents"
+                }
+              ],
+              attrs: { type: "checkbox", id: "systems-verbose" },
+              domProps: {
+                checked: Array.isArray(_vm.showSystemsEvents)
+                  ? _vm._i(_vm.showSystemsEvents, null) > -1
+                  : _vm.showSystemsEvents
+              },
+              on: {
+                change: function($event) {
+                  var $$a = _vm.showSystemsEvents,
+                    $$el = $event.target,
+                    $$c = $$el.checked ? true : false
+                  if (Array.isArray($$a)) {
+                    var $$v = null,
+                      $$i = _vm._i($$a, $$v)
+                    if ($$el.checked) {
+                      $$i < 0 && (_vm.showSystemsEvents = $$a.concat([$$v]))
+                    } else {
+                      $$i > -1 &&
+                        (_vm.showSystemsEvents = $$a
+                          .slice(0, $$i)
+                          .concat($$a.slice($$i + 1)))
+                    }
+                  } else {
+                    _vm.showSystemsEvents = $$c
+                  }
+                }
+              }
+            }),
+            _c("label", { attrs: { for: "systems-verbose" } }, [
+              _vm._v("show queries")
+            ]),
+            _vm._v(" "),
+            _c(
+              "ul",
+              _vm._l(_vm.data.systems, function(system) {
+                return _c(
+                  "li",
+                  {
+                    class: {
+                      running:
+                        !_vm.data.world.enabled &&
+                        _vm.data.lastExecutedSystem === system.name
+                    }
+                  },
+                  [
                     _c(
-                      "ul",
-                      _vm._l(system.queries, function(value, name) {
-                        return _c("li", [
-                          _vm._v(
-                            "\n                " +
-                              _vm._s(name) +
-                              ": " +
-                              _vm._s(value.key) +
-                              " " +
-                              _vm._s(
-                                _vm.queries.find(function(q) {
-                                  return q.key === value.key
-                                }).numEntities
-                              ) +
-                              "\n                "
-                          ),
-                          _c(
-                            "ul",
-                            _vm._l(value.events, function(value, name) {
-                              return _c("li", [
-                                _vm._v(
-                                  "\n                    " +
-                                    _vm._s(name) +
-                                    " <= " +
-                                    _vm._s(value.eventName) +
-                                    " " +
-                                    _vm._s(
-                                      value.components
-                                        ? "(" +
-                                            value.components.join(", ") +
-                                            ")"
-                                        : ""
-                                    ) +
-                                    " " +
-                                    _vm._s(value.numEntities) +
-                                    "\n                  "
-                                )
-                              ])
-                            }),
-                            0
-                          )
-                        ])
-                      }),
-                      0
-                    )
-                  ]),
-                  _vm._v(" "),
-                  Object.keys(system.events).length > 0
-                    ? _c("li", [
-                        _vm._v("events:\n            "),
+                      "span",
+                      {
+                        on: {
+                          mouseover: function($event) {
+                            return _vm.overSystem(system)
+                          }
+                        }
+                      },
+                      [
+                        _c("b", [_vm._v(_vm._s(system.name))]),
+                        _vm._v(" "),
                         _c(
-                          "ul",
-                          _vm._l(system.events, function(value, name) {
-                            return _c("li", [
-                              _vm._v(
-                                "\n                " +
-                                  _vm._s(name) +
-                                  " <= " +
-                                  _vm._s(value.eventName) +
-                                  "\n              "
-                              )
-                            ])
-                          }),
-                          0
+                          "button",
+                          {
+                            on: {
+                              click: function($event) {
+                                return _vm.toggleSystem(system)
+                              }
+                            }
+                          },
+                          [_vm._v(_vm._s(system.enabled ? "stop" : "play"))]
+                        ),
+                        _vm._v(" "),
+                        _c(
+                          "button",
+                          {
+                            attrs: {
+                              disabled: system.enabled && _vm.world.enabled
+                            },
+                            on: {
+                              click: function($event) {
+                                return _vm.stepSystem(system)
+                              }
+                            }
+                          },
+                          [_vm._v("step")]
+                        ),
+                        _vm._v(" "),
+                        _c(
+                          "button",
+                          {
+                            on: {
+                              click: function($event) {
+                                return _vm.soloPlaySystem(system)
+                              }
+                            }
+                          },
+                          [_vm._v("solo")]
+                        ),
+                        _vm._v(
+                          "\n\n           (" +
+                            _vm._s(system.executeTime.toFixed(2)) +
+                            "ms / " +
+                            _vm._s((100 * _vm.systemPerc(system)).toFixed(2)) +
+                            "%)\n        "
                         )
-                      ])
-                    : _vm._e()
-                ])
-              : _vm._e()
+                      ]
+                    ),
+                    _vm._v(" "),
+                    _vm.showSystemsEvents
+                      ? _c("ul", [
+                          _c("li", [
+                            _vm._v("queries:\n            "),
+                            _c(
+                              "ul",
+                              _vm._l(system.queries, function(value, name) {
+                                return _c(
+                                  "li",
+                                  {
+                                    staticClass: "systemQuery",
+                                    class: {
+                                      active:
+                                        _vm.highlightedQueries.indexOf(
+                                          value.key
+                                        ) !== -1
+                                    }
+                                  },
+                                  [
+                                    _c(
+                                      "span",
+                                      {
+                                        on: {
+                                          mouseover: function($event) {
+                                            return _vm.overSystemQuery(
+                                              value.key
+                                            )
+                                          }
+                                        }
+                                      },
+                                      [
+                                        _vm._v(
+                                          _vm._s(name) +
+                                            ": " +
+                                            _vm._s(value.key) +
+                                            " " +
+                                            _vm._s(
+                                              _vm.queries.find(function(q) {
+                                                return q.key === value.key
+                                              }).numEntities
+                                            )
+                                        )
+                                      ]
+                                    )
+                                  ]
+                                )
+                              }),
+                              0
+                            )
+                          ])
+                        ])
+                      : _vm._e()
+                  ]
+                )
+              }),
+              0
+            )
           ])
-        }),
-        0
+        ]
       )
-    ])
-  ])
+    : _vm._e()
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -1139,27 +1336,6 @@ function normalizeComponent (
   }
 }
 
-
-/***/ }),
-
-/***/ "./node_modules/vue-style-loader/index.js!./node_modules/css-loader/dist/cjs.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/vue-loader/lib/index.js?!./src/app/App.vue?vue&type=style&index=0&lang=css&":
-/*!*****************************************************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/vue-style-loader!./node_modules/css-loader/dist/cjs.js??ref--0-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/vue-loader/lib??vue-loader-options!./src/app/App.vue?vue&type=style&index=0&lang=css& ***!
-  \*****************************************************************************************************************************************************************************************************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-// style-loader: Adds some css to the DOM by adding a <style> tag
-
-// load the styles
-var content = __webpack_require__(/*! !../../node_modules/css-loader/dist/cjs.js??ref--0-1!../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../node_modules/vue-loader/lib??vue-loader-options!./App.vue?vue&type=style&index=0&lang=css& */ "./node_modules/css-loader/dist/cjs.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/vue-loader/lib/index.js?!./src/app/App.vue?vue&type=style&index=0&lang=css&");
-if(typeof content === 'string') content = [[module.i, content, '']];
-if(content.locals) module.exports = content.locals;
-// add the styles to the DOM
-var add = __webpack_require__(/*! ../../node_modules/vue-style-loader/lib/addStylesClient.js */ "./node_modules/vue-style-loader/lib/addStylesClient.js").default
-var update = add("2e0fd255", content, false, {});
-// Hot Module Replacement
-if(false) {}
 
 /***/ }),
 
@@ -9898,9 +10074,7 @@ if (inBrowser) {
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _App_vue_vue_type_template_id_7e7f006c___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./App.vue?vue&type=template&id=7e7f006c& */ "./src/app/App.vue?vue&type=template&id=7e7f006c&");
 /* harmony import */ var _App_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./App.vue?vue&type=script&lang=js& */ "./src/app/App.vue?vue&type=script&lang=js&");
-/* empty/unused harmony star reexport *//* harmony import */ var _App_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./App.vue?vue&type=style&index=0&lang=css& */ "./src/app/App.vue?vue&type=style&index=0&lang=css&");
-/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
-
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
 
 
 
@@ -9908,7 +10082,7 @@ __webpack_require__.r(__webpack_exports__);
 
 /* normalize component */
 
-var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__["default"])(
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
   _App_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
   _App_vue_vue_type_template_id_7e7f006c___WEBPACK_IMPORTED_MODULE_0__["render"],
   _App_vue_vue_type_template_id_7e7f006c___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
@@ -9937,22 +10111,6 @@ component.options.__file = "src/app/App.vue"
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_2_node_modules_vue_loader_lib_index_js_vue_loader_options_App_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../node_modules/babel-loader/lib??ref--2!../../node_modules/vue-loader/lib??vue-loader-options!./App.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./src/app/App.vue?vue&type=script&lang=js&");
 /* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_2_node_modules_vue_loader_lib_index_js_vue_loader_options_App_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
-
-/***/ }),
-
-/***/ "./src/app/App.vue?vue&type=style&index=0&lang=css&":
-/*!**********************************************************!*\
-  !*** ./src/app/App.vue?vue&type=style&index=0&lang=css& ***!
-  \**********************************************************/
-/*! no static exports found */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_vue_style_loader_index_js_node_modules_css_loader_dist_cjs_js_ref_0_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_vue_loader_lib_index_js_vue_loader_options_App_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../node_modules/vue-style-loader!../../node_modules/css-loader/dist/cjs.js??ref--0-1!../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../node_modules/vue-loader/lib??vue-loader-options!./App.vue?vue&type=style&index=0&lang=css& */ "./node_modules/vue-style-loader/index.js!./node_modules/css-loader/dist/cjs.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/vue-loader/lib/index.js?!./src/app/App.vue?vue&type=style&index=0&lang=css&");
-/* harmony import */ var _node_modules_vue_style_loader_index_js_node_modules_css_loader_dist_cjs_js_ref_0_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_vue_loader_lib_index_js_vue_loader_options_App_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_vue_style_loader_index_js_node_modules_css_loader_dist_cjs_js_ref_0_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_vue_loader_lib_index_js_vue_loader_options_App_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0__);
-/* harmony reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in _node_modules_vue_style_loader_index_js_node_modules_css_loader_dist_cjs_js_ref_0_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_vue_loader_lib_index_js_vue_loader_options_App_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0__) if(__WEBPACK_IMPORT_KEY__ !== 'default') (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return _node_modules_vue_style_loader_index_js_node_modules_css_loader_dist_cjs_js_ref_0_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_vue_loader_lib_index_js_vue_loader_options_App_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0__[key]; }) }(__WEBPACK_IMPORT_KEY__));
- /* harmony default export */ __webpack_exports__["default"] = (_node_modules_vue_style_loader_index_js_node_modules_css_loader_dist_cjs_js_ref_0_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_vue_loader_lib_index_js_vue_loader_options_App_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0___default.a); 
 
 /***/ }),
 
@@ -10011,6 +10169,7 @@ function processMessage(msg) {
   if (msg.method === 'reset') {
     reset();
   } else if (msg.method === 'refreshData') {
+    appData.data = msg.data;
     appData.numEntities = msg.data.numEntities;
     appData.systems = msg.data.systems;
     appData.queries = msg.data.queries;
@@ -10020,8 +10179,8 @@ function processMessage(msg) {
 }
 
 function reset() {
+  app.$children[0].data = {};
   app.$children[0].components = {};
-  components = {};
   app.$children[0].systems = [];
   app.$children[0].numEntities = 0;
   app.$children[0].queries = [];
@@ -10029,23 +10188,71 @@ function reset() {
 
 window.ecsyDevtools = {
   toggleWorld: function toggleWorld(enabled) {
-    var string = "world.".concat(enabled ? 'stop' : 'play', "()");
-    browser.devtools.inspectedWindow.eval(string);
+    var world = 'window.__ECSY_DEVTOOLS.worlds[0]';
+    var string = "".concat(world, ".").concat(enabled ? 'stop' : 'play', "()");
+    globalBrowser.devtools.inspectedWindow.eval(string);
+  },
+  stepNextSystem: function stepNextSystem() {
+    var world = 'window.__ECSY_DEVTOOLS.worlds[0]';
+    var string = "\n      var systemManager = ".concat(world, ".systemManager;\n      var nextSystem = systemManager._executeSystems[(systemManager._executeSystems.indexOf(systemManager.lastExecutedSystem)+1)%systemManager._executeSystems.length];\n      systemManager.executeSystem(nextSystem, 1/60, performance.now() / 1000);\n    ");
+    globalBrowser.devtools.inspectedWindow.eval(string);
   },
   stepWorld: function stepWorld() {
-    var string = "\n      world.systemManager.execute(1/60, performance.now() / 1000);\n      world.entityManager.processDeferredRemoval();\n    ";
-    browser.devtools.inspectedWindow.eval(string);
+    var world = 'window.__ECSY_DEVTOOLS.worlds[0]';
+    var string = "\n      ".concat(world, ".systemManager.execute(1/60, performance.now() / 1000);\n      ").concat(world, ".entityManager.processDeferredRemoval();\n    ");
+    globalBrowser.devtools.inspectedWindow.eval(string);
+  },
+  soloPlaySystem: function soloPlaySystem(system) {
+    var world = 'window.__ECSY_DEVTOOLS.worlds[0]';
+    var string = "".concat(world, ".systemManager._systems.forEach(s => {\n      if (s.constructor.name === '").concat(system.name, "') {\n        if (!s.enabled) {\n          s.play();\n        }\n      } else {\n        s.stop();\n      }\n    })");
+    globalBrowser.devtools.inspectedWindow.eval(string);
+    var string = "".concat(world, ".systemManager._systems.find(s => s.constructor.name === '").concat(system.name, "').play()");
+    globalBrowser.devtools.inspectedWindow.eval(string);
   },
   toggleSystem: function toggleSystem(system) {
-    var string = "world.systemManager.systems.find(s => s.constructor.name === '".concat(system.name, "').").concat(system.enabled ? 'stop' : 'play', "()");
-    system.enabled = !system.enabled;
-    browser.devtools.inspectedWindow.eval(string);
+    var world = 'window.__ECSY_DEVTOOLS.worlds[0]';
+    var string = "".concat(world, ".systemManager._systems.find(s => s.constructor.name === '").concat(system.name, "').").concat(system.enabled ? 'stop' : 'play', "()"); //system.enabled = !system.enabled;
+
+    globalBrowser.devtools.inspectedWindow.eval(string);
   },
   stepSystem: function stepSystem(system) {
-    var string = "\n      var system = world.systemManager.systems.find(s => s.constructor.name === '".concat(system.name, "');\n      system.execute(1/60, performance.now() / 1000);\n    ");
-    browser.devtools.inspectedWindow.eval(string);
+    debugger;
+    var world = 'window.__ECSY_DEVTOOLS.worlds[0]';
+    var string = "\n      var system = ".concat(world, ".systemManager._systems.find(s => s.constructor.name === '").concat(system.name, "');\n      ").concat(world, ".systemManager.executeSystem(system, 1/60, performance.now() / 1000);\n    ");
+    globalBrowser.devtools.inspectedWindow.eval(string);
+  },
+  playSystems: function playSystems() {
+    var world = 'window.__ECSY_DEVTOOLS.worlds[0]';
+    var string = "".concat(world, ".systemManager._systems.forEach(s => s.play());");
+    globalBrowser.devtools.inspectedWindow.eval(string);
+  },
+  stopSystems: function stopSystems() {
+    var world = 'window.__ECSY_DEVTOOLS.worlds[0]';
+    var string = "".concat(world, ".systemManager._systems.forEach(s => s.stop());");
+    globalBrowser.devtools.inspectedWindow.eval(string);
   }
 };
+
+/***/ }),
+
+/***/ "./src/app/style.css":
+/*!***************************!*\
+  !*** ./src/app/style.css ***!
+  \***************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(/*! !../../node_modules/css-loader/dist/cjs.js??ref--0-1!./style.css */ "./node_modules/css-loader/dist/cjs.js?!./src/app/style.css");
+if(typeof content === 'string') content = [[module.i, content, '']];
+if(content.locals) module.exports = content.locals;
+// add the styles to the DOM
+var add = __webpack_require__(/*! ../../node_modules/vue-style-loader/lib/addStylesClient.js */ "./node_modules/vue-style-loader/lib/addStylesClient.js").default
+var update = add("1e1c30cb", content, false, {});
+// Hot Module Replacement
+if(false) {}
 
 /***/ })
 

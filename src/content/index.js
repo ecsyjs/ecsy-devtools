@@ -12,16 +12,27 @@ if( !window.__ECSY_DEVTOOLS_INJECTED ) {
 	sendMessage('reset');
 
 	window.addEventListener('ecsy-world-created', e => {
+
+		if (!window.__ECSY_DEVTOOLS) {
+			window.__ECSY_DEVTOOLS = {
+				worlds: []
+			};
+		}
+
 		var world = e.detail;
+
+		window.__ECSY_DEVTOOLS.worlds.push(world);
+
 		var ori1 = world.execute;
 		world.execute = function() {
 			var result = ori1.apply(world, arguments);
-			refreshStats();
+			console.log('>>>');
+			window.__ECSY_DEVTOOLS.refreshStats();
 			return result;
 		}
 
-		function refreshStats() {
-			const systems = world.systemManager.systems.map(system => {
+		window.__ECSY_DEVTOOLS.refreshStats = function() {
+			const systems = world.systemManager._systems.map(system => {
 				var json = system.toJSON();
 				// Clear executeTime if it's not enabled
 				if (!json.enabled) json.executeTime = 0;
@@ -36,18 +47,34 @@ if( !window.__ECSY_DEVTOOLS_INJECTED ) {
 				}
 			});
 
-			var components = world.componentsManager.numComponents;
-			var data = {
+			let components = world.componentsManager.numComponents;
+			let componentsPools = {};
+			for (name in world.componentsManager._componentPool) {
+				let pool = world.componentsManager._componentPool[name];
+				var cName = pool.T.name;
+				componentsPools[cName] = {
+					valid: pool.isObjectPool,
+					used: pool.totalUsed(),
+					free: pool.totalFree(),
+					size: pool.totalSize()
+				}
+			};
+
+			let data = {
 				world: {
 					enabled: world.enabled
 				},
+				lastExecutedSystem: world.systemManager.lastExecutedSystem ? world.systemManager.lastExecutedSystem.constructor.name : '',
 				numEntities: world.entityManager._entities.length,
 				systems: systems,
 				queries: queries,
-				components: components
+				components: components,
+				componentsPools: componentsPools
 			};
 			sendMessage('refreshData', data);
 		}
+
+
 	});
 
 	function log() {
