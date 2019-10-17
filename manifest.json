@@ -20,11 +20,14 @@
   }],
 	"web_accessible_resources": [
     "src/content/*.js",
-    "src/vendor/*.js"
+    "src/vendor/*.js",
+    "assets/*.png"
 	],
   "browser_action" : {
-    "default_icon": {},
-    "default_title": "ECSY"
+    "default_title": "ECSY",
+    "default_icon": {
+      "128": "assets/icon_128.png"
+    }
   },
   "devtools_page": "src/extension/devtools.html",
   "content_security_policy": "style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-eval'; connect-src *; frame-src *;",

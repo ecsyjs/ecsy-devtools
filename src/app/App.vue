@@ -15,15 +15,7 @@
           class="component"
           v-bind:class="{ active: highlightedComponents.indexOf(name) !== -1 }"
           v-for="(value, name) in data.components" @mouseover="overComponent(name)">
-          <div>
-            <span class="name">{{name}}</span>
-            <span class="value">{{value}}</span>
-          </div>
-          <div>
-             <!--<em>{{data.componentsPools[name]}}</em>-->
-            <!--<span><canvas id="{{name}}_graph"></canvas></span>-->
-            <span>10</span>
-          </div>
+          <ComponentItem :name="name" :value="value" :stats="stats.components[name]"/>
         </li>
       </ul>
       <!-- Queries -->
@@ -89,6 +81,7 @@
 
 <script>
 import "./style.css";
+import ComponentItem from "./ComponentItem.vue";
 
 var graphs = {
   components: {},
@@ -98,11 +91,16 @@ var graphs = {
 
 export default {
   name: 'App',
+  components: {
+    ComponentItem
+  },
   data() {
     return {
       stats: {
-        numComponents: []
+        numComponents: [],
+        components: {}
       },
+      frame: 0,
       data: {},
       components: {},
       systems: [],

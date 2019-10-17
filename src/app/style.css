@@ -71,6 +71,7 @@ li.component div {
   width: 50%;
   justify-content: space-between;
   padding-right: 15px;
+  align-items: center;
 }
 
 li.component div:nth-child(2) {
