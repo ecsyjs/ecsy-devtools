@@ -28,6 +28,9 @@ function processMessage(msg) {
     reset();
   }
   else if (msg.method === 'refreshData') {
+    var totalNumComponents = Object.values(msg.data.components).reduce((a,i) => a+i);
+    appData.stats.numComponents.push(totalNumComponents);
+    window.stats = appData.stats;
     appData.data = msg.data;
     appData.numEntities = msg.data.numEntities;
     appData.systems = msg.data.systems;

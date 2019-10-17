@@ -26,7 +26,6 @@ if( !window.__ECSY_DEVTOOLS_INJECTED ) {
 		var ori1 = world.execute;
 		world.execute = function() {
 			var result = ori1.apply(world, arguments);
-			console.log('>>>');
 			window.__ECSY_DEVTOOLS.refreshStats();
 			return result;
 		}

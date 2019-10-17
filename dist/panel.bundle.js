@@ -161,11 +161,44 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
+var graphs = {
+  components: {},
+  queries: {},
+  systems: {}
+};
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'App',
   data: function data() {
     return {
+      stats: {
+        numComponents: []
+      },
       data: {},
       components: {},
       systems: [],
@@ -258,6 +291,7 @@ __webpack_require__.r(__webpack_exports__);
         };
       }).enabled;
     },
+    getComponentGraph: function getComponentGraph(component) {},
     overSystem: function overSystem(system) {
       this.highlightedQueries = [];
       this.highlightedComponents = [];
@@ -285,7 +319,7 @@ __webpack_require__.r(__webpack_exports__);
 
 exports = module.exports = __webpack_require__(/*! ../../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js")(false);
 // Module
-exports.push([module.i, "#app {\n  display: flex;\n  /*\n  color: #AAA;\n  background-color: #AAA;\n  */\n}\n\n.column {\n  width: 50%;\n}\n\nli.active,\nli.systemQuery:hover,\nli.query:hover\n {\n  background-color: #99f;\n}\n\nli.running {\n  background-color: #ff9;\n}\n\nli {\n  padding: 2px;\n}", ""]);
+exports.push([module.i, "#app {\n  display: flex;\n  font-family: Arial, Helvetica, sans-serif;\n  background-color: #292929;\n  /*\n  color: #AAA;\n  background-color: #AAA;\n  */\n}\n\nh3 {\n  color: #BBB;\n  font-weight: normal;\n}\n\n.column {\n  width: 50%;\n  margin-right: 20px;\n}\n\nli.active,\nli.system:hover,\nli.systemQuery:hover,\nli.query:hover\n {\n  background-color: #464323;\n}\n\nli.running {\n  background-color: #ff9;\n}\n\nli {\n  padding: 2px;\n  background-color: #1E1E1E;\n  list-style: none;\n}\n\nli .name {\n  color: #B5B5B5;\n  font-weight: normal;\n}\n\nli.system,\nli.component {\n  padding: 15px 0px 15px 15px;\n  border-left: 5px solid #161616;\n  margin-bottom: 3px;\n}\n\nli.component {\n  display: flex;\n}\n\nli.system:hover,\nli.component:hover {\n  border-left-color: #B4AD5D;\n}\n\nul {\n  padding-left: 0px;\n}\n\nli .stats,\nli .value {\n  color: #fff;\n}\n\nli.component div {\n  display: flex;\n  width: 50%;\n  justify-content: space-between;\n  padding-right: 15px;\n}\n\nli.component div:nth-child(2) {\n  color: #F1421C;\n}\n\n.disabled {\n  background-color: #262626;\n  color: #7D7D7D;\n}\n\n.disabled .stats,\n.disabled .name {\n  color: #7D7D7D;\n}\n\nli.system .queries li {\n  background-color: #273635;\n  padding: 5px;\n}\n\n.system .queries {\n  font-size: 0.8em;\n}\n\n.system .queries .name {\n  color: #1B856B;\n  background-color: #232A2C;\n  border-radius: 5px;\n  padding: 4px 8px;\n}\n\n.system .queries .originalQueryName {\n  color: #2CEBBD;\n}\n\n.systemData {\n  display: flex;\n}\n\n.systemData div {\n  width: 50%;\n}\n\n.graph-controls {\n  display: flex;\n  justify-content: space-between;\n}\n\n.name-stats  {\n  display: flex;\n  justify-content: space-between;\n  margin-right: 10px;\n}\n\ncanvas {\n  background-color: #ff9;\n}", ""]);
 
 
 
@@ -870,362 +904,391 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _vm.data.world
-    ? _c(
-        "div",
-        {
-          staticStyle: { display: "flex", "background-color": "#aaa" },
-          attrs: { id: "app" }
-        },
-        [
-          _c("div", [
-            _c(
-              "button",
-              {
-                on: {
-                  click: function($event) {
-                    _vm.showDebugInfo = !_vm.showDebugInfo
-                  }
+    ? _c("div", { attrs: { id: "app" } }, [
+        _c("div", [
+          _c(
+            "button",
+            {
+              on: {
+                click: function($event) {
+                  _vm.showDebugInfo = !_vm.showDebugInfo
                 }
-              },
-              [_vm._v("Show debug info")]
-            ),
-            _vm._v(" "),
-            _vm.showDebugInfo
-              ? _c("pre", { staticStyle: { "background-color": "#999" } }, [
-                  _vm._v(_vm._s(_vm.data))
-                ])
-              : _vm._e()
-          ]),
+              }
+            },
+            [_vm._v("Show debug info")]
+          ),
           _vm._v(" "),
-          _c("div", { staticClass: "column" }, [
-            _c("h3", [_vm._v("Entities: " + _vm._s(_vm.data.numEntities))]),
-            _vm._v(" "),
-            _c("h3", [
-              _vm._v(
-                "Components: " +
-                  _vm._s(_vm.numComponents()) +
-                  " (" +
-                  _vm._s(_vm.numComponentInstances()) +
-                  ")"
-              )
-            ]),
-            _vm._v(" "),
-            _c(
-              "ul",
-              _vm._l(_vm.data.components, function(value, name) {
-                return _c(
-                  "li",
-                  {
-                    staticClass: "query",
-                    class: {
-                      active: _vm.highlightedComponents.indexOf(name) !== -1
-                    },
-                    on: {
-                      mouseover: function($event) {
-                        return _vm.overComponent(name)
-                      }
-                    }
-                  },
-                  [
-                    _c("span", [_vm._v(_vm._s(name) + ": " + _vm._s(value))]),
-                    _vm._v(" "),
-                    _c("em", [_vm._v(_vm._s(_vm.data.componentsPools[name]))])
-                  ]
-                )
-              }),
-              0
-            ),
-            _vm._v(" "),
-            _c("h3", [_vm._v("Queries: " + _vm._s(_vm.data.queries.length))]),
-            _vm._v(" "),
-            _c(
-              "ul",
-              _vm._l(_vm.data.queries, function(query) {
-                return _c(
-                  "li",
-                  {
-                    staticClass: "query",
-                    class: {
-                      active: _vm.highlightedQueries.indexOf(query.key) !== -1
-                    },
-                    on: {
-                      mouseover: function($event) {
-                        return _vm.overSystemQuery(query.key)
-                      }
-                    }
-                  },
-                  [
-                    _c("b", [_vm._v(_vm._s(query.key) + ":")]),
-                    _vm._v(
-                      " " +
-                        _vm._s(query.numEntities) +
-                        " (" +
-                        _vm._s(query.components.join(", ")) +
-                        ")\n      "
-                    )
-                  ]
-                )
-              }),
-              0
+          _vm.showDebugInfo
+            ? _c("pre", { staticStyle: { "background-color": "#999" } }, [
+                _vm._v(_vm._s(_vm.data))
+              ])
+            : _vm._e()
+        ]),
+        _vm._v(" "),
+        _c("div", { staticClass: "column" }, [
+          _c("h3", [_vm._v("Entities: " + _vm._s(_vm.data.numEntities))]),
+          _vm._v(" "),
+          _c("h3", [
+            _vm._v(
+              "COMPONENTS " +
+                _vm._s(_vm.numComponents()) +
+                " (" +
+                _vm._s(_vm.numComponentInstances()) +
+                ")"
             )
           ]),
           _vm._v(" "),
-          _c("div", { staticClass: "column" }, [
-            _c("h3", [
-              _vm._v(
-                "Systems: " +
-                  _vm._s(_vm.numSystems()) +
-                  " (" +
-                  _vm._s(_vm.totalSystemsTime().toFixed(2)) +
-                  "ms)"
-              )
-            ]),
-            _vm._v(" "),
-            _c(
-              "button",
-              {
-                on: {
-                  click: function($event) {
-                    return _vm.toggleWorld()
-                  }
-                }
-              },
-              [
-                _vm._v(
-                  _vm._s(_vm.data.world.enabled ? "stop" : "play") + " world"
-                )
-              ]
-            ),
-            _vm._v(" "),
-            _c(
-              "button",
-              {
-                attrs: { disabled: _vm.data.world.enabled },
-                on: {
-                  click: function($event) {
-                    return _vm.stepNextSystem()
-                  }
-                }
-              },
-              [_vm._v("step next system")]
-            ),
-            _vm._v(" "),
-            _c(
-              "button",
-              {
-                attrs: { disabled: _vm.data.world.enabled },
-                on: {
-                  click: function($event) {
-                    return _vm.stepWorld()
-                  }
-                }
-              },
-              [_vm._v("step all systems")]
-            ),
-            _vm._v(" "),
-            _c(
-              "button",
-              {
-                attrs: { disabled: _vm.systemsEnabled() },
-                on: {
-                  click: function($event) {
-                    return _vm.playSystems()
-                  }
-                }
-              },
-              [_vm._v("play all systems")]
-            ),
-            _vm._v(" "),
-            _c(
-              "button",
-              {
-                attrs: { disabled: !_vm.systemsAnyEnabled() },
-                on: {
-                  click: function($event) {
-                    return _vm.stopSystems()
-                  }
-                }
-              },
-              [_vm._v("stop all systems")]
-            ),
-            _vm._v(" "),
-            _c("input", {
-              directives: [
+          _c(
+            "ul",
+            _vm._l(_vm.data.components, function(value, name) {
+              return _c(
+                "li",
                 {
-                  name: "model",
-                  rawName: "v-model",
-                  value: _vm.showSystemsEvents,
-                  expression: "showSystemsEvents"
-                }
-              ],
-              attrs: { type: "checkbox", id: "systems-verbose" },
-              domProps: {
-                checked: Array.isArray(_vm.showSystemsEvents)
-                  ? _vm._i(_vm.showSystemsEvents, null) > -1
-                  : _vm.showSystemsEvents
-              },
-              on: {
-                change: function($event) {
-                  var $$a = _vm.showSystemsEvents,
-                    $$el = $event.target,
-                    $$c = $$el.checked ? true : false
-                  if (Array.isArray($$a)) {
-                    var $$v = null,
-                      $$i = _vm._i($$a, $$v)
-                    if ($$el.checked) {
-                      $$i < 0 && (_vm.showSystemsEvents = $$a.concat([$$v]))
-                    } else {
-                      $$i > -1 &&
-                        (_vm.showSystemsEvents = $$a
-                          .slice(0, $$i)
-                          .concat($$a.slice($$i + 1)))
+                  staticClass: "component",
+                  class: {
+                    active: _vm.highlightedComponents.indexOf(name) !== -1
+                  },
+                  on: {
+                    mouseover: function($event) {
+                      return _vm.overComponent(name)
                     }
-                  } else {
-                    _vm.showSystemsEvents = $$c
                   }
+                },
+                [
+                  _c("div", [
+                    _c("span", { staticClass: "name" }, [_vm._v(_vm._s(name))]),
+                    _vm._v(" "),
+                    _c("span", { staticClass: "value" }, [
+                      _vm._v(_vm._s(value))
+                    ])
+                  ]),
+                  _vm._v(" "),
+                  _vm._m(0, true)
+                ]
+              )
+            }),
+            0
+          ),
+          _vm._v(" "),
+          _c("h3", [_vm._v("QUERIES " + _vm._s(_vm.data.queries.length))]),
+          _vm._v(" "),
+          _c(
+            "ul",
+            _vm._l(_vm.data.queries, function(query) {
+              return _c(
+                "li",
+                {
+                  staticClass: "query",
+                  class: {
+                    active: _vm.highlightedQueries.indexOf(query.key) !== -1
+                  },
+                  on: {
+                    mouseover: function($event) {
+                      return _vm.overSystemQuery(query.key)
+                    }
+                  }
+                },
+                [
+                  _c("b", [_vm._v(_vm._s(query.key) + ":")]),
+                  _vm._v(
+                    " " +
+                      _vm._s(query.numEntities) +
+                      " (" +
+                      _vm._s(query.components.join(", ")) +
+                      ")\n      "
+                  )
+                ]
+              )
+            }),
+            0
+          )
+        ]),
+        _vm._v(" "),
+        _c("div", { staticClass: "column" }, [
+          _c("h3", [
+            _vm._v(
+              "SYSTEMS (" +
+                _vm._s(_vm.numSystems()) +
+                ") " +
+                _vm._s(_vm.totalSystemsTime().toFixed(2)) +
+                "ms"
+            )
+          ]),
+          _vm._v(" "),
+          _c(
+            "button",
+            {
+              on: {
+                click: function($event) {
+                  return _vm.toggleWorld()
                 }
               }
-            }),
-            _c("label", { attrs: { for: "systems-verbose" } }, [
-              _vm._v("show queries")
-            ]),
-            _vm._v(" "),
-            _c(
-              "ul",
-              _vm._l(_vm.data.systems, function(system) {
-                return _c(
-                  "li",
-                  {
-                    class: {
-                      running:
-                        !_vm.data.world.enabled &&
-                        _vm.data.lastExecutedSystem === system.name
-                    }
-                  },
-                  [
-                    _c(
-                      "span",
-                      {
-                        on: {
-                          mouseover: function($event) {
-                            return _vm.overSystem(system)
-                          }
+            },
+            [
+              _vm._v(
+                _vm._s(_vm.data.world.enabled ? "stop" : "play") + " world"
+              )
+            ]
+          ),
+          _vm._v(" "),
+          _c(
+            "button",
+            {
+              attrs: { disabled: _vm.data.world.enabled },
+              on: {
+                click: function($event) {
+                  return _vm.stepNextSystem()
+                }
+              }
+            },
+            [_vm._v("step next system")]
+          ),
+          _vm._v(" "),
+          _c(
+            "button",
+            {
+              attrs: { disabled: _vm.data.world.enabled },
+              on: {
+                click: function($event) {
+                  return _vm.stepWorld()
+                }
+              }
+            },
+            [_vm._v("step all systems")]
+          ),
+          _vm._v(" "),
+          _c(
+            "button",
+            {
+              attrs: { disabled: _vm.systemsEnabled() },
+              on: {
+                click: function($event) {
+                  return _vm.playSystems()
+                }
+              }
+            },
+            [_vm._v("play all systems")]
+          ),
+          _vm._v(" "),
+          _c(
+            "button",
+            {
+              attrs: { disabled: !_vm.systemsAnyEnabled() },
+              on: {
+                click: function($event) {
+                  return _vm.stopSystems()
+                }
+              }
+            },
+            [_vm._v("stop all systems")]
+          ),
+          _vm._v(" "),
+          _c("input", {
+            directives: [
+              {
+                name: "model",
+                rawName: "v-model",
+                value: _vm.showSystemsEvents,
+                expression: "showSystemsEvents"
+              }
+            ],
+            attrs: { type: "checkbox", id: "systems-verbose" },
+            domProps: {
+              checked: Array.isArray(_vm.showSystemsEvents)
+                ? _vm._i(_vm.showSystemsEvents, null) > -1
+                : _vm.showSystemsEvents
+            },
+            on: {
+              change: function($event) {
+                var $$a = _vm.showSystemsEvents,
+                  $$el = $event.target,
+                  $$c = $$el.checked ? true : false
+                if (Array.isArray($$a)) {
+                  var $$v = null,
+                    $$i = _vm._i($$a, $$v)
+                  if ($$el.checked) {
+                    $$i < 0 && (_vm.showSystemsEvents = $$a.concat([$$v]))
+                  } else {
+                    $$i > -1 &&
+                      (_vm.showSystemsEvents = $$a
+                        .slice(0, $$i)
+                        .concat($$a.slice($$i + 1)))
+                  }
+                } else {
+                  _vm.showSystemsEvents = $$c
+                }
+              }
+            }
+          }),
+          _c("label", { attrs: { for: "systems-verbose" } }, [
+            _vm._v("show queries")
+          ]),
+          _vm._v(" "),
+          _c(
+            "ul",
+            _vm._l(_vm.data.systems, function(system) {
+              return _c(
+                "li",
+                {
+                  staticClass: "system",
+                  class: {
+                    running:
+                      !_vm.data.world.enabled &&
+                      _vm.data.lastExecutedSystem === system.name,
+                    disabled: !system.enabled
+                  }
+                },
+                [
+                  _c(
+                    "div",
+                    {
+                      staticClass: "systemData",
+                      on: {
+                        mouseover: function($event) {
+                          return _vm.overSystem(system)
                         }
-                      },
-                      [
-                        _c("b", [_vm._v(_vm._s(system.name))]),
+                      }
+                    },
+                    [
+                      _c("div", { staticClass: "name-stats" }, [
+                        _c("span", { staticClass: "name" }, [
+                          _vm._v(_vm._s(system.name))
+                        ]),
                         _vm._v(" "),
-                        _c(
-                          "button",
-                          {
-                            on: {
-                              click: function($event) {
-                                return _vm.toggleSystem(system)
-                              }
-                            }
-                          },
-                          [_vm._v(_vm._s(system.enabled ? "stop" : "play"))]
-                        ),
-                        _vm._v(" "),
-                        _c(
-                          "button",
-                          {
-                            attrs: {
-                              disabled: system.enabled && _vm.world.enabled
-                            },
-                            on: {
-                              click: function($event) {
-                                return _vm.stepSystem(system)
-                              }
-                            }
-                          },
-                          [_vm._v("step")]
-                        ),
-                        _vm._v(" "),
-                        _c(
-                          "button",
-                          {
-                            on: {
-                              click: function($event) {
-                                return _vm.soloPlaySystem(system)
-                              }
-                            }
-                          },
-                          [_vm._v("solo")]
-                        ),
-                        _vm._v(
-                          "\n\n           (" +
-                            _vm._s(system.executeTime.toFixed(2)) +
-                            "ms / " +
-                            _vm._s((100 * _vm.systemPerc(system)).toFixed(2)) +
-                            "%)\n        "
-                        )
-                      ]
-                    ),
-                    _vm._v(" "),
-                    _vm.showSystemsEvents
-                      ? _c("ul", [
-                          _c("li", [
-                            _vm._v("queries:\n            "),
-                            _c(
-                              "ul",
-                              _vm._l(system.queries, function(value, name) {
-                                return _c(
-                                  "li",
-                                  {
-                                    staticClass: "systemQuery",
-                                    class: {
-                                      active:
-                                        _vm.highlightedQueries.indexOf(
-                                          value.key
-                                        ) !== -1
-                                    }
-                                  },
-                                  [
-                                    _c(
-                                      "span",
-                                      {
-                                        on: {
-                                          mouseover: function($event) {
-                                            return _vm.overSystemQuery(
-                                              value.key
-                                            )
-                                          }
-                                        }
-                                      },
-                                      [
-                                        _vm._v(
-                                          _vm._s(name) +
-                                            ": " +
-                                            _vm._s(value.key) +
-                                            " " +
-                                            _vm._s(
-                                              _vm.queries.find(function(q) {
-                                                return q.key === value.key
-                                              }).numEntities
-                                            )
-                                        )
-                                      ]
-                                    )
-                                  ]
-                                )
-                              }),
-                              0
+                        _c("span", { staticClass: "stats" }, [
+                          _c("span", [
+                            _vm._v(_vm._s(system.executeTime.toFixed(2)) + "ms")
+                          ]),
+                          _vm._v(" "),
+                          _c("span", [
+                            _vm._v(
+                              _vm._s(
+                                (100 * _vm.systemPerc(system)).toFixed(2)
+                              ) + "%"
                             )
                           ])
                         ])
-                      : _vm._e()
-                  ]
-                )
-              }),
-              0
-            )
-          ])
-        ]
-      )
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "graph-controls" }, [
+                        _c("span", [_vm._v("graph to-do")]),
+                        _vm._v(" "),
+                        _c("div", [
+                          _c(
+                            "button",
+                            {
+                              on: {
+                                click: function($event) {
+                                  return _vm.toggleSystem(system)
+                                }
+                              }
+                            },
+                            [_vm._v(_vm._s(system.enabled ? "stop" : "play"))]
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "button",
+                            {
+                              attrs: {
+                                disabled: system.enabled && _vm.world.enabled
+                              },
+                              on: {
+                                click: function($event) {
+                                  return _vm.stepSystem(system)
+                                }
+                              }
+                            },
+                            [_vm._v("step")]
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "button",
+                            {
+                              on: {
+                                click: function($event) {
+                                  return _vm.soloPlaySystem(system)
+                                }
+                              }
+                            },
+                            [_vm._v("solo")]
+                          )
+                        ])
+                      ])
+                    ]
+                  ),
+                  _vm._v(" "),
+                  _c("div", { staticClass: "queries" }, [
+                    _c("ul", [
+                      _c("li", [
+                        _c(
+                          "ul",
+                          _vm._l(system.queries, function(value, name) {
+                            return _c(
+                              "li",
+                              {
+                                staticClass: "systemQuery",
+                                class: {
+                                  active:
+                                    _vm.highlightedQueries.indexOf(
+                                      value.key
+                                    ) !== -1
+                                }
+                              },
+                              [
+                                _c(
+                                  "span",
+                                  {
+                                    on: {
+                                      mouseover: function($event) {
+                                        return _vm.overSystemQuery(value.key)
+                                      }
+                                    }
+                                  },
+                                  [
+                                    _c("span", { staticClass: "name" }, [
+                                      _vm._v(_vm._s(name))
+                                    ]),
+                                    _vm._v(" "),
+                                    _c(
+                                      "span",
+                                      { staticClass: "originalQueryName" },
+                                      [_vm._v(_vm._s(value.key))]
+                                    ),
+                                    _vm._v(
+                                      " " +
+                                        _vm._s(
+                                          _vm.queries.find(function(q) {
+                                            return q.key === value.key
+                                          }).numEntities
+                                        )
+                                    )
+                                  ]
+                                )
+                              ]
+                            )
+                          }),
+                          0
+                        )
+                      ])
+                    ])
+                  ])
+                ]
+              )
+            }),
+            0
+          )
+        ])
+      ])
     : _vm._e()
 }
-var staticRenderFns = []
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", [_c("span", [_vm._v("10")])])
+  }
+]
 render._withStripped = true
 
 
@@ -10169,6 +10232,11 @@ function processMessage(msg) {
   if (msg.method === 'reset') {
     reset();
   } else if (msg.method === 'refreshData') {
+    var totalNumComponents = Object.values(msg.data.components).reduce(function (a, i) {
+      return a + i;
+    });
+    appData.stats.numComponents.push(totalNumComponents);
+    window.stats = appData.stats;
     appData.data = msg.data;
     appData.numEntities = msg.data.numEntities;
     appData.systems = msg.data.systems;

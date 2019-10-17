@@ -19,7 +19,8 @@
     "run_at": "document_start"
   }],
 	"web_accessible_resources": [
-		"src/content/*.js"
+    "src/content/*.js",
+    "src/vendor/*.js"
 	],
   "browser_action" : {
     "default_icon": {},

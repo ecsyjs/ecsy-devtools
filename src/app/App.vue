@@ -1,5 +1,5 @@
 <template>
-  <div v-if="data.world" id="app" style="display: flex; background-color: #aaa">
+  <div v-if="data.world" id="app">
     <div>
       <button @click="showDebugInfo = !showDebugInfo">Show debug info</button>
       <pre v-if="showDebugInfo" style="background-color: #999">{{data}}</pre>
@@ -9,17 +9,25 @@
       <h3>Entities: {{data.numEntities}}</h3>
 
       <!-- Components -->
-      <h3>Components: {{numComponents()}} ({{numComponentInstances()}})</h3>
+      <h3>COMPONENTS {{numComponents()}} ({{numComponentInstances()}})</h3>
       <ul>
         <li
+          class="component"
           v-bind:class="{ active: highlightedComponents.indexOf(name) !== -1 }"
-          v-for="(value, name) in data.components" class="query" @mouseover="overComponent(name)">
-          <span>{{name}}: {{value}}</span> <em>{{data.componentsPools[name]}}</em>
+          v-for="(value, name) in data.components" @mouseover="overComponent(name)">
+          <div>
+            <span class="name">{{name}}</span>
+            <span class="value">{{value}}</span>
+          </div>
+          <div>
+             <!--<em>{{data.componentsPools[name]}}</em>-->
+            <!--<span><canvas id="{{name}}_graph"></canvas></span>-->
+            <span>10</span>
+          </div>
         </li>
       </ul>
-
       <!-- Queries -->
-      <h3>Queries: {{data.queries.length}}</h3>
+      <h3>QUERIES {{data.queries.length}}</h3>
       <ul>
         <li v-for="query in data.queries"
           v-bind:class="{ active: highlightedQueries.indexOf(query.key) !== -1 }" class="query"
@@ -29,7 +37,7 @@
       </ul>
     </div>
     <div class="column">
-      <h3>Systems: {{numSystems()}} ({{totalSystemsTime().toFixed(2)}}ms)</h3>
+      <h3>SYSTEMS ({{numSystems()}}) {{totalSystemsTime().toFixed(2)}}ms</h3>
       <button v-on:click='toggleWorld()'>{{data.world.enabled ? 'stop' : 'play'}} world</button>
       <button v-on:click='stepNextSystem()' :disabled="data.world.enabled">step next system</button>
       <button v-on:click='stepWorld()' :disabled="data.world.enabled">step all systems</button>
@@ -38,24 +46,41 @@
 
       <input type="checkbox" id="systems-verbose" v-model="showSystemsEvents"><label for="systems-verbose">show queries</label>
       <ul>
-        <li v-for="system in data.systems" v-bind:class="{ running: !data.world.enabled && data.lastExecutedSystem === system.name }">
-          <span @mouseover="overSystem(system)"><b>{{system.name}}</b>
-            <button v-on:click='toggleSystem(system)'>{{system.enabled ? 'stop' : 'play'}}</button>
-            <button v-on:click='stepSystem(system)' :disabled="system.enabled && world.enabled">step</button>
-            <button v-on:click='soloPlaySystem(system)'>solo</button>
+        <li v-for="system in data.systems"
+            class="system"
+            v-bind:class="{ running: !data.world.enabled && data.lastExecutedSystem === system.name,
+            disabled: !system.enabled }">
 
-             ({{system.executeTime.toFixed(2)}}ms / {{(100 * systemPerc(system)).toFixed(2)}}%)
-          </span>
-          <ul v-if="showSystemsEvents">
-            <li>queries:
-              <ul>
-                <li class="systemQuery" v-for="(value, name) in system.queries"
-                    v-bind:class="{ active: highlightedQueries.indexOf(value.key) !== -1 }">
-                  <span @mouseover="overSystemQuery(value.key)">{{name}}: {{value.key}} {{(queries.find(q => q.key === value.key)).numEntities}}</span>
-                </li>
-              </ul>
-            </li>
-          </ul>
+          <div class="systemData" @mouseover="overSystem(system)">
+            <div class="name-stats">
+              <span class="name">{{system.name}}</span>
+              <span class="stats">
+                <span>{{system.executeTime.toFixed(2)}}ms</span>
+                <span>{{(100 * systemPerc(system)).toFixed(2)}}%</span>
+              </span>
+            </div>
+            <div class="graph-controls">
+              <span>graph to-do</span>
+              <div>
+                <button v-on:click='toggleSystem(system)'>{{system.enabled ? 'stop' : 'play'}}</button>
+                <button v-on:click='stepSystem(system)' :disabled="system.enabled && world.enabled">step</button>
+                <button v-on:click='soloPlaySystem(system)'>solo</button>
+              </div>
+            </div>
+          </div>
+          <div class="queries">
+            <ul>
+              <li>
+                <ul>
+                  <li class="systemQuery" v-for="(value, name) in system.queries"
+                      v-bind:class="{ active: highlightedQueries.indexOf(value.key) !== -1 }">
+                    <span @mouseover="overSystemQuery(value.key)">
+                      <span class="name">{{name}}</span> <span class="originalQueryName">{{value.key}}</span> {{(queries.find(q => q.key === value.key)).numEntities}}</span>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </div>
         </li>
       </ul>
     </div>
@@ -65,10 +90,19 @@
 <script>
 import "./style.css";
 
+var graphs = {
+  components: {},
+  queries: {},
+  systems: {}
+};
+
 export default {
   name: 'App',
   data() {
     return {
+      stats: {
+        numComponents: []
+      },
       data: {},
       components: {},
       systems: [],
@@ -140,6 +174,9 @@ export default {
     },
     systemsAnyEnabled() {
       return this.data.systems.reduce((a,c) => { return {enabled: a.enabled || c.enabled}; }).enabled;
+    },
+    getComponentGraph(component) {
+
     },
     overSystem(system) {
       this.highlightedQueries = [];
