@@ -53,3 +53,5 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   }
   return true;
 });
+
+log("Background file loaded");

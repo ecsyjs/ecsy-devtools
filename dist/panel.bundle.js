@@ -423,6 +423,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 var PR = Math.round(window.devicePixelRatio || 1);
 var W = 160;
 var H = 25;
@@ -435,8 +436,6 @@ var WIDTH = W * PR,
     GRAPH_Y = MARGIN * PR,
     GRAPH_WIDTH = (W - 2 * MARGIN) * PR,
     GRAPH_HEIGHT = (H - 2 * MARGIN) * PR;
-var min = 0;
-var max = 0;
 var round = Math.round;
 var bg = '#002';
 bg = '#222';
@@ -444,7 +443,11 @@ var fg = '#0ff';
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'ComponentTimeLine',
   data: function data() {
-    return {};
+    return {
+      previousMax: Number.MIN_VALUE,
+      max: Number.MAX_VALUE,
+      min: Number.MIN_VALUE
+    };
   },
   mounted: function mounted() {
     this.canvas = this.$refs.canvas;
@@ -469,13 +472,13 @@ var fg = '#0ff';
     currentValue: {
       immediate: true,
       handler: function handler(value) {
-        var maxValue = 200;
         if (!this.ctx) return;
         var context = this.ctx;
         var name = 'ms';
         var canvas = this.canvas;
-        min = Math.min(min, value);
-        max = Math.max(max, value);
+        this.min = Math.min(this.min, value);
+        this.max = Math.max(this.max, value);
+        maxValue = max;
         context.fillStyle = bg;
         context.globalAlpha = 1;
         /*
@@ -485,7 +488,12 @@ var fg = '#0ff';
         */
 
         context.fillStyle = "#EB932C";
-        context.drawImage(canvas, GRAPH_X + PR, GRAPH_Y, GRAPH_WIDTH - PR, GRAPH_HEIGHT, GRAPH_X, GRAPH_Y, GRAPH_WIDTH - PR, GRAPH_HEIGHT);
+        context.drawImage(canvas, GRAPH_X + PR, GRAPH_Y, // sx, sy
+        GRAPH_WIDTH - PR, GRAPH_HEIGHT, // sw, sh
+        GRAPH_X, GRAPH_Y, // dx, dy
+        GRAPH_WIDTH - PR, GRAPH_HEIGHT // dw, dh
+        ); //if (this.previousMax )
+
         context.fillRect(GRAPH_X + GRAPH_WIDTH - PR, GRAPH_Y, PR, GRAPH_HEIGHT);
         context.fillStyle = bg;
         context.globalAlpha = 0.9;
@@ -1577,7 +1585,10 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", [_c("canvas", { ref: "canvas" })])
+  return _c("div", [
+    _c("canvas", { ref: "canvas" }),
+    _vm._v("\n  " + _vm._s(_vm.min) + " " + _vm._s(_vm.max) + "\n")
+  ])
 }
 var staticRenderFns = []
 render._withStripped = true

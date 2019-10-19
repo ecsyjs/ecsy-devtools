@@ -2,6 +2,7 @@
   <div>
     <canvas ref="canvas">
     </canvas>
+    {{min}} {{max}}
   </div>
 </template>
 
@@ -17,8 +18,6 @@ var MARGIN = 1;
 			GRAPH_WIDTH = (W - 2*MARGIN) * PR, GRAPH_HEIGHT = (H-2*MARGIN) * PR;
 
 
-var min = 0;
-var max = 0;
 var round = Math.round;
         let bg = '#002';
         bg = '#222';
@@ -27,7 +26,11 @@ var round = Math.round;
 export default {
   name: 'ComponentTimeLine',
   data() {
-    return {}
+    return {
+      previousMax: Number.MIN_VALUE,
+      max: Number.MAX_VALUE,
+      min: Number.MIN_VALUE
+    }
   },
   mounted () {
     this.canvas = this.$refs.canvas;
@@ -57,14 +60,15 @@ export default {
     currentValue: {
       immediate: true,
       handler(value) {
-        let maxValue = 200;
         if (!this.ctx) return;
         let context = this.ctx;
         let name = 'ms';
         let canvas = this.canvas;
 
-          min = Math.min( min, value );
-          max = Math.max( max, value );
+          this.min = Math.min( this.min, value );
+          this.max = Math.max( this.max, value );
+
+          maxValue = max;
 
           context.fillStyle = bg;
           context.globalAlpha = 1;
@@ -74,7 +78,14 @@ export default {
           context.fillText( round( value ) + ' ' + name + ' (' + round( min ) + '-' + round( max ) + ')', TEXT_X, TEXT_Y );
 */
           context.fillStyle = `#EB932C`;
-          context.drawImage( canvas, GRAPH_X + PR, GRAPH_Y, GRAPH_WIDTH - PR, GRAPH_HEIGHT, GRAPH_X, GRAPH_Y, GRAPH_WIDTH - PR, GRAPH_HEIGHT );
+          context.drawImage( canvas,
+            GRAPH_X + PR, GRAPH_Y, // sx, sy
+            GRAPH_WIDTH - PR, GRAPH_HEIGHT, // sw, sh
+            GRAPH_X, GRAPH_Y, // dx, dy
+            GRAPH_WIDTH - PR, GRAPH_HEIGHT // dw, dh
+          );
+
+          //if (this.previousMax )
 
           context.fillRect( GRAPH_X + GRAPH_WIDTH - PR, GRAPH_Y, PR, GRAPH_HEIGHT );
 
