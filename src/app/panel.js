@@ -1,35 +1,20 @@
-import Vue from 'vue';
-import App from './App';
+import Panel from './components/Panel';
 
-var app = new Vue({
-  el: '#app',
-  render: h => h(App)
-});
+import React from 'react';
+import ReactDOM from 'react-dom';
+//import registerServiceWorker from './registerServiceWorker';
+
+ReactDOM.render(<Panel />, document.getElementById('app'));
+//registerServiceWorker();
 
 var globalBrowser =  chrome || browser;
 
-var backgroundPageConnection = chrome.runtime.connect({
-	name: "devtools"
-});
-/*
-globalBrowser.browserAction.setIcon({
-  path: {
-    "128": '../../assets/icon_128.png'
-  }
-});
-*/
-
-backgroundPageConnection.postMessage({
-	name: 'init',
-	tabId: chrome.devtools.inspectedWindow.tabId
-});
-
-backgroundPageConnection.onMessage.addListener(m => {
-  processMessage(m);
-  // @todo Add option to toggle debug document.getElementById("debug").innerHTML = JSON.stringify(m, null, 2);
-});
 
 function processMessage(msg) {
+  var event = new CustomEvent('newdata2', {data: msg.data});
+  window.dispatchEvent(event);
+
+  return;
   var appData = app.$children[0];
   if (msg.method === 'reset') {
     reset();
