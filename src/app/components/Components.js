@@ -10,9 +10,9 @@ export default class Components extends React.Component {
   render() {
     const { components } = this.props;
 
-    if (!Array.isArray(components)) {
+    if (!components) {
       return (
-        <ul></ul>
+        <span>No components</span>
       );
     }
 

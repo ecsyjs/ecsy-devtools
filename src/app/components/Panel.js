@@ -43,6 +43,13 @@ class App extends Component {
   render() {
     // const data = this.props.data;
     const data = this.state.data;
+
+    if (!data) {
+      return (
+        <div></div>
+      );
+    }
+
     const numComponents = data.components ? Object.keys(data.components).length : 0;
     const numComponentInstances = data.components && Object.values(data.components).length > 0 ? Object.values(data.components).reduce((a, c) => a + c) : undefined;
 
@@ -56,6 +63,7 @@ class App extends Component {
           <Components components={data.components}/>
         </div>
         <div className="column">
+          <h3>SYSTEMS</h3>
           <Systems systems={data.systems}/>
         </div>
         <Code>{JSON.stringify(data, null, 2)}</Code>
