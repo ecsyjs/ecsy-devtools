@@ -1,12 +1,13 @@
 import React from 'react';
 import classNames from 'classnames';
+import Bindings from '../ECSYBindings';
 
 import './Panel.css';
 
 export default class System extends React.Component {
 
   toggle() {
-
+    Bindings.toggleSystem(this.props.system);
   }
 
   step() {
@@ -14,7 +15,7 @@ export default class System extends React.Component {
   }
 
   solo() {
-    
+
   }
 
   render() {
@@ -23,6 +24,10 @@ export default class System extends React.Component {
       system: true,
       disabled: !system.enabled
     });
+
+    let toggle = this.toggle.bind(this);
+    let step = this.step.bind(this);
+    let solo = this.solo.bind(this);
 
     return (
       <li className={classes}>
