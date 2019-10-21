@@ -4,6 +4,19 @@ import classNames from 'classnames';
 import './Panel.css';
 
 export default class System extends React.Component {
+
+  toggle() {
+
+  }
+
+  step() {
+
+  }
+
+  solo() {
+    
+  }
+
   render() {
     const system = this.props.system;
     const classes = classNames({
@@ -23,9 +36,9 @@ export default class System extends React.Component {
           <div className="graph-controls">
             <span>graph to-do</span>
             <div>
-              <button onClick={()=> {}}>{system.enabled ? 'stop' : 'play'}</button>
-              <button onClick={()=> {}}>step</button>
-              <button onClick={()=> {}}>solo</button>
+              <button onClick={toggle}>{system.enabled ? 'stop' : 'play'}</button>
+              <button onClick={step}>step</button>
+              <button onClick={solo}>solo</button>
             </div>
           </div>
         </div>

@@ -6,6 +6,7 @@ import styled from 'styled-components';
 const Container = styled.div`
   background-color: #292929;
   padding: 10px;
+  display: flex;
 `;
 
 const Code = styled.pre`
