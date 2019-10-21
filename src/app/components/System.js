@@ -11,18 +11,21 @@ export default class System extends React.Component {
   }
 
   step() {
-
+    Bindings.stepSystem(this.props.system);
   }
 
   solo() {
-
+    Bindings.soloSystem(this.props.system);
   }
 
   render() {
     const system = this.props.system;
+    const data = this.props.data;
+
     const classes = classNames({
       system: true,
-      disabled: !system.enabled
+      disabled: !system.enabled,
+      running: !data.world.enabled && data.lastExecutedSystem === system.name
     });
 
     let toggle = this.toggle.bind(this);

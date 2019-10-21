@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import Components from './Components';
 import Systems from './Systems';
 import styled from 'styled-components';
+import Bindings from '../ECSYBindings';
 
 const Container = styled.div`
   background-color: #292929;
@@ -19,18 +20,18 @@ class App extends Component {
     super();
 
     this.state = {
-      data: {msg: "Uninitalized"}
+      debug: false
     }
 
     var backgroundPageConnection = chrome.runtime.connect({
       name: "devtools"
     });
-    
+
     backgroundPageConnection.postMessage({
       name: 'init',
       tabId: chrome.devtools.inspectedWindow.tabId
     });
-    
+
     backgroundPageConnection.onMessage.addListener(m => {
       this.setState({data: m.data});
     });
@@ -38,7 +39,27 @@ class App extends Component {
   }
 
   toggleWorld() {
-    // window.ecsyDevtools.toggleWorld(true);
+    Bindings.toggleWorld(this.state.data.world.enabled);
+  }
+
+  stepWorld() {
+    Bindings.stepWorld();
+  }
+
+  playSystems() {
+    Bindings.playSystems();
+  }
+
+  stopSystems() {
+    Bindings.stopSystems();
+  }
+
+  stepNextSystem() {
+    Bindings.stepNextSystem();
+  }
+
+  toggleDebug() {
+    this.setState({debug: !this.state.debug})
   }
 
   render() {
@@ -54,8 +75,23 @@ class App extends Component {
     const numComponents = data.components ? Object.keys(data.components).length : 0;
     const numComponentInstances = data.components && Object.values(data.components).length > 0 ? Object.values(data.components).reduce((a, c) => a + c) : undefined;
 
+    let toggleWorld = this.toggleWorld.bind(this);
+    let stepWorld = this.stepWorld.bind(this);
+    let playSystems = this.playSystems.bind(this);
+    let stopSystems = this.stopSystems.bind(this);
+    let toggleDebug = this.toggleDebug.bind(this);
+    let stepNextSystem = this.stepNextSystem.bind(this);
+
     return (
       <Container>
+        <div>
+          <button onClick={toggleWorld}>{data.world.enabled ? 'stop' : 'play'} world</button>
+          <button onClick={stepWorld}>step world (all systems)</button>
+          <button onClick={stepNextSystem}>step next system</button>
+          <button onClick={playSystems}>play all systems</button>
+          <button onClick={stopSystems}>stop all systems</button>
+          <button onClick={toggleDebug}>toggle debug info</button>
+        </div>
         <div>
           <h3>Entities: {data.numEntities}</h3>
         </div>
@@ -64,10 +100,11 @@ class App extends Component {
           <Components components={data.components}/>
         </div>
         <div className="column">
-          <h3>SYSTEMS</h3>
-          <Systems systems={data.systems}/>
+          <Systems systems={data.systems} data={data}/>
         </div>
-        <Code>{JSON.stringify(data, null, 2)}</Code>
+        {
+          this.state.debug && <Code>{JSON.stringify(data, null, 2)}</Code>
+        }
       </Container>
     );
   }
