@@ -1,7 +1,5 @@
 const webpack = require('webpack');
 const path = require('path');
-const CleanWebpackPlugin = require('clean-webpack-plugin');
-const VueLoaderPlugin = require('vue-loader/lib/plugin');
 
 const aliases = {
     src: 'source',
@@ -14,6 +12,35 @@ const paths = {
     source: path.resolve(basePath),
     dist: path.resolve(basePath, aliases.dist),
 };
+
+module.exports = {
+  entry: {
+    panel: `${paths.source}/src/app/panel.js`,
+  },
+  output: {
+    filename: `[name].${aliases.suffix}.js`,
+    chunkFilename: `${aliases.vendor}.${aliases.suffix}.js`,
+    path: paths.dist,
+    publicPath: `/${aliases.dist}/`,
+  },
+  module: {
+    rules: [
+      {
+        test: /\.(js|jsx)$/,
+        exclude: /node_modules/,
+        use: {
+          loader: "babel-loader"
+        }
+      },
+      {
+        test: /\.css$/i,
+        use: ['style-loader', 'css-loader'],
+      }      
+    ]
+  }
+};
+
+/*
 const webpackOptions = {
     shouldSplitChunks: false,
 };
@@ -36,25 +63,6 @@ const webpackConfig = (env, argv) => {
         module: {
             rules: [
                 {
-                    test: /\.css$/,
-                    use: [
-                        'vue-style-loader',
-                        {
-                            loader: 'css-loader',
-                            options: {
-                                // enable CSS Modules
-                                //modules: true,
-                                // customize generated class names
-                                //localIdentName: '[local]_[hash:base64:8]'
-                            }
-                        }
-                    ]
-                },
-                {
-                    test: /\.vue$/,
-                    loader: 'vue-loader',
-                },
-                {
                     test: /\.js$/,
                     exclude: /node_modules/,
                     use: {
@@ -67,7 +75,7 @@ const webpackConfig = (env, argv) => {
             ],
         },
         resolve: {
-            extensions: ['.vue', '.js', '.json'],
+            extensions: ['.js', '.json'],
             modules: [path.resolve(paths.source, aliases.src), 'node_modules'],
             alias: {
                 '@': path.resolve(paths.source),
@@ -75,7 +83,6 @@ const webpackConfig = (env, argv) => {
             symlinks: false,
         },
         plugins: [
-            new VueLoaderPlugin(),
             new webpack.DefinePlugin({
                 global: 'window',
                 }),
@@ -116,3 +123,4 @@ const webpackConfig = (env, argv) => {
 };
 
 module.exports = webpackConfig;
+*/
