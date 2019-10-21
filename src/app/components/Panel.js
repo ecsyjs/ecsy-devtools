@@ -92,11 +92,9 @@ class App extends Component {
           <button onClick={stopSystems}>stop all systems</button>
           <button onClick={toggleDebug}>toggle debug info</button>
         </div>
-        <div>
-          <h3>Entities: {data.numEntities}</h3>
-        </div>
         <div className="column">
-          <h3>COMPONENTS {numComponents} ({numComponentInstances} instances)</h3>
+          <h3>Entities: {data.numEntities}</h3>
+          <h3>Components {numComponents} ({numComponentInstances} instances)</h3>
           <Components components={data.components}/>
         </div>
         <div className="column">

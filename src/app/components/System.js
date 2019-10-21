@@ -1,6 +1,7 @@
 import React from 'react';
 import classNames from 'classnames';
 import Bindings from '../ECSYBindings';
+import Queries from './Queries';
 
 import './Panel.css';
 
@@ -25,7 +26,7 @@ export default class System extends React.Component {
     const classes = classNames({
       system: true,
       disabled: !system.enabled,
-      running: !data.world.enabled && data.lastExecutedSystem === system.name
+      running: !data.world.enabled && data.lastExecutedSystem === system
     });
 
     let toggle = this.toggle.bind(this);
@@ -50,6 +51,7 @@ export default class System extends React.Component {
             </div>
           </div>
         </div>
+        { this.props.showQueries && <Queries queries={system.queries}/> }
       </li>
     );
   }
