@@ -3,6 +3,7 @@ import Components from './Components';
 import Systems from './Systems';
 import styled from 'styled-components';
 import Bindings from '../ECSYBindings';
+import Queries from './Queries';
 
 const Container = styled.div`
   background-color: #292929;
@@ -96,6 +97,9 @@ class App extends Component {
           <h3>Entities: {data.numEntities}</h3>
           <h3>Components {numComponents} ({numComponentInstances} instances)</h3>
           <Components components={data.components}/>
+        </div>
+        <div className="column">
+          <Queries queries={data.queries} data={data}/>
         </div>
         <div className="column">
           <Systems systems={data.systems} data={data}/>

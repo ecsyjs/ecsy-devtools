@@ -20,6 +20,7 @@ h3 {
 
 li.active,
 li.system:hover,
+li.query:hover,
 li.component:hover,
 li.systemQuery:hover,
 li.query:hover
@@ -43,6 +44,7 @@ li .name {
 }
 
 li.system,
+li.query,
 li.component {
   padding: 15px 0px 15px 15px;
   border-left: 5px solid #161616;

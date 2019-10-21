@@ -7,14 +7,13 @@ export default class Queries extends React.Component {
   render() {
     const queries = this.props.queries;
 
-    debugger;
-    let queriesHtml = Object.keys(queries).map(queryName => (
-      <Query name={queryName} query={queries[queryName]}/>
+    let queriesHtml = queries.map(query => (
+      <Query key={query.key} query={query}/>
     ));
 
     return (
       <div>
-        <h4>Queries</h4>
+        <h3>Queries {queries.length}</h3>
         <ul>{queriesHtml}</ul>
       </div>
     );
