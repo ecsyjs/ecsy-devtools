@@ -52,7 +52,7 @@ export default class Systems extends React.Component {
   constructor() {
     super();
     this.state = {
-      showQueries: false,
+      showQueries: true,
       data: [],
       stats: []
     }

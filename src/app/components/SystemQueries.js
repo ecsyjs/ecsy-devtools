@@ -53,7 +53,7 @@ export default class SystemQueries extends React.Component {
     return (
       <Queries>
         <span class="queriesTitle">QUERIES</span>
-        <ul>{queriesHtml}</ul>
+        <ul class="SystemsQueries">{queriesHtml}</ul>
       </Queries>
     );
   }

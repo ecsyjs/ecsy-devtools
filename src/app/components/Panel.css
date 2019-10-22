@@ -77,7 +77,7 @@ li.component:hover {
 
 ul {
   padding-left: 0px;
-  margin-top: 5px;
+  /*margin-top: 5px;*/
 }
 
 li .stats,
@@ -188,4 +188,12 @@ li.component.highlighted,
 li.query.highlighted {
   border-left-color: #DBD166;
   background-color: #706926;
+}
+
+li.systemQueryLi:hover {
+  background-color: #464323;
+}
+
+ul.SystemsQueries {
+  flex: 1;
 }
