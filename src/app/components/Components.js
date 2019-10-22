@@ -15,7 +15,7 @@ export default class Components extends React.Component {
   }
 
   render() {
-    const { components, data, showGraphs } = this.props;
+    const { components, data, showGraphs, overQueries } = this.props;
 
     if (!components) {
       return (
@@ -27,7 +27,7 @@ export default class Components extends React.Component {
     const numComponentInstances = data.components && Object.values(data.components).length > 0 ? Object.values(data.components).reduce((a, c) => a + c) : undefined;
 
     let componentsHtml = Object.keys(components).map(name => (
-      <Component key={name} name={name} value={components[name]} showGraphs={showGraphs}/>
+      <Component key={name} name={name} value={components[name]} showGraphs={showGraphs} overQueries={overQueries}/>
     ));
     this.ts1.append(new Date().getTime(), numComponentInstances);
 

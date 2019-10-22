@@ -5,10 +5,10 @@ import {SectionHeader, Title, TitleGroup } from './StyledComponents';
 export default class Queries extends React.Component {
 
   render() {
-    const { queries, showGraphs } = this.props;
+    const { queries, showGraphs, overQueries, overComponents } = this.props;
 
     let queriesHtml = queries.map(query => (
-      <Query key={query.key} query={query} showGraphs={showGraphs}/>
+      <Query key={query.key} query={query} showGraphs={showGraphs} overComponents={overComponents} overQueries={overQueries}/>
     ));
 
     return (

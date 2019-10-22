@@ -182,3 +182,10 @@ li.system .queries li {
 li.query {
   display: flex;
 }
+
+li.systemQueryLi.highlighted,
+li.component.highlighted,
+li.query.highlighted {
+  border-left-color: #DBD166;
+  background-color: #706926;
+}

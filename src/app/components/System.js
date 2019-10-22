@@ -4,6 +4,7 @@ import Bindings from '../ECSYBindings';
 import SystemQueries from './SystemQueries';
 import SmoothieComponent, { TimeSeries } from 'react-smoothie';
 import styled from 'styled-components';
+import Events from '../Events';
 
 import './Panel.css';
 
@@ -43,8 +44,17 @@ export default class System extends React.Component {
     Bindings.soloPlaySystem(this.props.system);
   }
 
+  onEnter = () => {
+    Events.emit('systemOver', [this.props.system]);
+  }
+
+  onLeave = () => {
+    Events.emit('systemOver', []);
+  }
+
+
   render() {
-    const { system, data, showGraphs } = this.props
+    const { system, data, showGraphs, overQueries, overComponents, overSystem } = this.props
     const percTime = system.executeTime / this.props.totalSystemsTime * 100;
 
     const classes = classNames({
@@ -56,7 +66,10 @@ export default class System extends React.Component {
     this.ts1.append(new Date().getTime(), system.executeTime);
 
     return (
-      <li>
+      <li
+        onMouseEnter={this.onEnter}
+        onMouseLeave={this.onLeave}
+      >
         <div className={classes}>
           <div className="systemData">
             <div className="name-stats">
@@ -93,7 +106,7 @@ export default class System extends React.Component {
               </div>
             </div>
           </div>
-          { this.props.showQueries && <SystemQueries queries={system.queries} data={data}/> }
+          { this.props.showQueries && <SystemQueries queries={system.queries} overSystem={overSystem} overQueries={overQueries} overComponents={overComponents} data={data}/> }
         </div>
       </li>
     );

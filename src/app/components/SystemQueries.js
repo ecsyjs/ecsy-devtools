@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import classNames from 'classnames';
 
 const Queries = styled.div`
   margin-left: 20px;
@@ -21,17 +22,26 @@ const QueryNumEntities = styled.span`
 export default class SystemQueries extends React.Component {
 
   render() {
-    const queries = this.props.queries;
-    const data = this.props.data;
+    const { queries, data, overSystem, overComponents, overQueries } = this.props;
 
     let queriesHtml = Object.keys(queries).map(queryName => {
-      let query = data.queries.find(q => q.key === queries[queryName].key);
+      let key = queries[queryName].key;
+      let query = data.queries.find(q => q.key === key);
       const components = query.components.map(name => (
         <span class="ComponentName">{name}</span>
       ));
 
+      const classes = classNames({
+        systemQueryLi: true,
+        highlighted: !overSystem && (
+          overQueries.filter(q => q.key === key).length > 0
+          ||
+          query.components.find(c => overComponents.indexOf(c) !== -1)
+        )
+      });
+
       return (
-        <li class="systemQueryLi">
+        <li className={classes}>
           <div>{ components }</div>
           <QueryNumEntities>{query.numEntities}</QueryNumEntities>
         </li>

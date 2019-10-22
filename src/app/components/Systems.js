@@ -63,7 +63,7 @@ export default class Systems extends React.Component {
   }
 
   render() {
-    const { systems, data, showGraphs } = this.props;
+    const { systems, data, showGraphs, overComponents, overQueries, overSystem } = this.props;
     const state = this.state;
 
     if (!Array.isArray(systems)) {
@@ -76,7 +76,17 @@ export default class Systems extends React.Component {
     let totalSystemsTime = systems.reduce((acum, s) => acum + s.executeTime, 0);
 
     let systemsHtml = systems.map(system => (
-      <System key={system.name} system={system} data={data} totalSystemsTime={totalSystemsTime} showQueries={state.showQueries} showGraphs={showGraphs}/>
+      <System
+        key={system.name}
+        system={system}
+        data={data}
+        totalSystemsTime={totalSystemsTime}
+        showQueries={state.showQueries}
+        showGraphs={showGraphs}
+        overQueries={overQueries}
+        overSystem={overSystem}
+        overComponents={overComponents}
+      />
     ));
 
     let chartData = systems.map((s, i) => {

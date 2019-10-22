@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import Bindings from '../ECSYBindings';
 import Queries from './Queries';
 import Entities from './Entities';
+import Events from '../Events';
 
 const Container = styled.div`
   background-color: #292929;
@@ -45,8 +46,37 @@ class App extends Component {
       showEntities: true,
       showQueries: true,
       showSystems: true,
-      showGraphs: false
-    }
+      showGraphs: false,
+      overComponents: [],
+      overQueries: [],
+      overSystem: false
+    };
+
+    Events.on('componentOver', detail => {
+      this.setState({overComponents: detail});
+    });
+
+    Events.on('componentQuery', detail => {
+      this.setState({overQueries: detail});
+    });
+
+    Events.on('systemOver', detail => {
+      if (detail.length > 0) {
+        var system = detail[0];
+        let overQueries = Object.keys(system.queries).map(querySystemName =>
+          this.state.data.queries.find(q => q.key === system.queries[querySystemName].key)
+        );
+        this.setState({
+          overQueries: overQueries,
+          overSystem: true
+        });
+      } else {
+        this.setState({
+          overQueries: [],
+          overSystem: false
+        });
+      }
+    });
 
     var backgroundPageConnection = chrome.runtime.connect({
       name: "devtools"
@@ -152,15 +182,19 @@ class App extends Component {
               state.showEntities && <Entities data={data} showGraphs={this.state.showGraphs}/>
             }
             {
-              state.showComponents && <Components components={data.components} data={data} showGraphs={this.state.showGraphs}/>
+              state.showComponents && <Components components={data.components} data={data} overQueries={this.state.overQueries} showGraphs={this.state.showGraphs}/>
             }
             {
-              state.showQueries && <Queries queries={data.queries} data={data} showGraphs={this.state.showGraphs}/>
+              state.showQueries && <Queries queries={data.queries} data={data} overQueries={this.state.overQueries} overComponents={this.state.overComponents} showGraphs={this.state.showGraphs}/>
             }
           </div>
           <div className="column">
             {
-              state.showSystems && <Systems systems={data.systems} data={data} showGraphs={this.state.showGraphs}/>
+              state.showSystems && <Systems systems={data.systems} data={data}
+              showGraphs={this.state.showGraphs}
+              overQueries={this.state.overQueries}
+              overSystem={this.state.overSystem}
+              overComponents={this.state.overComponents} />
             }
           </div>
         </Columns>

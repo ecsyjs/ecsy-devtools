@@ -2,6 +2,7 @@ import React from 'react';
 import classNames from 'classnames';
 import SmoothieComponent, { TimeSeries } from 'react-smoothie';
 import styled from 'styled-components';
+import Events from '../Events';
 
 const Half = styled.div`
   width: 50%;
@@ -20,10 +21,24 @@ export default class Query extends React.Component {
   constructor(props) {
     super(props);
 
+    this.state = {
+      hover: false
+    }
     this.ts1 = new TimeSeries({});
   }
+
+  onEnter = () => {
+    Events.emit('componentQuery', [this.props.query]);
+    this.setState({hover: true});
+  }
+
+  onLeave = () => {
+    Events.emit('componentQuery', []);
+    this.setState({hover: false});
+  }
+
   render() {
-    const { query, showGraphs } = this.props;
+    const { query, showGraphs, overComponents, overQueries } = this.props;
 
     const components = query.components.map(name => (
       <span class="ComponentName">{name}</span>
@@ -31,8 +46,17 @@ export default class Query extends React.Component {
 
     this.ts1.append(new Date().getTime(), query.numEntities);
 
+    const classes = classNames({
+      query: true,
+      highlighted: query.components.find(c => overComponents.indexOf(c) !== -1)
+          || !this.state.hover && overQueries.find(q => q.key === query.key)
+    });
+
     return (
-      <li class="query">
+      <li className={classes}
+        onMouseEnter={this.onEnter}
+        onMouseLeave={this.onLeave}
+      >
         <Half2 title={'Query key: ' + query.key}>
           <span>{components}</span>
           <span className="value">{query.numEntities}</span>
