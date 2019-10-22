@@ -3,6 +3,7 @@ import classNames from 'classnames';
 import SmoothieComponent, { TimeSeries } from 'react-smoothie';
 import styled from 'styled-components';
 import Events from '../Events';
+import Bindings from '../ECSYBindings';
 
 const Half = styled.div`
   width: 50%;
@@ -35,6 +36,10 @@ export default class Query extends React.Component {
   onLeave = () => {
     Events.emit('componentQuery', []);
     this.setState({hover: false});
+  }
+
+  logQuery = () => {
+    Bindings.logQuery(this.props.query);
   }
 
   render() {
@@ -76,7 +81,8 @@ export default class Query extends React.Component {
             }
           ]}/>
         }
-      </Half>
+        </Half>
+        <button onClick={this.logQuery} title="Log entities to the console">⇩</button>
       </li>
     );
   }

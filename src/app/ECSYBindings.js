@@ -23,6 +23,25 @@ class Bindings {
     `;
     globalBrowser.devtools.inspectedWindow.eval(string);
   }
+  logQuery(query) {
+    var world = 'window.__ECSY_DEVTOOLS.worlds[0]';
+    var string = `
+      console.log("Query: ${query.key} (${query.components.join(', ')})", ${world}.entityManager._queryManager._queries['${query.key}'].entities);
+    `;
+    globalBrowser.devtools.inspectedWindow.eval(string);
+  }
+  logComponent(componentName) {
+    // @todo Move this to ecsy core?
+    var world = 'window.__ECSY_DEVTOOLS.worlds[0]';
+    var string = `
+      console.log("Component: ${componentName}", ${world}.entityManager._entities
+        .filter(e => e._ComponentTypes.map(ct => ct.name).indexOf("${componentName}")!== -1)
+        .map(c => c._components["${componentName}"])
+      );
+    `;
+
+    globalBrowser.devtools.inspectedWindow.eval(string);
+  }
   soloPlaySystem(system) {
     var world = 'window.__ECSY_DEVTOOLS.worlds[0]';
     var string = `${world}.systemManager._systems.forEach(s => {

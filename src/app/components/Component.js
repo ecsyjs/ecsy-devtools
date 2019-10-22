@@ -3,6 +3,7 @@ import './Panel.css';
 import classNames from 'classnames';
 import SmoothieComponent, { TimeSeries } from 'react-smoothie';
 import Events from '../Events';
+import Bindings from '../ECSYBindings';
 
 export default class Component extends React.Component {
   constructor(props) {
@@ -20,6 +21,10 @@ export default class Component extends React.Component {
 
   onLeave = () => {
     Events.emit('componentOver', []);
+  }
+
+  logComponent = () => {
+    Bindings.logComponent(this.props.name);
   }
 
   render() {
@@ -54,6 +59,7 @@ export default class Component extends React.Component {
             }
           ]}/>
         }
+        <button onClick={this.logComponent} title="Log components to the console">⇩</button>
       </li>
     );
   }

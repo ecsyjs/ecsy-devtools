@@ -50,7 +50,7 @@ class App extends Component {
       overComponents: [],
       overQueries: [],
       overSystem: false,
-      highlight: true
+      highlight: false
     };
 
     Events.on('componentOver', detail => {
