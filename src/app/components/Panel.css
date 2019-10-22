@@ -19,8 +19,8 @@ h3 {
 }
 
 li.active,
-li.system:hover,
 li.query:hover,
+div.systemData:hover,
 li.component:hover,
 li.systemQuery:hover,
 li.query:hover
@@ -33,9 +33,15 @@ li.running {
 }
 
 li {
+  list-style: none;
+}
+
+li.query,
+li.component,
+div.systemData,
+li.systemQuery {
   padding: 2px;
   background-color: #1E1E1E;
-  list-style: none;
 }
 
 li .name {
@@ -43,10 +49,10 @@ li .name {
   font-weight: normal;
 }
 
-li.system,
 li.query,
+div.systemData,
 li.component {
-  padding: 15px 0px 15px 15px;
+  padding: 5px 0px 5px 15px;
   border-left: 5px solid #161616;
   margin-bottom: 3px;
 }
@@ -55,13 +61,20 @@ li.component {
   display: flex;
 }
 
-li.system:hover,
+div.systemData {
+  margin-bottom: 0px;
+}
+
+div.systemData:hover,
+div.system:hover,
+li.query:hover,
 li.component:hover {
   border-left-color: #B4AD5D;
 }
 
 ul {
   padding-left: 0px;
+  margin-top: 5px;
 }
 
 li .stats,
@@ -113,15 +126,18 @@ li.system .queries li {
 
 .systemData {
   display: flex;
+  align-items: center;
 }
 
-.systemData div {
+.systemData div.graph-controls,
+.systemData div.name-stats {
   width: 50%;
 }
 
 .graph-controls {
   display: flex;
   justify-content: space-between;
+  align-items: center;
 }
 
 .name-stats  {
@@ -130,6 +146,32 @@ li.system .queries li {
   margin-right: 10px;
 }
 
-canvas {
-  background-color: #ff9;
+.SystemQueryName,
+.ComponentName {
+  color: #1B856B;
+  background-color: #232A2C;
+  font-size: 0.9em;
+  padding: 5px;
+  margin-right: 4px;
+  border-radius: 6px;
+}
+
+.graph {
+  height: 200px;
+}
+
+.buttons {
+  font-size: 1.4em;
+  margin-left: 5px;
+  margin-right: 5px;
+}
+
+.systemQueryLi {
+  padding: 6px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.queriesTitle {
+  padding: 10px;
 }

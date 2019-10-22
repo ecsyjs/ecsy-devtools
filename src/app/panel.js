@@ -9,56 +9,6 @@ ReactDOM.render(<Panel />, document.getElementById('app'));
 
 var globalBrowser =  chrome || browser;
 
-
-function processMessage(msg) {
-  var event = new CustomEvent('newdata2', {data: msg.data});
-  window.dispatchEvent(event);
-
-  return;
-  var appData = app.$children[0];
-  if (msg.method === 'reset') {
-    reset();
-  }
-  else if (msg.method === 'worldCreated') {
-    /*
-    globalBrowser.browserAction.setIcon({
-      path: {
-        "128": '../../assets/icon_128_detected.png'
-      }
-    });
-    */
-  } else if (msg.method === 'refreshData') {
-    var totalNumComponents = Object.values(msg.data.components).reduce((a,i) => a+i);
-    appData.stats.numComponents.push(totalNumComponents);
-
-    for (let name in msg.data.components) {
-      var num = msg.data.components[name];
-      if (!appData.stats.components[name]) {
-        appData.stats.components[name] = [];
-      }
-
-      //appData.stats.components[name].push(num + Math.random() * 30);
-    }
-
-    window.stats = appData.stats;
-    appData.data = msg.data;
-    appData.frame++;
-    appData.numEntities = msg.data.numEntities;
-    appData.systems = msg.data.systems;
-    appData.queries = msg.data.queries;
-    appData.components = msg.data.components;
-    appData.world = msg.data.world;
-  }
-}
-
-function reset() {
-  app.$children[0].data = {};
-  app.$children[0].components = {};
-  app.$children[0].systems = [];
-  app.$children[0].numEntities = 0;
-  app.$children[0].queries = [];
-}
-
 window.ecsyDevtools = {
 
   toggleWorld: function (enabled) {

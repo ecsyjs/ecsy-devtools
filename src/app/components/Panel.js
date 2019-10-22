@@ -4,10 +4,15 @@ import Systems from './Systems';
 import styled from 'styled-components';
 import Bindings from '../ECSYBindings';
 import Queries from './Queries';
+import Entities from './Entities';
 
 const Container = styled.div`
   background-color: #292929;
   padding: 10px;
+  width: 100%;
+`;
+
+const Columns = styled.div`
   display: flex;
 `;
 
@@ -16,12 +21,21 @@ const Code = styled.pre`
   color: #EEE;
 `;
 
+var stats = {
+  totalSystemsTime: []
+};
+
 class App extends Component {
   constructor() {
     super();
 
     this.state = {
-      debug: false
+      debug: false,
+      showComponents: true,
+      showEntities: true,
+      showQueries: true,
+      showSystems: true,
+      showGraphs: true
     }
 
     var backgroundPageConnection = chrome.runtime.connect({
@@ -34,38 +48,63 @@ class App extends Component {
     });
 
     backgroundPageConnection.onMessage.addListener(m => {
+      // @todo Check message type!
+      let totalSystemsTime = m.data.systems.reduce((acum, s) => acum + s.executeTime, 0);
+      stats.totalSystemsTime.push(totalSystemsTime);
+      if (stats.totalSystemsTime.length > 10) {
+        stats.totalSystemsTime.shift();
+      }
+      m.data.stats = stats;
+
       this.setState({data: m.data});
     });
 
   }
 
-  toggleWorld() {
+  toggleWorld = () => {
     Bindings.toggleWorld(this.state.data.world.enabled);
   }
 
-  stepWorld() {
+  stepWorld = () => {
     Bindings.stepWorld();
   }
 
-  playSystems() {
+  playSystems = () => {
     Bindings.playSystems();
   }
 
-  stopSystems() {
+  stopSystems = () => {
     Bindings.stopSystems();
   }
 
-  stepNextSystem() {
+  stepNextSystem = () => {
     Bindings.stepNextSystem();
   }
 
-  toggleDebug() {
-    this.setState({debug: !this.state.debug})
+  onShowDebugChanged = e => {
+    this.setState({debug: e.target.checked});
+  }
+
+  onShowGraphChanged = e => {
+    this.setState({showGraphs: e.target.checked});
+  }
+
+  toggleComponents = () => {
+    this.setState({showComponents: !this.state.showComponents});
+  }
+
+  toggleQueries = () => {
+    this.setState({showQueries: !this.state.showQueries});
+  }
+
+  toggleSystems = () => {
+    this.setState({showSystems: !this.state.showSystems});
   }
 
   render() {
     // const data = this.props.data;
     const data = this.state.data;
+    const state = this.state;
 
     if (!data) {
       return (
@@ -73,40 +112,43 @@ class App extends Component {
       );
     }
 
-    const numComponents = data.components ? Object.keys(data.components).length : 0;
-    const numComponentInstances = data.components && Object.values(data.components).length > 0 ? Object.values(data.components).reduce((a, c) => a + c) : undefined;
-
-    let toggleWorld = this.toggleWorld.bind(this);
-    let stepWorld = this.stepWorld.bind(this);
-    let playSystems = this.playSystems.bind(this);
-    let stopSystems = this.stopSystems.bind(this);
-    let toggleDebug = this.toggleDebug.bind(this);
-    let stepNextSystem = this.stepNextSystem.bind(this);
-
     return (
       <Container>
         <div>
-          <button onClick={toggleWorld}>{data.world.enabled ? 'stop' : 'play'} world</button>
-          <button onClick={stepWorld}>step world (all systems)</button>
-          <button onClick={stepNextSystem}>step next system</button>
-          <button onClick={playSystems}>play all systems</button>
-          <button onClick={stopSystems}>stop all systems</button>
-          <button onClick={toggleDebug}>toggle debug info</button>
+          <button onClick={this.toggleComponents}>{state.showComponents ? 'hide' : 'show'} components</button>
+          <button onClick={this.toggleQueries}>{state.showQueries ? 'hide' : 'show'} Queries</button>
+          <button onClick={this.toggleSystems}>{state.showSystems ? 'hide' : 'show'} Systems</button>
         </div>
-        <div className="column">
-          <h3>Entities: {data.numEntities}</h3>
-          <h3>Components {numComponents} ({numComponentInstances} instances)</h3>
-          <Components components={data.components}/>
+        <div>
+          <button onClick={this.toggleWorld}>{data.world.enabled ? 'stop' : 'play'} world</button>
+          <button onClick={this.stepWorld}>step world (all systems)</button>
+          <button onClick={this.stepNextSystem}>step next system</button>
+          <button onClick={this.playSystems}>play all systems</button>
+          <button onClick={this.stopSystems}>stop all systems</button>
+          <input type="checkbox" id="show-debug" checked={this.state.debug} value={this.state.debug} onChange={this.onShowDebugChanged}/><label for="show-debug">Show debug</label>
+          {
+            this.state.debug && <Code>{JSON.stringify(data, null, 2)}</Code>
+          }
+          <input type="checkbox" id="show-graphs" checked={this.state.showGraphs} value={this.state.showGraphs} onChange={this.onShowGraphChanged}/><label for="show-graphs">Show graphs</label>
         </div>
-        <div className="column">
-          <Queries queries={data.queries} data={data}/>
-        </div>
-        <div className="column">
-          <Systems systems={data.systems} data={data}/>
-        </div>
-        {
-          this.state.debug && <Code>{JSON.stringify(data, null, 2)}</Code>
-        }
+        <Columns>
+          <div className="column">
+            {
+              state.showEntities && <Entities data={data} showGraphs={this.state.showGraphs}/>
+            }
+            {
+              state.showComponents && <Components components={data.components} data={data} showGraphs={this.state.showGraphs}/>
+            }
+            {
+              state.showQueries && <Queries queries={data.queries} data={data} showGraphs={this.state.showGraphs}/>
+            }
+          </div>
+          <div className="column">
+            {
+              state.showSystems && <Systems systems={data.systems} data={data} showGraphs={this.state.showGraphs}/>
+            }
+          </div>
+        </Columns>
       </Container>
     );
   }
