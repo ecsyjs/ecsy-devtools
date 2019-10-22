@@ -46,7 +46,7 @@ class App extends Component {
       showEntities: true,
       showQueries: true,
       showSystems: true,
-      showGraphs: false,
+      showGraphs: true,
       overComponents: [],
       overQueries: [],
       overSystem: false,

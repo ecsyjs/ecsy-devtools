@@ -19,6 +19,8 @@ export default class Component extends React.Component {
       resetBounds: true,
       resetBoundsInterval: 3000
     });
+
+    this.ts2 = new TimeSeries({});
   }
 
   onEnter = () => {
@@ -35,14 +37,17 @@ export default class Component extends React.Component {
 
   render() {
     const { data, value, name, showGraphs, overQueries } = this.props;
-    this.ts1.append(new Date().getTime(), value);
 
     const classes = classNames({
       component: true,
       highlighted: overQueries.find(e => e.components.indexOf(name) !== -1)
     });
 
-    const notPool = data.componentsPools[name].valid !== true;
+    const pool = data.componentsPools[name];
+    const notPool = pool.valid !== true;
+
+    this.ts1.append(new Date().getTime(), value);
+    this.ts2.append(new Date().getTime(), pool.size);
 
     return (
       <li className={classes}
@@ -66,10 +71,17 @@ export default class Component extends React.Component {
             {
               data: this.ts1,
               strokeStyle: { g: 255 },
-              fillStyle: { g: 255 },
+              fillStyle: 'rgba(0, 255, 0, 0.1)',
+              lineWidth: 1,
+            },
+            {
+              data: this.ts2,
+              strokeStyle: { r: 255 },
+              fillStyle: 'rgba(255, 0, 0, 0.1)',
               lineWidth: 1,
             }
-          ]}/>
+          ]
+        }/>
         }
         <button onClick={this.logComponent} title="Log components to the console">⇩</button>
       </li>
