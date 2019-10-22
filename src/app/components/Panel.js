@@ -49,18 +49,25 @@ class App extends Component {
       showGraphs: false,
       overComponents: [],
       overQueries: [],
-      overSystem: false
+      overSystem: false,
+      highlight: true
     };
 
     Events.on('componentOver', detail => {
+      if (!this.state.highlight) return;
+
       this.setState({overComponents: detail});
     });
 
     Events.on('componentQuery', detail => {
+      if (!this.state.highlight) return;
+
       this.setState({overQueries: detail});
     });
 
     Events.on('systemOver', detail => {
+      if (!this.state.highlight) return;
+
       if (detail.length > 0) {
         var system = detail[0];
         let overQueries = Object.keys(system.queries).map(querySystemName =>
@@ -125,6 +132,10 @@ class App extends Component {
     this.setState({debug: e.target.checked});
   }
 
+  onHighlightChanged = e => {
+    this.setState({highlight: e.target.checked});
+  }
+
   onShowGraphChanged = e => {
     this.setState({showGraphs: e.target.checked});
   }
@@ -170,6 +181,8 @@ class App extends Component {
           <button onClick={this.stepNextSystem}>step next system</button>
           <button onClick={this.playSystems}>play all systems</button>
           <button onClick={this.stopSystems}>stop all systems</button>
+          <input type="checkbox" id="highlight" checked={this.state.highlight} value={this.state.highlight} onChange={this.onHighlightChanged}/><label for="highlight">Highlight components and queries connections</label>
+
           <input type="checkbox" id="show-debug" checked={this.state.debug} value={this.state.debug} onChange={this.onShowDebugChanged}/><label for="show-debug">Show debug</label>
           {
             this.state.debug && <Code>{JSON.stringify(data, null, 2)}</Code>
