@@ -4,6 +4,12 @@ import classNames from 'classnames';
 import SmoothieComponent, { TimeSeries } from 'react-smoothie';
 import Events from '../Events';
 import Bindings from '../ECSYBindings';
+import styled from 'styled-components';
+
+const WarningIcon = styled.span`
+  color: #ff0;
+  font-size: 1.2em;
+`;
 
 export default class Component extends React.Component {
   constructor(props) {
@@ -28,7 +34,7 @@ export default class Component extends React.Component {
   }
 
   render() {
-    const { value, name, showGraphs, overQueries } = this.props;
+    const { data, value, name, showGraphs, overQueries } = this.props;
     this.ts1.append(new Date().getTime(), value);
 
     const classes = classNames({
@@ -36,13 +42,19 @@ export default class Component extends React.Component {
       highlighted: overQueries.find(e => e.components.indexOf(name) !== -1)
     });
 
+    const notPool = data.componentsPools[name].valid !== true;
+
     return (
       <li className={classes}
         onMouseEnter={this.onEnter}
         onMouseLeave={this.onLeave}
       >
         <div>
-          <span className="name">{name}</span>
+          <span className="name">{name} {
+            notPool &&
+            <WarningIcon title="This component is not using automatic pooling">⚠</WarningIcon>
+          }
+          </span>
           <span className="value">{value}</span>
         </div>
         {
