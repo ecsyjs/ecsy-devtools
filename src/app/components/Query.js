@@ -1,6 +1,19 @@
 import React from 'react';
 import classNames from 'classnames';
 import SmoothieComponent, { TimeSeries } from 'react-smoothie';
+import styled from 'styled-components';
+
+const Half = styled.div`
+  width: 50%;
+`;
+
+const Half2 = styled.div`
+  width: 50%;
+  display: flex;
+  justify-content: space-between;
+  margin-right: 10px;
+  align-items: center;
+`;
 
 export default class Query extends React.Component {
 
@@ -20,11 +33,11 @@ export default class Query extends React.Component {
 
     return (
       <li class="query">
-        <div hint={query.key}>
+        <Half2 title={'Query key: ' + query.key}>
           <span>{components}</span>
           <span className="value">{query.numEntities}</span>
-        </div>
-        <div>
+        </Half2>
+        <Half>
         {
           showGraphs && <SmoothieComponent
           responsive
@@ -39,7 +52,7 @@ export default class Query extends React.Component {
             }
           ]}/>
         }
-      </div>
+      </Half>
       </li>
     );
   }

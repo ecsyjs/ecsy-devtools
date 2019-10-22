@@ -21,6 +21,16 @@ const Code = styled.pre`
   color: #EEE;
 `;
 
+const ToggleSection = styled.span`
+  color: ${(props) => props.disabled ? "#6B6B6B" : "#4AF4FF"};
+  cursor: pointer;
+  margin-right: 10px;
+
+  &:hover {
+    color: #81E3EA;
+  }
+`;
+
 var stats = {
   totalSystemsTime: []
 };
@@ -35,7 +45,7 @@ class App extends Component {
       showEntities: true,
       showQueries: true,
       showSystems: true,
-      showGraphs: true
+      showGraphs: false
     }
 
     var backgroundPageConnection = chrome.runtime.connect({
@@ -93,6 +103,10 @@ class App extends Component {
     this.setState({showComponents: !this.state.showComponents});
   }
 
+  toggleEntities = () => {
+    this.setState({showEntities: !this.state.showEntities});
+  }
+
   toggleQueries = () => {
     this.setState({showQueries: !this.state.showQueries});
   }
@@ -115,9 +129,10 @@ class App extends Component {
     return (
       <Container>
         <div>
-          <button onClick={this.toggleComponents}>{state.showComponents ? 'hide' : 'show'} components</button>
-          <button onClick={this.toggleQueries}>{state.showQueries ? 'hide' : 'show'} Queries</button>
-          <button onClick={this.toggleSystems}>{state.showSystems ? 'hide' : 'show'} Systems</button>
+          <ToggleSection onClick={this.toggleEntities} disabled={!state.showEntities}>ENTITIES</ToggleSection>
+          <ToggleSection onClick={this.toggleComponents} disabled={!state.showComponents}>COMPONENTS</ToggleSection>
+          <ToggleSection onClick={this.toggleQueries} disabled={!state.showQueries}>QUERIES</ToggleSection>
+          <ToggleSection onClick={this.toggleSystems} disabled={!state.showSystems}>SYSTEMS</ToggleSection>
         </div>
         <div>
           <button onClick={this.toggleWorld}>{data.world.enabled ? 'stop' : 'play'} world</button>
