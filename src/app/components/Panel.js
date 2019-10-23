@@ -50,7 +50,7 @@ class App extends Component {
       overComponents: [],
       overQueries: [],
       overSystem: false,
-      highlight: false
+      highlight: true
     };
 
     Events.on('componentOver', detail => {
@@ -148,12 +148,12 @@ class App extends Component {
           <ToggleSection onClick={this.toggleSystems} disabled={!state.showSystems}>SYSTEMS</ToggleSection>
         </div>
         <div>
-          <input type="checkbox" id="highlight" checked={this.state.highlight} value={this.state.highlight} onChange={this.onHighlightChanged}/><label for="highlight">Highlight components and queries connections</label>
-          <input type="checkbox" id="show-debug" checked={this.state.debug} value={this.state.debug} onChange={this.onShowDebugChanged}/><label for="show-debug">Show debug</label>
+          <input type="checkbox" id="highlight" checked={this.state.highlight} value={this.state.highlight} onChange={this.onHighlightChanged}/><label htmlFor="highlight">Highlight components and queries connections</label>
+          <input type="checkbox" id="show-debug" checked={this.state.debug} value={this.state.debug} onChange={this.onShowDebugChanged}/><label htmlFor="show-debug">Show debug</label>
           {
             this.state.debug && <Code>{JSON.stringify(data, null, 2)}</Code>
           }
-          <input type="checkbox" id="show-graphs" checked={this.state.showGraphs} value={this.state.showGraphs} onChange={this.onShowGraphChanged}/><label for="show-graphs">Show graphs</label>
+          <input type="checkbox" id="show-graphs" checked={this.state.showGraphs} value={this.state.showGraphs} onChange={this.onShowGraphChanged}/><label htmlFor="show-graphs">Show graphs</label>
         </div>
         <Columns>
           <div className="column">

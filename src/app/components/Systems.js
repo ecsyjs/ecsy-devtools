@@ -206,7 +206,7 @@ export default class Systems extends React.Component {
         <button onClick={state.playing ? this.stopSystems : this.playSystems}>{state.playing ? 'Stop' : 'Play'} systems</button>
         <button onClick={this.stepSystems}>Step all systems</button>
         <button onClick={this.stepNextSystem}>Step next system</button>
-        <input type="checkbox" id="show-queries" checked={state.showQueries} value={state.showQueries} onChange={this.onShowQueriesChanged}/><label for="show-queries">show queries
+        <input type="checkbox" id="show-queries" checked={state.showQueries} value={state.showQueries} onChange={this.onShowQueriesChanged}/><label htmlFor="show-queries">show queries
         </label>
         <ul>
           {systemsHtml}

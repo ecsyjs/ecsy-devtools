@@ -50,7 +50,7 @@ export default class Components extends React.Component {
               checked={this.state.linkMinMax}
               value={this.state.linkMinMax}
               onChange={this.linkMinMaxChanged}/>
-              <label for="linkminmax">linkminmax components and queries connections</label>
+              <label htmlFor="linkminmax">linkminmax components and queries connections</label>
           {
             showGraphs &&
             <SmoothieComponent

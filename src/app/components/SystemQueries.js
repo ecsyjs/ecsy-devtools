@@ -27,7 +27,7 @@ export default class SystemQueries extends React.Component {
     let queriesHtml = Object.keys(queries).map(queryName => {
       let key = queries[queryName].key;
       let query = data.queries.find(q => q.key === key);
-      const components = query.components.map(name => (
+      const components = query.components.included.map(name => (
         <span class="ComponentName">{name}</span>
       ));
 
@@ -36,7 +36,7 @@ export default class SystemQueries extends React.Component {
         highlighted: !overSystem && (
           overQueries.filter(q => q.key === key).length > 0
           ||
-          query.components.find(c => overComponents.indexOf(c) !== -1)
+          query.components.included.find(c => overComponents.indexOf(c) !== -1)
         )
       });
 

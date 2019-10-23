@@ -34,7 +34,7 @@ class Bindings {
   logQuery(query) {
     var world = 'window.__ECSY_DEVTOOLS.worlds[0]';
     var string = `
-      console.log("Query: ${query.key} (${query.components.join(', ')})", ${world}.entityManager._queryManager._queries['${query.key}'].entities);
+      console.log("Query: ${query.key} (${query.components.included.join(', ')})", ${world}.entityManager._queryManager._queries['${query.key}'].entities);
     `;
     globalBrowser.devtools.inspectedWindow.eval(string);
   }

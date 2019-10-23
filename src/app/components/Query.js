@@ -45,15 +45,17 @@ export default class Query extends React.Component {
   render() {
     const { query, showGraphs, overComponents, overQueries } = this.props;
 
-    const components = query.components.map(name => (
+    const components = query.components.included.map(name => (
       <span class="ComponentName">{name}</span>
-    ));
+    )).concat(query.components.not.map(name => (
+      <span class="ComponentName">NOT({name})</span>
+    )));
 
     this.ts1.append(new Date().getTime(), query.numEntities);
 
     const classes = classNames({
       query: true,
-      highlighted: query.components.find(c => overComponents.indexOf(c) !== -1)
+      highlighted: query.components.included.find(c => overComponents.indexOf(c) !== -1)
           || !this.state.hover && overQueries.find(q => q.key === query.key)
     });
 

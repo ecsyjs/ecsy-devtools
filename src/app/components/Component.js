@@ -15,7 +15,6 @@ const PoolIncreased = styled.span`
   color: #f00;
 `;
 
-
 export default class Component extends React.Component {
   constructor(props) {
     super(props);
@@ -47,18 +46,18 @@ export default class Component extends React.Component {
 
     const classes = classNames({
       component: true,
-      highlighted: overQueries.find(e => e.components.indexOf(name) !== -1)
+      highlighted: overQueries.find(e => e.components.included.indexOf(name) !== -1 || e.components.not.indexOf(name) !== -1)
     });
 
     const pool = data.componentsPools[name];
-    const notPool = pool.valid !== true;
+    const notPool = pool && pool.valid !== true;
+    const poolSize = pool ? pool.size : 0;
 
     this.ts1.append(new Date().getTime(), value);
-    this.ts2.append(new Date().getTime(), pool.size);
+    this.ts2.append(new Date().getTime(), poolSize);
 
-    const poolIncreased = pool.size !== this.prevPoolSize;
-
-    this.prevPoolSize = pool.size;
+    const poolIncreased = poolSize !== this.prevPoolSize;
+    this.prevPoolSize = poolSize;
 
     return (
       <li className={classes}

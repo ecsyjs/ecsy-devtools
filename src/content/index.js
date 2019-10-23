@@ -41,7 +41,10 @@ if( !window.__ECSY_DEVTOOLS_INJECTED ) {
 			const queries = Object.values(world.entityManager._queryManager._queries).map(q => {
 				return {
 					key: q.key,
-					components: q.Components.map(C => C.name),
+					components: {
+						included: q.Components.map(C => C.name),
+						not: q.NotComponents.map(C => C.name)
+					},
 					numEntities: q.entities.length
 				}
 			});
