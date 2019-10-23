@@ -5,6 +5,8 @@ import PieChart from 'react-minimal-pie-chart';
 import styled from 'styled-components';
 import SmoothieComponent, { TimeSeries } from 'react-smoothie';
 import {SectionHeader2, Title, TitleGroup } from './StyledComponents';
+import Bindings from '../ECSYBindings';
+import Events from '../Events';
 
 const PieContainer = styled.div`
   width: 150px;
@@ -52,10 +54,57 @@ export default class Systems extends React.Component {
   constructor() {
     super();
     this.state = {
+      playing: true,
       showQueries: false,
       data: [],
-      stats: []
-    }
+      stats: [],
+      prevSystemsState: {}
+    };
+
+    Events.on('soloPlaySystem', system => {
+      let prevSystemsState = this.props.data.systems.map(s =>
+        ({
+          name: s.name,
+          enabled: s.enabled
+        })
+      );
+
+      this.setState({
+        prevSystemsState: prevSystemsState
+      });
+    });
+
+    Events.on('revertSoloPlaySystem', system => {
+      Bindings.setSystemsPlayState(this.state.prevSystemsState);
+      this.setState({
+        prevSystemsState: {}
+      });
+    });
+  }
+
+
+  stepSystems = () => {
+    Bindings.stepSystems();
+  }
+
+  playSystems = () => {
+    this.setState({
+      playing: true,
+      prevSystemsState: {}
+    });
+    Bindings.playSystems();
+  }
+
+  stopSystems = () => {
+    this.setState({
+      playing: false,
+      prevSystemsState: {}
+    });
+    Bindings.stopSystems();
+  }
+
+  stepNextSystem = () => {
+    Bindings.stepNextSystem();
   }
 
   onShowQueriesChanged = e => {
@@ -154,6 +203,9 @@ export default class Systems extends React.Component {
             </PieContainer>
           }
       </SectionHeader2>
+        <button onClick={state.playing ? this.stopSystems : this.playSystems}>{state.playing ? 'Stop' : 'Play'} systems</button>
+        <button onClick={this.stepSystems}>Step all systems</button>
+        <button onClick={this.stepNextSystem}>Step next system</button>
         <input type="checkbox" id="show-queries" checked={state.showQueries} value={state.showQueries} onChange={this.onShowQueriesChanged}/><label for="show-queries">show queries
         </label>
         <ul>

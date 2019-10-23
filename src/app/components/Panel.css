@@ -31,7 +31,7 @@ li.query:hover
   background-color: #464323;
 }
 
-li.running {
+div.running {
   background-color: #ff9;
 }
 

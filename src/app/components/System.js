@@ -30,6 +30,10 @@ export default class System extends React.Component {
       resetBounds: true,
       resetBoundsInterval: 3000
     });
+
+    this.state = {
+      solo: false
+    };
   }
 
   toggle = () => {
@@ -40,8 +44,17 @@ export default class System extends React.Component {
     Bindings.stepSystem(this.props.system);
   }
 
-  solo = () =>{
-    Bindings.soloPlaySystem(this.props.system);
+  toggleSolo = () => {
+    if (this.state.solo) {
+      Events.emit('revertSoloPlaySystem', this.props.system);
+    } else {
+      Events.emit('soloPlaySystem', this.props.system);
+      Bindings.soloPlaySystem(this.props.system);
+    }
+
+    this.setState({
+      solo: !this.state.solo
+    });
   }
 
   onEnter = () => {
@@ -55,12 +68,12 @@ export default class System extends React.Component {
 
   render() {
     const { system, data, showGraphs, overQueries, overComponents, overSystem } = this.props
-    const percTime = system.executeTime / this.props.totalSystemsTime * 100;
+    const percTime = this.props.totalSystemsTime > 0 ? system.executeTime / this.props.totalSystemsTime * 100 : 0;
 
     const classes = classNames({
       system: true,
       disabled: !system.enabled,
-      running: !data.world.enabled && data.lastExecutedSystem === system
+      running: data.lastExecutedSystem === system.name
     });
 
     this.ts1.append(new Date().getTime(), system.executeTime);
@@ -102,7 +115,7 @@ export default class System extends React.Component {
                   { system.enabled ? '❙❙' : '▶' }
                 </Button>
                 <Button onClick={this.step} title="Step system execution">▸❙</Button>
-                <Button onClick={this.solo} title="Execute only this system"><b>S</b></Button>
+                <Button onClick={this.toggleSolo} title="Execute only this system"><b>S</b></Button>
               </div>
             </div>
           </div>

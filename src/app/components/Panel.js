@@ -96,36 +96,9 @@ class App extends Component {
 
     backgroundPageConnection.onMessage.addListener(m => {
       // @todo Check message type!
-      let totalSystemsTime = m.data.systems.reduce((acum, s) => acum + s.executeTime, 0);
-      stats.totalSystemsTime.push(totalSystemsTime);
-      if (stats.totalSystemsTime.length > 10) {
-        stats.totalSystemsTime.shift();
-      }
-      m.data.stats = stats;
-
       this.setState({data: m.data});
     });
 
-  }
-
-  toggleWorld = () => {
-    Bindings.toggleWorld(this.state.data.world.enabled);
-  }
-
-  stepWorld = () => {
-    Bindings.stepWorld();
-  }
-
-  playSystems = () => {
-    Bindings.playSystems();
-  }
-
-  stopSystems = () => {
-    Bindings.stopSystems();
-  }
-
-  stepNextSystem = () => {
-    Bindings.stepNextSystem();
   }
 
   onShowDebugChanged = e => {
@@ -157,7 +130,6 @@ class App extends Component {
   }
 
   render() {
-    // const data = this.props.data;
     const data = this.state.data;
     const state = this.state;
 
@@ -176,13 +148,7 @@ class App extends Component {
           <ToggleSection onClick={this.toggleSystems} disabled={!state.showSystems}>SYSTEMS</ToggleSection>
         </div>
         <div>
-          <button onClick={this.toggleWorld}>{data.world.enabled ? 'stop' : 'play'} world</button>
-          <button onClick={this.stepWorld}>step world (all systems)</button>
-          <button onClick={this.stepNextSystem}>step next system</button>
-          <button onClick={this.playSystems}>play all systems</button>
-          <button onClick={this.stopSystems}>stop all systems</button>
           <input type="checkbox" id="highlight" checked={this.state.highlight} value={this.state.highlight} onChange={this.onHighlightChanged}/><label for="highlight">Highlight components and queries connections</label>
-
           <input type="checkbox" id="show-debug" checked={this.state.debug} value={this.state.debug} onChange={this.onShowDebugChanged}/><label for="show-debug">Show debug</label>
           {
             this.state.debug && <Code>{JSON.stringify(data, null, 2)}</Code>

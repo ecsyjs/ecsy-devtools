@@ -15,6 +15,14 @@ class Bindings {
     `;
     globalBrowser.devtools.inspectedWindow.eval(string);
   }
+  stepSystems () {
+    var world = 'window.__ECSY_DEVTOOLS.worlds[0]';
+    var string = `
+      ${world}.systemManager.execute(1/60, performance.now() / 1000, true);
+      ${world}.entityManager.processDeferredRemoval();
+    `;
+    globalBrowser.devtools.inspectedWindow.eval(string);
+  }
   stepWorld () {
     var world = 'window.__ECSY_DEVTOOLS.worlds[0]';
     var string = `
@@ -42,6 +50,14 @@ class Bindings {
 
     globalBrowser.devtools.inspectedWindow.eval(string);
   }
+  setSystemsPlayState(systemsState) {
+    var world = 'window.__ECSY_DEVTOOLS.worlds[0]';
+
+    let string = systemsState.map(s =>
+      `${world}.systemManager._systems.find(s => s.constructor.name === "${s.name}").enabled = ${s.enabled};`
+    ).join('\n');
+    globalBrowser.devtools.inspectedWindow.eval(string);
+  }
   soloPlaySystem(system) {
     var world = 'window.__ECSY_DEVTOOLS.worlds[0]';
     var string = `${world}.systemManager._systems.forEach(s => {
@@ -56,8 +72,8 @@ class Bindings {
 
     globalBrowser.devtools.inspectedWindow.eval(string);
 
-    var string = `${world}.systemManager._systems.find(s => s.constructor.name === '${system.name}').play()`;
-    globalBrowser.devtools.inspectedWindow.eval(string);
+    //var string = `${world}.systemManager._systems.find(s => s.constructor.name === '${system.name}').play()`;
+    //globalBrowser.devtools.inspectedWindow.eval(string);
   }
   toggleSystem(system) {
     var world = 'window.__ECSY_DEVTOOLS.worlds[0]';

@@ -11,6 +11,11 @@ const WarningIcon = styled.span`
   font-size: 1.2em;
 `;
 
+const PoolIncreased = styled.span`
+  color: #f00;
+`;
+
+
 export default class Component extends React.Component {
   constructor(props) {
     super(props);
@@ -21,6 +26,8 @@ export default class Component extends React.Component {
     });
 
     this.ts2 = new TimeSeries({});
+
+    this.prevPoolSize = 0;
   }
 
   onEnter = () => {
@@ -49,6 +56,10 @@ export default class Component extends React.Component {
     this.ts1.append(new Date().getTime(), value);
     this.ts2.append(new Date().getTime(), pool.size);
 
+    const poolIncreased = pool.size !== this.prevPoolSize;
+
+    this.prevPoolSize = pool.size;
+
     return (
       <li className={classes}
         onMouseEnter={this.onEnter}
@@ -58,6 +69,9 @@ export default class Component extends React.Component {
           <span className="name">{name} {
             notPool &&
             <WarningIcon title="This component is not using automatic pooling">⚠</WarningIcon>
+          }
+          {
+            poolIncreased && <PoolIncreased>Pool size increased!</PoolIncreased>
           }
           </span>
           <span className="value">{value}</span>
@@ -71,13 +85,13 @@ export default class Component extends React.Component {
             {
               data: this.ts1,
               strokeStyle: { g: 255 },
-              fillStyle: 'rgba(0, 255, 0, 0.1)',
+              fillStyle: 'rgba(0, 255, 0, 0.2)',
               lineWidth: 1,
             },
             {
               data: this.ts2,
               strokeStyle: { r: 255 },
-              fillStyle: 'rgba(255, 0, 0, 0.1)',
+              fillStyle: 'rgba(255, 0, 0, 0.2)',
               lineWidth: 1,
             }
           ]
