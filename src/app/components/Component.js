@@ -8,9 +8,6 @@ import styled from 'styled-components';
 
 import { Half, Half2, Button } from './StyledComponents';
 
-import SVG from 'react-inlinesvg';
-import poolWarnIcon from "../../../assets/poolwarn.svg";
-
 import {
   FaExclamationTriangle,
   FaArrowDown,
@@ -107,13 +104,13 @@ export default class Component extends React.Component {
               data: this.ts1,
               strokeStyle: { g: 255 },
               fillStyle: 'rgba(0, 255, 0, 0.2)',
-              lineWidth: 1,
+              lineWidth: 2,
             },
             {
               data: this.ts2,
               strokeStyle: { r: 255 },
               fillStyle: 'rgba(255, 0, 0, 0.2)',
-              lineWidth: 1,
+              lineWidth: 2,
             }
           ]
         }/>
