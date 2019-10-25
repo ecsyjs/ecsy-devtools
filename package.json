@@ -41,6 +41,7 @@
     "events": "^3.0.0",
     "react": "^16.10.2",
     "react-dom": "^16.10.2",
+    "react-icons": "^3.8.0",
     "react-minimal-pie-chart": "^5.0.2",
     "react-smoothie": "^0.10.2",
     "styled-components": "^4.4.0"
