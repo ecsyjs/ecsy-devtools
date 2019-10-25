@@ -12,6 +12,7 @@ import {
   FaExclamationTriangle,
   FaArrowDown,
   FaCog,
+  FaExclamationCircle,
   FaPlus
  } from 'react-icons/fa';
 
@@ -73,6 +74,11 @@ export default class Component extends React.Component {
     this.prevPoolSize = poolSize;
     //const poolIncreased = true;
 
+    const classesPoolIncreased = classNames({
+      poolIncreased: true,
+      hide: !poolIncreased
+    });
+
     return (
       <li className={classes}
         onMouseEnter={this.onEnter}
@@ -87,9 +93,7 @@ export default class Component extends React.Component {
               </Warn>
             )
           }
-          {
-            poolIncreased && <span class="poolIncreased"><FaPlus></FaPlus> Component pool increased</span>
-          }
+            <span className={classesPoolIncreased}><FaExclamationCircle></FaExclamationCircle> Component pool increased</span>
           </span>
           <span className="value">{value}</span>
         </Half2>

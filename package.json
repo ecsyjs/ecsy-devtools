@@ -42,6 +42,7 @@
     "react": "^16.10.2",
     "react-dom": "^16.10.2",
     "react-icons": "^3.8.0",
+    "react-json-tree": "^0.11.2",
     "react-minimal-pie-chart": "^5.0.2",
     "react-smoothie": "^0.10.2",
     "styled-components": "^4.4.0"

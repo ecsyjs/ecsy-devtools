@@ -6,6 +6,7 @@ import Bindings from '../ECSYBindings';
 import Queries from './Queries';
 import Entities from './Entities';
 import Events from '../Events';
+import JSONTree from 'react-json-tree';
 
 const Container = styled.div`
   background-color: #292929;
@@ -150,6 +151,9 @@ class App extends Component {
         <div>
           <input type="checkbox" id="highlight" checked={this.state.highlight} value={this.state.highlight} onChange={this.onHighlightChanged}/><label htmlFor="highlight">Highlight components and queries connections</label>
           <input type="checkbox" id="show-debug" checked={this.state.debug} value={this.state.debug} onChange={this.onShowDebugChanged}/><label htmlFor="show-debug">Show debug</label>
+          {
+            false && this.state.debug && <JSONTree data={data} theme={theme} invertTheme={false} />
+          }
           {
             this.state.debug && <Code>{JSON.stringify(data, null, 2)}</Code>
           }

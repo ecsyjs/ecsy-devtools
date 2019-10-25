@@ -238,3 +238,12 @@ ul.SystemsQueries {
             transform: rotate(359deg);
   }
 }
+
+.poolIncreased {
+  opacity: 1;
+}
+.poolIncreased.hide {
+  transition: opacity 0.5s;
+  opacity: 0;
+  pointer-events:none;
+}

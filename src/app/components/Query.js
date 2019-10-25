@@ -7,9 +7,11 @@ import Bindings from '../ECSYBindings';
 import { Half, Half2, Button } from './StyledComponents';
 
 import {
-  FaArrowDown
+  FaArrowDown,
+  FaSearch,
+  FaEye,
+  FaRegEye
  } from 'react-icons/fa';
-
 
 export default class Query extends React.Component {
 
