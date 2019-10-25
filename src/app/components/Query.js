@@ -4,18 +4,12 @@ import SmoothieComponent, { TimeSeries } from 'react-smoothie';
 import styled from 'styled-components';
 import Events from '../Events';
 import Bindings from '../ECSYBindings';
+import { Half, Half2, Button } from './StyledComponents';
 
-const Half = styled.div`
-  width: 50%;
-`;
+import {
+  FaArrowDown
+ } from 'react-icons/fa';
 
-const Half2 = styled.div`
-  width: 50%;
-  display: flex;
-  justify-content: space-between;
-  margin-right: 10px;
-  align-items: center;
-`;
 
 export default class Query extends React.Component {
 
@@ -84,7 +78,10 @@ export default class Query extends React.Component {
           ]}/>
         }
         </Half>
-        <button onClick={this.logQuery} title="Log entities to the console">⇩</button>
+        <Button onClick={this.logQuery} title="Log queries to the console">
+          <FaArrowDown></FaArrowDown>
+        </Button>
+
       </li>
     );
   }

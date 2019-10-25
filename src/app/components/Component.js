@@ -6,6 +6,18 @@ import Events from '../Events';
 import Bindings from '../ECSYBindings';
 import styled from 'styled-components';
 
+import { Half, Half2, Button } from './StyledComponents';
+
+import SVG from 'react-inlinesvg';
+import poolWarnIcon from "../../../assets/poolwarn.svg";
+
+import {
+  FaExclamationTriangle,
+  FaArrowDown,
+  FaCog,
+  FaPlus
+ } from 'react-icons/fa';
+
 const WarningIcon = styled.span`
   color: #ff0;
   font-size: 1.2em;
@@ -13,6 +25,10 @@ const WarningIcon = styled.span`
 
 const PoolIncreased = styled.span`
   color: #f00;
+`;
+
+const Warn = styled.span`
+ color: #ff0;
 `;
 
 export default class Component extends React.Component {
@@ -58,23 +74,29 @@ export default class Component extends React.Component {
 
     const poolIncreased = poolSize !== this.prevPoolSize;
     this.prevPoolSize = poolSize;
+    //const poolIncreased = true;
 
     return (
       <li className={classes}
         onMouseEnter={this.onEnter}
         onMouseLeave={this.onLeave}
       >
-        <div>
+        <Half2>
           <span className="name">{name} {
             notPool &&
-            <WarningIcon title="This component is not using automatic pooling">⚠</WarningIcon>
+            (
+              <Warn>
+              <FaExclamationTriangle title="This component is not using automatic pooling"></FaExclamationTriangle>
+              </Warn>
+            )
           }
           {
-            poolIncreased && <PoolIncreased>Pool size increased!</PoolIncreased>
+            poolIncreased && <span class="poolIncreased"><FaPlus></FaPlus> Component pool increased</span>
           }
           </span>
           <span className="value">{value}</span>
-        </div>
+        </Half2>
+        <Half>
         {
           showGraphs && <SmoothieComponent
           responsive
@@ -96,7 +118,10 @@ export default class Component extends React.Component {
           ]
         }/>
         }
-        <button onClick={this.logComponent} title="Log components to the console">⇩</button>
+        </Half>
+        <Button onClick={this.logComponent} title="Log components to the console">
+          <FaArrowDown></FaArrowDown>
+        </Button>
       </li>
     );
   }

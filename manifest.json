@@ -21,7 +21,9 @@
 	"web_accessible_resources": [
     "src/content/*.js",
     "src/vendor/*.js",
-    "assets/*.png"
+    "assets/*.svg",
+    "assets/*.png",
+    "dist/*.svg"
 	],
   "browser_action" : {
     "default_title": "ECSY",

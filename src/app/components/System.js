@@ -3,24 +3,24 @@ import classNames from 'classnames';
 import Bindings from '../ECSYBindings';
 import SystemQueries from './SystemQueries';
 import SmoothieComponent, { TimeSeries } from 'react-smoothie';
-import styled from 'styled-components';
 import Events from '../Events';
+import playIcon from "../../../assets/play.svg";
+import pauseIcon from "../../../assets/pause.svg";
+import stepIcon from "../../../assets/step.svg";
+import soloIcon from "../../../assets/solo.svg";
+import { Button } from './StyledComponents';
+
+import {
+  FaStripeS,
+  FaPlay,
+  FaPause,
+  FaFastForward,
+  FaStepForward
+ } from 'react-icons/fa';
 
 import './Panel.css';
 
-const Button = styled.a`
-  cursor: pointer;
-  color: #4AF4FF;
-  padding: 2px;
-
-  &:hover {
-    color: #37A7AE;
-  }
-
-  &:disabled {
-    color: #ff0;
-  }
-`;
+import SVG from 'react-inlinesvg';
 
 export default class System extends React.Component {
   constructor(props) {
@@ -109,13 +109,20 @@ export default class System extends React.Component {
               ]}/>
             }
               <div className="buttons">
-                <Button
+              <Button
                   onClick={this.toggle}
                   title={system.enabled ? 'Pause system' : 'Play system'}>
-                  { system.enabled ? '❙❙' : '▶' }
+                  {
+                    system.enabled ? <FaPause></FaPause> : <FaPlay></FaPlay>
+                  }
                 </Button>
-                <Button onClick={this.step} title="Step system execution">▸❙</Button>
-                <Button onClick={this.toggleSolo} title="Execute only this system"><b>S</b></Button>
+
+                <Button onClick={this.step} title="Step system execution">
+                  <FaStepForward></FaStepForward>
+                </Button>
+                <Button onClick={this.toggleSolo} title="Execute only this system">
+                  <FaStripeS/>
+                </Button>
               </div>
             </div>
           </div>
