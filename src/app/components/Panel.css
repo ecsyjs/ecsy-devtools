@@ -204,7 +204,7 @@ ul.SystemsQueries {
 }
 
 .solo {
-  fill: #ff9;
+  color: #ff9 !important;
 }
 
 .poolIncreased {

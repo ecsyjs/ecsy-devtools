@@ -115,7 +115,7 @@ export default class System extends React.Component {
                 <Button onClick={this.step} title="Step system execution">
                   <FaStepForward></FaStepForward>
                 </Button>
-                <Button onClick={this.toggleSolo} title="Execute only this system">
+                <Button className={(this.state.solo ? 'solo' : '')} onClick={this.toggleSolo} title="Execute only this system">
                   <FaStripeS/>
                 </Button>
               </div>
