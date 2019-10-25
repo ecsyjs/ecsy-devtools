@@ -16,8 +16,6 @@ import {
 
 import './Panel.css';
 
-import SVG from 'react-inlinesvg';
-
 export default class System extends React.Component {
   constructor(props) {
     super(props);
