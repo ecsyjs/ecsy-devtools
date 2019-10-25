@@ -56,6 +56,8 @@ export default class Components extends React.Component {
             <SmoothieComponent
             responsive
             millisPerPixel={60}
+            labels={ {precision: 0}}
+            grid={ {strokeStyle: 'transparent'} }
             height={30}
             series={[
               {

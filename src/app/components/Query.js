@@ -66,7 +66,9 @@ export default class Query extends React.Component {
         {
           showGraphs && <SmoothieComponent
           responsive
+          grid={ {strokeStyle: 'transparent'} }
           millisPerPixel={60}
+          labels={ {precision: 0}}
           height={30}
           series={[
             {

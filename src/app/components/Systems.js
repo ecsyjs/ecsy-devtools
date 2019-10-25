@@ -161,6 +161,7 @@ export default class Systems extends React.Component {
             <SmoothieComponent
               responsive
               height={30}
+              grid={ {strokeStyle: 'transparent'} }
               millisPerPixel={60}
               series={[
                 {

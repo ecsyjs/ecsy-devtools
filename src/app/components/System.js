@@ -90,6 +90,7 @@ export default class System extends React.Component {
             {
               showGraphs &&             <SmoothieComponent
               responsive
+              grid={ {strokeStyle: 'transparent'} }
               tooltip={true}
               millisPerPixel={60}
               height={30}

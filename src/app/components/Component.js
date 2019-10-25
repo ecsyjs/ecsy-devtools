@@ -97,6 +97,8 @@ export default class Component extends React.Component {
         {
           showGraphs && <SmoothieComponent
           responsive
+          grid={ {strokeStyle: 'transparent'} }
+          labels={ {precision: 0}}
           millisPerPixel={60}
           height={30}
           series={[
