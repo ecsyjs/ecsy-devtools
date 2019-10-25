@@ -4,10 +4,6 @@ import Bindings from '../ECSYBindings';
 import SystemQueries from './SystemQueries';
 import SmoothieComponent, { TimeSeries } from 'react-smoothie';
 import Events from '../Events';
-import playIcon from "../../../assets/play.svg";
-import pauseIcon from "../../../assets/pause.svg";
-import stepIcon from "../../../assets/step.svg";
-import soloIcon from "../../../assets/solo.svg";
 import { Button } from './StyledComponents';
 
 import {
