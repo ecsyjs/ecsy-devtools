@@ -187,6 +187,7 @@ export default class Systems extends React.Component {
                 {
                   data: ts1,
                   strokeStyle: '#2CC8EB',
+                  fillStyle: 'rgba(74, 244, 255, 0.1)',
                   lineWidth: 1,
                 }
               ]}/>

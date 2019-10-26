@@ -82,6 +82,7 @@ export default class Query extends React.Component {
             {
               data: this.ts1,
               strokeStyle: '#2CEBBD',
+              fillStyle: 'rgba(188, 255, 239, 0.05)',
               lineWidth: 1,
             }
           ]}/>

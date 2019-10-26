@@ -57,7 +57,7 @@ export default class Components extends React.Component {
             responsive
             millisPerPixel={60}
             grid={{
-              fillStyle: 'rgba(0,0,0,0)',
+              fillStyle: 'transparent',
               strokeStyle: 'transparent'
             }}
             labels={{
@@ -69,6 +69,7 @@ export default class Components extends React.Component {
               {
                 data: this.ts1,
                 strokeStyle: '#EB932C',
+                fillStyle: 'rgba(255, 210, 156, 0.05)',
                 lineWidth: 1,
               }
             ]}/>

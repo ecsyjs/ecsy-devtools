@@ -103,6 +103,7 @@ export default class System extends React.Component {
                 {
                   data: this.ts1,
                   strokeStyle: '#2CC8EB',
+                  fillStyle: 'rgba(44, 200, 235, 0.1)',
                   lineWidth: 1,
                 }
               ]}/>

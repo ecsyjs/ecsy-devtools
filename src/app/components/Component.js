@@ -104,7 +104,7 @@ export default class Component extends React.Component {
           showGraphs && <SmoothieComponent
           responsive
           grid={{
-            fillStyle: 'rgba(0,0,0,0)',
+            fillStyle: 'transparent',
             strokeStyle: 'transparent'
           }}
           labels={{
@@ -117,12 +117,13 @@ export default class Component extends React.Component {
             {
               data: this.ts1,
               strokeStyle: '#EB932C',
-              lineWidth: 2,
+              fillStyle: 'rgba(235, 147, 44, 0.08)',
+              lineWidth: 1,
             },
             {
               data: this.ts2,
               strokeStyle: '#F1421C',
-              lineWidth: 2,
+              lineWidth: 1,
             }
           ]
         }/>

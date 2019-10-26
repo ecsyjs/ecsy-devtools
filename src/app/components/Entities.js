@@ -40,6 +40,7 @@ export default class Entities extends React.Component {
               {
                 data: this.ts1,
                 strokeStyle: { g: 255 },
+                fillStyle: 'rgba(136, 255, 136, 0.06)',
                 lineWidth: 1,
               }
             ]}/>
