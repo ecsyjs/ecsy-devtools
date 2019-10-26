@@ -56,14 +56,19 @@ export default class Components extends React.Component {
             <SmoothieComponent
             responsive
             millisPerPixel={60}
-            labels={ {precision: 0}}
-            grid={ {strokeStyle: 'transparent'} }
+            grid={{
+              fillStyle: 'rgba(0,0,0,0)',
+              strokeStyle: 'transparent'
+            }}
+            labels={{
+              fillStyle: '#FFD29C',
+              precision: 0
+            }}
             height={30}
             series={[
               {
                 data: this.ts1,
-                strokeStyle: { g: 255 },
-                fillStyle: { g: 255 },
+                strokeStyle: '#EB932C',
                 lineWidth: 1,
               }
             ]}/>

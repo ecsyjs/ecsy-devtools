@@ -8,17 +8,20 @@ export const SectionHeader = styled.div`
 export const SectionHeader2 = styled.div`
   background-color: #1E1E1E;
   padding: 15px;
+  padding-right: 0;
   display: flex;
+  align-items: start;
 `;
 
 export const TitleGroup = styled.div`
   display: flex;
   justify-content: space-between;
+  margin-bottom: 10px;
 `;
 
 export const Title = styled.span`
-  font-size: 1.4em;
-  color: #bbb;
+  font-size: 1.3em;
+  color: #ccc;
   font-weight: light;
 `;
 

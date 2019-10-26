@@ -4,9 +4,18 @@ import System from './System';
 import PieChart from 'react-minimal-pie-chart';
 import styled from 'styled-components';
 import SmoothieComponent, { TimeSeries } from 'react-smoothie';
-import {SectionHeader2, Title, TitleGroup } from './StyledComponents';
+import {Button, SectionHeader2, Title, TitleGroup } from './StyledComponents';
 import Bindings from '../ECSYBindings';
 import Events from '../Events';
+
+import {
+  FaStripeS,
+  FaPlay,
+  FaPause,
+  FaFastForward,
+  FaStepForward
+ } from 'react-icons/fa';
+
 
 const PieContainer = styled.div`
   width: 150px;
@@ -37,9 +46,14 @@ function getRandomColor() {
   return color;
 }
 
+
+function getGradientColor(i) {
+  return `hsl(${(54 - i * 20) % 255}, 100%, 57%)`
+}
+
 var colors = [];
-for (var i=0;i<100;i++) {
-  colors.push(getRandomColor());
+for (var i = 0; i < 100; i++) {
+  colors.push(getGradientColor(i));
 }
 
 
@@ -161,13 +175,18 @@ export default class Systems extends React.Component {
             <SmoothieComponent
               responsive
               height={30}
-              grid={ {strokeStyle: 'transparent'} }
+              grid={{
+                fillStyle: 'transparent',
+                strokeStyle: 'transparent'
+              }}
+              labels={{
+                fillStyle: '#A9F0FF'
+              }}
               millisPerPixel={60}
               series={[
                 {
                   data: ts1,
-                  strokeStyle: { g: 255 },
-                  fillStyle: { g: 255 },
+                  strokeStyle: '#2CC8EB',
                   lineWidth: 1,
                 }
               ]}/>
@@ -190,12 +209,12 @@ export default class Systems extends React.Component {
                   fontFamily: 'sans-serif',
                   fontSize: '5px'
                 }}
-                lineWidth={100}
+                lineWidth={15}
                 lengthAngle={360}
                 onClick={undefined}
                 onMouseOut={undefined}
                 onMouseOver={undefined}
-                paddingAngle={0}
+                paddingAngle={8}
                 radius={50}
                 ratio={1}
                 rounded={false}
@@ -203,11 +222,26 @@ export default class Systems extends React.Component {
               />
             </PieContainer>
           }
+
+        <div className="buttons">
+          <Button
+            onClick={state.playing ? this.stopSystems : this.playSystems}
+            title={state.playing ? 'Pause all systems' : 'Play all systems'}>
+            {
+              state.playing ? <FaPause></FaPause> : <FaPlay></FaPlay>
+            }
+          </Button>
+
+          <Button onClick={this.stepNextSystem} title="Step next system">
+            <FaStepForward></FaStepForward>
+          </Button>
+          <Button onClick={this.stepSystems} title="Step all systems">
+            <FaFastForward></FaFastForward>
+          </Button>
+        </div>
+
       </SectionHeader2>
-        <button onClick={state.playing ? this.stopSystems : this.playSystems}>{state.playing ? 'Stop' : 'Play'} systems</button>
-        <button onClick={this.stepSystems}>Step all systems</button>
-        <button onClick={this.stepNextSystem}>Step next system</button>
-        <input type="checkbox" id="show-queries" checked={state.showQueries} value={state.showQueries} onChange={this.onShowQueriesChanged}/><label htmlFor="show-queries">show queries
+        <label htmlFor="show-queries" id="showqueries"><input type="checkbox" id="show-queries" checked={state.showQueries} value={state.showQueries} onChange={this.onShowQueriesChanged}/>Show queries
         </label>
         <ul>
           {systemsHtml}

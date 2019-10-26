@@ -1,14 +1,35 @@
+/*@font-face {
+    font-family: OpenSans;
+    src: url("../../../assets/OpenSans-Regular.ttf");
+}
+*/
+
 body {
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: OpenSans, Arial, Helvetica, sans-serif;
   background-color: #292929;
   /*
   color: #AAA;
   background-color: #AAA;
   */
+  overflow-x: hidden;
+  margin: 0;
+}
+
+#header {
+  margin-bottom: 10px;
+  background: #1E1E1E;
+  padding: 10px 15px;
+  width: calc(100% - 50px);
 }
 
 label {
-  color: #AAA;
+  color: #999;
+  margin-right: 10px;
+  margin-left: 2px;
+  cursor: pointer;
+}
+label:hover {
+  color: #CCC;
 }
 
 h3 {
@@ -28,7 +49,8 @@ li.component:hover,
 li.systemQuery:hover,
 li.query:hover
  {
-  background-color: #464323;
+  /*background-color: #464323; */
+  background-color: #646032;
 }
 
 div.running {
@@ -57,7 +79,20 @@ div.systemData,
 li.component {
   padding: 5px 0px 5px 15px;
   border-left: 5px solid #161616;
-  margin-bottom: 3px;
+  margin-bottom: 4px;
+}
+
+li .logbutton {
+  padding-left: 10px;
+}
+
+div.system {
+  margin-bottom: 4px;
+}
+
+#showqueries {
+  display: block;
+  margin: 5px;
 }
 
 li.component {
@@ -83,6 +118,11 @@ ul {
 li .stats,
 li .value {
   color: #fff;
+}
+li .stats span{
+  width: 50px;
+  display: inline-block;
+  text-align: right;
 }
 
 /*
@@ -152,12 +192,12 @@ li.system .queries li {
 
 .SystemQueryName,
 .ComponentName {
-  color: #1B856B;
+  color: #27CEA5;
   background-color: #232A2C;
-  font-size: 0.9em;
-  padding: 5px;
-  margin-right: 4px;
-  border-radius: 6px;
+  font-size: 1em;
+  padding: 6px 8px;
+  margin-right: 6px;
+  border-radius: 5px;
 }
 
 .graph {
@@ -172,10 +212,11 @@ li.system .queries li {
   font-size: 1.4em;
   margin-left: 5px;
   margin-right: 5px;
+  min-width: 87px;
 }
 
 .systemQueryLi {
-  padding: 6px;
+  padding: 9px 6px;
   display: flex;
   justify-content: space-between;
 }
@@ -192,7 +233,7 @@ li.systemQueryLi.highlighted,
 li.component.highlighted,
 li.query.highlighted {
   border-left-color: #DBD166;
-  background-color: #706926;
+  background-color: #646032;
 }
 
 li.systemQueryLi:hover {
@@ -201,6 +242,7 @@ li.systemQueryLi:hover {
 
 ul.SystemsQueries {
   flex: 1;
+  padding: 5px;
 }
 
 .solo {
@@ -208,7 +250,8 @@ ul.SystemsQueries {
 }
 
 .poolIncreased {
-  color: #f00;
+  color: #F1421C;
+  margin-left: 1em;
 }
 
 .icon-spin {

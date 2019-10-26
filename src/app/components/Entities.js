@@ -26,15 +26,20 @@ export default class Entities extends React.Component {
           {
             showGraphs && <SmoothieComponent
             responsive
-            grid={ {strokeStyle: 'transparent'} }
-            labels={ {precision: 0}}
+            grid={{
+              strokeStyle: 'transparent',
+              fillStyle: 'transparent'
+            }}
+            labels={{
+              fillStyle: '#88ff88',
+              precision: 0
+            }}
             millisPerPixel={60}
             height={30}
             series={[
               {
                 data: this.ts1,
                 strokeStyle: { g: 255 },
-                fillStyle: { g: 255 },
                 lineWidth: 1,
               }
             ]}/>
