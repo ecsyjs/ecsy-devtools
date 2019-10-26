@@ -88,17 +88,22 @@ export default class System extends React.Component {
             </div>
             <div className="graph-controls">
             {
-              showGraphs &&             <SmoothieComponent
+              showGraphs && <SmoothieComponent
               responsive
-              grid={ {strokeStyle: 'transparent'} }
-              tooltip={true}
+              grid={{
+                fillStyle: 'transparent',
+                strokeStyle: 'transparent'
+              }}
+              labels={{
+                fillStyle: '#A9F0FF'
+              }}
               millisPerPixel={60}
               height={30}
               series={[
                 {
                   data: this.ts1,
-                  strokeStyle: { g: 255 },
-                  fillStyle: { g: 255 },
+                  strokeStyle: '#2CC8EB',
+                  fillStyle: 'rgba(44, 200, 235, 0.1)',
                   lineWidth: 1,
                 }
               ]}/>

@@ -44,7 +44,7 @@ export default class Query extends React.Component {
     const components = query.components.included.map(name => (
       <span class="ComponentName">{name}</span>
     )).concat(query.components.not.map(name => (
-      <span class="ComponentName">NOT({name})</span>
+      <span class="ComponentName">NOT {name}</span>
     )));
 
     this.ts1.append(new Date().getTime(), query.numEntities);
@@ -68,21 +68,27 @@ export default class Query extends React.Component {
         {
           showGraphs && <SmoothieComponent
           responsive
-          grid={ {strokeStyle: 'transparent'} }
+          grid={ {
+            fillStyle: 'transparent',
+            strokeStyle: 'transparent'
+          }}
           millisPerPixel={60}
-          labels={ {precision: 0}}
+          labels={ {
+            fillStyle: '#BCFFEF',
+            precision: 0
+          }}
           height={30}
           series={[
             {
               data: this.ts1,
-              strokeStyle: { g: 255 },
-              fillStyle: { g: 255 },
+              strokeStyle: '#2CEBBD',
+              fillStyle: 'rgba(188, 255, 239, 0.05)',
               lineWidth: 1,
             }
           ]}/>
         }
         </Half>
-        <Button onClick={this.logQuery} title="Log queries to the console">
+        <Button className="logbutton" onClick={this.logQuery} title="Log queries to the console">
           <FaArrowDown></FaArrowDown>
         </Button>
 

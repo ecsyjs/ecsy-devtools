@@ -19,17 +19,23 @@ const Columns = styled.div`
 `;
 
 const Code = styled.pre`
-  background-color: #111;
-  color: #EEE;
+  background-color: #1e1e1e;
+  color: #CCC;
+  padding: 0.5em;
 `;
 
 const ToggleSection = styled.span`
   color: ${(props) => props.disabled ? "#6B6B6B" : "#4AF4FF"};
   cursor: pointer;
   margin-right: 10px;
+  font-size: 15px;
 
   &:hover {
-    color: #81E3EA;
+    opacity: 0.7;
+  }
+
+  &:last-of-type {
+    margin-right: 2em;
   }
 `;
 
@@ -142,14 +148,13 @@ class App extends Component {
 
     return (
       <Container>
-        <div>
-          <ToggleSection onClick={this.toggleEntities} disabled={!state.showEntities}>ENTITIES</ToggleSection>
-          <ToggleSection onClick={this.toggleComponents} disabled={!state.showComponents}>COMPONENTS</ToggleSection>
-          <ToggleSection onClick={this.toggleQueries} disabled={!state.showQueries}>QUERIES</ToggleSection>
-          <ToggleSection onClick={this.toggleSystems} disabled={!state.showSystems}>SYSTEMS</ToggleSection>
-        </div>
-        <div>
-          <input type="checkbox" id="highlight" checked={this.state.highlight} value={this.state.highlight} onChange={this.onHighlightChanged}/><label htmlFor="highlight">Highlight components and queries connections</label>
+        <div id="header">
+          <ToggleSection title="Show Entities Panel" onClick={this.toggleEntities} disabled={!state.showEntities}>E</ToggleSection>
+          <ToggleSection title="Show Components Panel" onClick={this.toggleComponents} disabled={!state.showComponents}>C</ToggleSection>
+          <ToggleSection title="Show Systems Panel" onClick={this.toggleSystems} disabled={!state.showSystems}>S</ToggleSection>
+          <ToggleSection title="Show Queries Panel" onClick={this.toggleQueries} disabled={!state.showQueries}>Q</ToggleSection>
+
+          <input type="checkbox" id="highlight" checked={this.state.highlight} value={this.state.highlight} onChange={this.onHighlightChanged}/><label htmlFor="highlight">Highlight relationships</label>
           <input type="checkbox" id="show-debug" checked={this.state.debug} value={this.state.debug} onChange={this.onShowDebugChanged}/><label htmlFor="show-debug">Show debug</label>
           {
             false && this.state.debug && <JSONTree data={data} theme={theme} invertTheme={false} />

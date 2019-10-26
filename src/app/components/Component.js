@@ -9,24 +9,26 @@ import styled from 'styled-components';
 import { Half, Half2, Button } from './StyledComponents';
 
 import {
-  FaExclamationTriangle,
+  FaInfoCircle,
   FaArrowDown,
   FaCog,
-  FaExclamationCircle,
   FaPlus
  } from 'react-icons/fa';
 
 const WarningIcon = styled.span`
-  color: #ff0;
+  color: #F1421C;
   font-size: 1.2em;
+  margin-left: 0.5em;
 `;
 
 const PoolIncreased = styled.span`
-  color: #f00;
+  color: #F1421C;
 `;
 
 const Warn = styled.span`
- color: #ff0;
+  color: #F1421C;
+  margin-left: 0.5em;
+  vertical-align: middle;
 `;
 
 export default class Component extends React.Component {
@@ -89,11 +91,11 @@ export default class Component extends React.Component {
             notPool &&
             (
               <Warn>
-              <FaExclamationTriangle title="This component is not using automatic pooling"></FaExclamationTriangle>
+              <FaInfoCircle title="This component is not using automatic pooling"></FaInfoCircle>
               </Warn>
             )
           }
-            <span className={classesPoolIncreased}><FaExclamationCircle></FaExclamationCircle> Component pool increased</span>
+            <span className={classesPoolIncreased}> Pool increased!</span>
           </span>
           <span className="value">{value}</span>
         </Half2>
@@ -101,28 +103,33 @@ export default class Component extends React.Component {
         {
           showGraphs && <SmoothieComponent
           responsive
-          grid={ {strokeStyle: 'transparent'} }
-          labels={ {precision: 0}}
+          grid={{
+            fillStyle: 'transparent',
+            strokeStyle: 'transparent'
+          }}
+          labels={{
+            fillStyle: '#FFD29C',
+            precision: 0
+          }}
           millisPerPixel={60}
           height={30}
           series={[
             {
               data: this.ts1,
-              strokeStyle: { g: 255 },
-              fillStyle: 'rgba(0, 255, 0, 0.2)',
-              lineWidth: 2,
+              strokeStyle: '#EB932C',
+              fillStyle: 'rgba(235, 147, 44, 0.08)',
+              lineWidth: 1,
             },
             {
               data: this.ts2,
-              strokeStyle: { r: 255 },
-              fillStyle: 'rgba(255, 0, 0, 0.2)',
-              lineWidth: 2,
+              strokeStyle: '#F1421C',
+              lineWidth: 1,
             }
           ]
         }/>
         }
         </Half>
-        <Button onClick={this.logComponent} title="Log components to the console">
+        <Button className="logbutton" onClick={this.logComponent} title="Log components to the console">
           <FaArrowDown></FaArrowDown>
         </Button>
       </li>
