@@ -20,7 +20,7 @@ export default class System extends React.Component {
   constructor(props) {
     super(props);
 
-    this.ts1 = new TimeSeries({
+    this.timeSeries = new TimeSeries({
       resetBounds: true,
       resetBoundsInterval: 3000
     });
@@ -36,6 +36,18 @@ export default class System extends React.Component {
 
   step = () => {
     Bindings.stepSystem(this.props.system);
+  }
+
+  componentWillReceiveProps() {
+    let config = this.props.chartRange;
+    if (this.props.linkMinMax) {
+      this.refs.chart.smoothie.options.minValue = config.min;
+      this.refs.chart.smoothie.options.maxValue = config.max;
+    } else {
+      delete this.refs.chart.smoothie.options.minValue
+      delete this.refs.chart.smoothie.options.maxValue
+    }
+    this.forceUpdate();
   }
 
   toggleSolo = () => {
@@ -70,7 +82,7 @@ export default class System extends React.Component {
       running: data.lastExecutedSystem === system.name
     });
 
-    this.ts1.append(new Date().getTime(), system.executeTime);
+    this.timeSeries.append(new Date().getTime(), system.executeTime);
 
     return (
       <li
@@ -89,6 +101,7 @@ export default class System extends React.Component {
             <div className="graph-controls">
             {
               showGraphs && <SmoothieComponent
+              ref="chart"
               responsive
               grid={{
                 fillStyle: 'transparent',
@@ -101,7 +114,7 @@ export default class System extends React.Component {
               height={30}
               series={[
                 {
-                  data: this.ts1,
+                  data: this.timeSeries,
                   strokeStyle: '#2CC8EB',
                   fillStyle: 'rgba(44, 200, 235, 0.1)',
                   lineWidth: 1,

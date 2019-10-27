@@ -37,7 +37,7 @@ export default class Component extends React.Component {
 
     this.ts1 = new TimeSeries({
       resetBounds: true,
-      resetBoundsInterval: 3000
+      resetBoundsInterval: 300
     });
 
     this.ts2 = new TimeSeries({});
@@ -55,6 +55,18 @@ export default class Component extends React.Component {
 
   logComponent = () => {
     Bindings.logComponent(this.props.name);
+  }
+
+  componentWillReceiveProps() {
+    let config = this.props.chartRange;
+    if (this.props.linkMinMax) {
+      this.refs.chart.smoothie.options.minValue = config.min;
+      this.refs.chart.smoothie.options.maxValue = config.max;
+    } else {
+      delete this.refs.chart.smoothie.options.minValue
+      delete this.refs.chart.smoothie.options.maxValue
+    }
+    this.forceUpdate();
   }
 
   render() {
@@ -81,6 +93,9 @@ export default class Component extends React.Component {
       hide: !poolIncreased
     });
 
+    let config = this.props.graphConfig;
+    let opts = this.props.linkMinMax ? {minValue: config.globalMin, maxValue: config.globalMax} : {};
+
     return (
       <li className={classes}
         onMouseEnter={this.onEnter}
@@ -91,7 +106,7 @@ export default class Component extends React.Component {
             notPool &&
             (
               <Warn>
-              <FaInfoCircle title="This component is not using automatic pooling"></FaInfoCircle>
+                <FaInfoCircle title="This component is not using automatic pooling"></FaInfoCircle>
               </Warn>
             )
           }
@@ -102,7 +117,9 @@ export default class Component extends React.Component {
         <Half>
         {
           showGraphs && <SmoothieComponent
+          ref="chart"
           responsive
+          {...opts}
           grid={{
             fillStyle: 'transparent',
             strokeStyle: 'transparent'

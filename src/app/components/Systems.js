@@ -65,15 +65,34 @@ export const GraphsGroup = styled.div`
 
 
 export default class Systems extends React.Component {
+  linkMinMaxChanged = (e) => {
+    this.setState({linkMinMax: e.target.checked});
+  }
+
+  getOrCreateRef(id) {
+    if (!this.references.hasOwnProperty(id)) {
+        this.references[id] = React.createRef();
+    }
+    return this.references[id];
+  }
+
   constructor() {
     super();
     this.state = {
+      chartRange: {
+        min: 0,
+        max: 0
+      },
       playing: true,
       showQueries: false,
       data: [],
       stats: [],
+      linkMinMax: false,
       prevSystemsState: {}
     };
+
+    this.references = {};
+
 
     Events.on('soloPlaySystem', system => {
       let prevSystemsState = this.props.data.systems.map(s =>
@@ -125,6 +144,31 @@ export default class Systems extends React.Component {
     this.setState({showQueries: e.target.checked});
   }
 
+  componentWillReceiveProps() {
+    let minMax = Object.values(this.references).map(e => e.current.timeSeries).reduce((acum, current) => ({
+      min: Math.min(acum.min, current.minValue),
+      max: Math.max(acum.max, current.maxValue)
+    }),
+      {
+        min: Number.MAX_VALUE,
+        max: Number.MIN_VALUE
+      }
+    );
+
+    /*
+    let minMax = Object.values(this.references).map(e => e.current.refs.chart.smoothie).reduce((acum, current) => ({
+      min: Math.min(acum.min, current.currentVisMinValue),
+      max: Math.max(acum.max, current.currentVisMinValue + current.currentValueRange)
+    }),
+      {
+        min: Number.MAX_VALUE,
+        max: Number.MIN_VALUE
+      }
+    );
+*/
+    this.setState({chartRange: minMax});
+  }
+
   render() {
     const { systems, data, showGraphs, overComponents, overQueries, overSystem } = this.props;
     const state = this.state;
@@ -140,9 +184,13 @@ export default class Systems extends React.Component {
 
     let systemsHtml = systems.map(system => (
       <System
+        ref={this.getOrCreateRef(system.name)}
         key={system.name}
         system={system}
         data={data}
+        chartRange={this.state.chartRange}
+        graphConfig={this.props.graphConfig.systems}
+        linkMinMax={this.state.linkMinMax}
         totalSystemsTime={totalSystemsTime}
         showQueries={state.showQueries}
         showGraphs={showGraphs}
@@ -169,7 +217,15 @@ export default class Systems extends React.Component {
         <div>
           <TitleGroup>
             <Title>SYSTEMS ({systems.length})</Title> <Title>{totalSystemsTime.toFixed(2)}ms</Title>
+            {JSON.stringify(this.state.chartRange)}
           </TitleGroup>
+          <input
+              type="checkbox"
+              id="linkminmaxsystems"
+              checked={this.state.linkMinMax}
+              value={this.state.linkMinMax}
+              onChange={this.linkMinMaxChanged}/>
+              <label htmlFor="linkminmaxsystems">Link mix/max graphs</label>
           {
             showGraphs &&
             <SmoothieComponent

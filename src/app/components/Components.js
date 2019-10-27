@@ -16,9 +16,39 @@ export default class Components extends React.Component {
     this.state = {
       linkMinMax: false
     };
+
+    this.references = {};
   }
+
+  getOrCreateRef(id) {
+    if (!this.references.hasOwnProperty(id)) {
+        this.references[id] = React.createRef();
+    }
+    return this.references[id];
+  }
+
   linkMinMaxChanged = (e) => {
-    this.setState({linkMinMax: e.target.checked});
+    this.setState({
+      linkMinMax: e.target.checked,
+      chartRange: {
+        min: 0,
+        max: 0
+      }
+    });
+  }
+
+  componentWillReceiveProps() {
+    let minMax = Object.values(this.references).map(e => e.current.refs.chart.smoothie).reduce((acum, current) => ({
+      min: Math.min(acum.min, current.currentVisMinValue),
+      max: Math.max(acum.max, current.currentVisMinValue + current.currentValueRange)
+    }),
+      {
+        min: Number.MAX_VALUE,
+        max: Number.MIN_VALUE
+      }
+    );
+
+    this.setState({chartRange: minMax});
   }
 
   render() {
@@ -34,7 +64,18 @@ export default class Components extends React.Component {
     const numComponentInstances = data.components && Object.values(data.components).length > 0 ? Object.values(data.components).reduce((a, c) => a + c) : undefined;
 
     let componentsHtml = Object.keys(components).map(name => (
-      <Component key={name} name={name} value={components[name]} showGraphs={showGraphs} overQueries={overQueries} data={data}/>
+      <Component
+        graphConfig={this.props.graphConfig.components}
+        ref={this.getOrCreateRef(name)}
+        linkMinMax={this.state.linkMinMax}
+        key={name}
+        name={name}
+        value={components[name]}
+        showGraphs={showGraphs}
+        chartRange={this.state.chartRange}
+        overQueries={overQueries}
+        data={data}
+      />
     ));
     this.ts1.append(new Date().getTime(), numComponentInstances);
 
@@ -44,13 +85,13 @@ export default class Components extends React.Component {
           <TitleGroup>
             <Title>COMPONENTS ({numComponents})</Title> <Title>{numComponentInstances} instances</Title>
           </TitleGroup>
-            <input
+          <input
               type="checkbox"
               id="linkminmax"
               checked={this.state.linkMinMax}
               value={this.state.linkMinMax}
               onChange={this.linkMinMaxChanged}/>
-              <label htmlFor="linkminmax">linkminmax components and queries connections</label>
+              <label htmlFor="linkminmax">Link mix/max graphs</label>
           {
             showGraphs &&
             <SmoothieComponent

@@ -24,6 +24,18 @@ export default class Query extends React.Component {
     this.ts1 = new TimeSeries({});
   }
 
+  componentWillReceiveProps() {
+    let config = this.props.graphConfig;
+    if (this.props.linkMinMax) {
+      this.refs.chart.smoothie.options.minValue = config.globalMin;
+      this.refs.chart.smoothie.options.maxValue = config.globalMax;
+    } else {
+      delete this.refs.chart.smoothie.options.minValue
+      delete this.refs.chart.smoothie.options.maxValue
+    }
+    this.forceUpdate();
+  }
+
   onEnter = () => {
     Events.emit('componentQuery', [this.props.query]);
     this.setState({hover: true});
@@ -67,6 +79,7 @@ export default class Query extends React.Component {
         <Half>
         {
           showGraphs && <SmoothieComponent
+          ref="chart"
           responsive
           grid={ {
             fillStyle: 'transparent',

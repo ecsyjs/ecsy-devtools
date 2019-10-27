@@ -57,7 +57,21 @@ class App extends Component {
       overComponents: [],
       overQueries: [],
       overSystem: false,
-      highlight: true
+      highlight: true,
+      graphConfig: {
+        components: {
+          globalMin: Number.MAX_VALUE,
+          globalMax: Number.MIN_VALUE
+        },
+        systems: {
+          globalMin: Number.MAX_VALUE,
+          globalMax: Number.MIN_VALUE
+        },
+        queries: {
+          globalMin: Number.MAX_VALUE,
+          globalMax: Number.MIN_VALUE
+        },
+      }
     };
 
     Events.on('componentOver', detail => {
@@ -102,10 +116,60 @@ class App extends Component {
     });
 
     backgroundPageConnection.onMessage.addListener(m => {
-      // @todo Check message type!
-      this.setState({data: m.data});
+      let data = m.data;
+      let graphConfig = Object.assign({}, this.state.graphConfig);  // creating copy of state variable jasper
+
+      // Components
+      var minMax = Object.values(data.components).reduce((a, c) =>
+        ({
+          min: Math.min(a.min, c),
+          max: Math.max(a.max, c)
+        }),
+        {
+          min: Number.MAX_VALUE,
+          max: Number.MIN_VALUE
+        }
+      );
+
+      graphConfig.components.globalMin = Math.min(graphConfig.components.globalMin, minMax.min);
+      graphConfig.components.globalMax = Math.max(graphConfig.components.globalMax, minMax.max);
+
+      // Systems
+      let minMaxSystems = data.systems.reduce((acum, actual) => ({
+        min: Math.min(acum.min, actual.executeTime),
+        max: Math.max(acum.max, actual.executeTime)
+      }),
+      {
+        min: Number.MAX_VALUE,
+        max: Number.MIN_VALUE
+      });
+
+      graphConfig.systems.globalMin = Math.min(graphConfig.systems.globalMin, minMaxSystems.min);
+      graphConfig.systems.globalMax = Math.max(graphConfig.systems.globalMax, minMaxSystems.max);
+
+      // Queries
+      let minMaxQueries = data.queries.reduce((acum, actual) => ({
+        min: Math.min(acum.min, actual.numEntities),
+        max: Math.max(acum.max, actual.numEntities)
+      }),
+      {
+        min: Number.MAX_VALUE,
+        max: Number.MIN_VALUE
+      });
+
+      graphConfig.queries.globalMin = Math.min(graphConfig.queries.globalMin, minMaxQueries.min);
+      graphConfig.queries.globalMax = Math.max(graphConfig.queries.globalMax, minMaxQueries.max);
+
+      this.setState({
+        data: m.data,
+        graphConfig: graphConfig
+      });
     });
 
+  }
+
+  dumpData = e => {
+    Bindings.logData(this.state.data);
   }
 
   onShowDebugChanged = e => {
@@ -160,26 +224,46 @@ class App extends Component {
             false && this.state.debug && <JSONTree data={data} theme={theme} invertTheme={false} />
           }
           {
-            this.state.debug && <Code>{JSON.stringify(data, null, 2)}</Code>
+            this.state.debug && <Code><button onClick={this.dumpData}>dump to console (and assign it to $data)</button><br/>{JSON.stringify(data, null, 2)}</Code>
           }
           <input type="checkbox" id="show-graphs" checked={this.state.showGraphs} value={this.state.showGraphs} onChange={this.onShowGraphChanged}/><label htmlFor="show-graphs">Show graphs</label>
         </div>
         <Columns>
           <div className="column">
             {
-              state.showEntities && <Entities data={data} showGraphs={this.state.showGraphs}/>
+              state.showEntities &&
+              <Entities
+                data={data}
+                showGraphs={this.state.showGraphs}
+              />
             }
             {
-              state.showComponents && <Components components={data.components} data={data} overQueries={this.state.overQueries} showGraphs={this.state.showGraphs}/>
+              state.showComponents &&
+              <Components
+                graphConfig={this.state.graphConfig}
+                components={data.components}
+                data={data}
+                overQueries={this.state.overQueries}
+                showGraphs={this.state.showGraphs}
+              />
             }
             {
-              state.showQueries && <Queries queries={data.queries} data={data} overQueries={this.state.overQueries} overComponents={this.state.overComponents} showGraphs={this.state.showGraphs}/>
+              state.showQueries &&
+              <Queries
+                graphConfig={this.state.graphConfig}
+                queries={data.queries}
+                data={data}
+                overQueries={this.state.overQueries}
+                overComponents={this.state.overComponents}
+                showGraphs={this.state.showGraphs}
+              />
             }
           </div>
           <div className="column">
             {
               state.showSystems && <Systems systems={data.systems} data={data}
               showGraphs={this.state.showGraphs}
+              graphConfig={this.state.graphConfig}
               overQueries={this.state.overQueries}
               overSystem={this.state.overSystem}
               overComponents={this.state.overComponents} />

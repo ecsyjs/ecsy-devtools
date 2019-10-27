@@ -208,6 +208,7 @@ li.system .queries li {
   display: flex;
   fill: #4AF4FF;
   color: #4AF4FF;
+  user-select: none;
 
   font-size: 1.4em;
   margin-left: 5px;

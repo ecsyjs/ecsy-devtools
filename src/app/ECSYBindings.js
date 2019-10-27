@@ -31,6 +31,14 @@ class Bindings {
     `;
     globalBrowser.devtools.inspectedWindow.eval(string);
   }
+  logData(data) {
+    var world = 'window.__ECSY_DEVTOOLS.worlds[0]';
+    var string = `
+      window.$data = JSON.parse('${JSON.stringify(data)}');
+      console.log("Data: ", window.$data);
+    `;
+    globalBrowser.devtools.inspectedWindow.eval(string);
+  }
   logQuery(query) {
     var world = 'window.__ECSY_DEVTOOLS.worlds[0]';
     var string = `
