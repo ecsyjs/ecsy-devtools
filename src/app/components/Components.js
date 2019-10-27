@@ -8,7 +8,7 @@ export default class Components extends React.Component {
 
   constructor(props) {
     super(props);
-    this.ts1 = new TimeSeries({
+    this.timeSeries = new TimeSeries({
       resetBounds: true,
       resetBoundsInterval: 3000
     });
@@ -38,9 +38,9 @@ export default class Components extends React.Component {
   }
 
   componentWillReceiveProps() {
-    let minMax = Object.values(this.references).map(e => e.current.refs.chart.smoothie).reduce((acum, current) => ({
-      min: Math.min(acum.min, current.currentVisMinValue),
-      max: Math.max(acum.max, current.currentVisMinValue + current.currentValueRange)
+    let minMax = Object.values(this.references).map(e => e.current.timeSeries[0]).reduce((acum, current) => ({
+      min: Math.min(acum.min, current.minValue),
+      max: Math.max(acum.max, current.maxValue)
     }),
       {
         min: Number.MAX_VALUE,
@@ -77,7 +77,7 @@ export default class Components extends React.Component {
         data={data}
       />
     ));
-    this.ts1.append(new Date().getTime(), numComponentInstances);
+    this.timeSeries.append(new Date().getTime(), numComponentInstances);
 
     return (
       <div>
@@ -108,7 +108,7 @@ export default class Components extends React.Component {
             height={30}
             series={[
               {
-                data: this.ts1,
+                data: this.timeSeries,
                 strokeStyle: '#EB932C',
                 fillStyle: 'rgba(255, 210, 156, 0.05)',
                 lineWidth: 1,

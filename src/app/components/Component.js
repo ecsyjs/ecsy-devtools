@@ -35,12 +35,13 @@ export default class Component extends React.Component {
   constructor(props) {
     super(props);
 
-    this.ts1 = new TimeSeries({
-      resetBounds: true,
-      resetBoundsInterval: 300
-    });
-
-    this.ts2 = new TimeSeries({});
+    this.timeSeries = [
+      new TimeSeries({
+        resetBounds: true,
+        resetBoundsInterval: 300
+      }),
+      new TimeSeries({})
+    ];
 
     this.prevPoolSize = 0;
   }
@@ -81,8 +82,8 @@ export default class Component extends React.Component {
     const notPool = pool && pool.valid !== true;
     const poolSize = pool ? pool.size : 0;
 
-    this.ts1.append(new Date().getTime(), value);
-    this.ts2.append(new Date().getTime(), poolSize);
+    this.timeSeries[0].append(new Date().getTime(), value);
+    this.timeSeries[1].append(new Date().getTime(), poolSize);
 
     const poolIncreased = poolSize !== this.prevPoolSize;
     this.prevPoolSize = poolSize;
@@ -132,13 +133,13 @@ export default class Component extends React.Component {
           height={30}
           series={[
             {
-              data: this.ts1,
+              data: this.timeSeries[0],
               strokeStyle: '#EB932C',
               fillStyle: 'rgba(235, 147, 44, 0.08)',
               lineWidth: 1,
             },
             {
-              data: this.ts2,
+              data: this.timeSeries[1],
               strokeStyle: '#F1421C',
               lineWidth: 1,
             }

@@ -142,17 +142,6 @@ export default class Systems extends React.Component {
       }
     );
 
-    /*
-    let minMax = Object.values(this.references).map(e => e.current.refs.chart.smoothie).reduce((acum, current) => ({
-      min: Math.min(acum.min, current.currentVisMinValue),
-      max: Math.max(acum.max, current.currentVisMinValue + current.currentValueRange)
-    }),
-      {
-        min: Number.MAX_VALUE,
-        max: Number.MIN_VALUE
-      }
-    );
-*/
     this.setState({chartRange: minMax});
   }
 
@@ -168,24 +157,6 @@ export default class Systems extends React.Component {
 
     // @todo Move to a function or property
     let totalSystemsTime = systems.reduce((acum, s) => acum + s.executeTime, 0);
-
-    let systemsHtml = systems.map(system => (
-      <System
-        ref={this.getOrCreateRef(system.name)}
-        key={system.name}
-        system={system}
-        data={data}
-        chartRange={this.state.chartRange}
-        graphConfig={this.props.graphConfig.systems}
-        linkMinMax={this.state.linkMinMax}
-        totalSystemsTime={totalSystemsTime}
-        showQueries={state.showQueries}
-        showGraphs={showGraphs}
-        overQueries={overQueries}
-        overSystem={overSystem}
-        overComponents={overComponents}
-      />
-    ));
 
     let chartData = systems.map((s, i) => {
       return {
@@ -287,7 +258,26 @@ export default class Systems extends React.Component {
         <label htmlFor="show-queries" id="showqueries"><input type="checkbox" id="show-queries" checked={state.showQueries} value={state.showQueries} onChange={this.onShowQueriesChanged}/>Show queries
         </label>
         <ul>
-          {systemsHtml}
+          {
+            systems.map(system => (
+              <System
+                graphConfig={this.props.graphConfig.systems}
+                ref={this.getOrCreateRef(system.name)}
+                key={system.name}
+                system={system}
+                data={data}
+                chartRange={this.state.chartRange}
+                graphConfig={this.props.graphConfig.systems}
+                linkMinMax={this.state.linkMinMax}
+                totalSystemsTime={totalSystemsTime}
+                showQueries={state.showQueries}
+                showGraphs={showGraphs}
+                overQueries={overQueries}
+                overSystem={overSystem}
+                overComponents={overComponents}
+              />
+            ))
+          }
         </ul>
       </div>
     );

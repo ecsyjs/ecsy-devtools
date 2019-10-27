@@ -21,14 +21,14 @@ export default class Query extends React.Component {
     this.state = {
       hover: false
     }
-    this.ts1 = new TimeSeries({});
+    this.timeSeries = new TimeSeries({});
   }
 
   componentWillReceiveProps() {
-    let config = this.props.graphConfig;
+    let config = this.props.chartRange;
     if (this.props.linkMinMax) {
-      this.refs.chart.smoothie.options.minValue = config.globalMin;
-      this.refs.chart.smoothie.options.maxValue = config.globalMax;
+      this.refs.chart.smoothie.options.minValue = config.min;
+      this.refs.chart.smoothie.options.maxValue = config.max;
     } else {
       delete this.refs.chart.smoothie.options.minValue
       delete this.refs.chart.smoothie.options.maxValue
@@ -59,7 +59,7 @@ export default class Query extends React.Component {
       <span class="ComponentName">NOT {name}</span>
     )));
 
-    this.ts1.append(new Date().getTime(), query.numEntities);
+    this.timeSeries.append(new Date().getTime(), query.numEntities);
 
     const classes = classNames({
       query: true,
@@ -93,7 +93,7 @@ export default class Query extends React.Component {
           height={30}
           series={[
             {
-              data: this.ts1,
+              data: this.timeSeries,
               strokeStyle: '#2CEBBD',
               fillStyle: 'rgba(188, 255, 239, 0.05)',
               lineWidth: 1,
