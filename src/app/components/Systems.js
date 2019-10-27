@@ -23,20 +23,6 @@ const PieContainer = styled.div`
 `;
 
 
-const ts1 = new TimeSeries({});
-const ts2 = new TimeSeries({
-  resetBounds: true,
-  resetBoundsInterval: 3000,
-});
-/*
-setInterval(function() {
-  var time = new Date().getTime();
-
-  ts1.append(time, Math.random());
-  ts2.append(time, Math.random());
-}, 500);
-*/
-
 function getRandomColor() {
   var letters = '0123456789ABCDEF';
   var color = '#';
@@ -93,6 +79,7 @@ export default class Systems extends React.Component {
 
     this.references = {};
 
+    this.timeSeries = new TimeSeries({});
 
     Events.on('soloPlaySystem', system => {
       let prevSystemsState = this.props.data.systems.map(s =>
@@ -209,7 +196,7 @@ export default class Systems extends React.Component {
     });
 
     var t = new Date().getTime();
-    ts1.append(t, totalSystemsTime);
+    this.timeSeries.append(t, totalSystemsTime);
 
     return (
       <div>
@@ -217,7 +204,6 @@ export default class Systems extends React.Component {
         <div>
           <TitleGroup>
             <Title>SYSTEMS ({systems.length})</Title> <Title>{totalSystemsTime.toFixed(2)}ms</Title>
-            {JSON.stringify(this.state.chartRange)}
           </TitleGroup>
           <input
               type="checkbox"
@@ -241,7 +227,7 @@ export default class Systems extends React.Component {
               millisPerPixel={60}
               series={[
                 {
-                  data: ts1,
+                  data: this.timeSeries,
                   strokeStyle: '#2CC8EB',
                   fillStyle: 'rgba(74, 244, 255, 0.1)',
                   lineWidth: 1,
