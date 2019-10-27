@@ -95,7 +95,7 @@ export default class System extends React.Component {
               <span className="name">{system.name}</span>
               <span className="stats">
                 <span>{system.executeTime.toFixed(2)}ms</span>&nbsp;
-                <span>{percTime}%</span>
+                <span>{parseInt(percTime)}%</span>
               </span>
             </div>
             <div className="graph-controls">
