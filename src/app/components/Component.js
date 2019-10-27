@@ -67,11 +67,14 @@ export default class Component extends React.Component {
       delete this.refs.chart.smoothie.options.minValue
       delete this.refs.chart.smoothie.options.maxValue
     }
+
+    this.refs.chart.smoothie.seriesSet[1].options.strokeStyle = this.props.showPoolGraph ? '#F1421C' : 'none';
+
     this.forceUpdate();
   }
 
   render() {
-    const { data, value, name, showGraphs, overQueries } = this.props;
+    const { showPoolGraph, data, value, name, showGraphs, overQueries } = this.props;
 
     const classes = classNames({
       component: true,
@@ -136,15 +139,15 @@ export default class Component extends React.Component {
               data: this.timeSeries[0],
               strokeStyle: '#EB932C',
               fillStyle: 'rgba(235, 147, 44, 0.08)',
-              lineWidth: 1,
+              lineWidth: 1
             },
             {
               data: this.timeSeries[1],
               strokeStyle: '#F1421C',
-              lineWidth: 1,
+              lineWidth: 1
             }
-          ]
-        }/>
+          ]}
+          />
         }
         </Half>
         <Button className="logbutton" onClick={this.logComponent} title="Log components to the console">

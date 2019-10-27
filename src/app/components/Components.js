@@ -14,7 +14,8 @@ export default class Components extends React.Component {
     });
 
     this.state = {
-      linkMinMax: false
+      linkMinMax: false,
+      showPoolGraph: false
     };
 
     this.references = {};
@@ -25,6 +26,12 @@ export default class Components extends React.Component {
         this.references[id] = React.createRef();
     }
     return this.references[id];
+  }
+
+  showPoolGraphChanged = (e) => {
+    this.setState({
+      showPoolGraph: e.target.checked
+    });
   }
 
   linkMinMaxChanged = (e) => {
@@ -38,7 +45,10 @@ export default class Components extends React.Component {
   }
 
   componentWillReceiveProps() {
-    let minMax = Object.values(this.references).map(e => e.current.timeSeries[0]).reduce((acum, current) => ({
+    let timeSeries = [];
+    Object.values(this.references).forEach(e => timeSeries = timeSeries.concat(e.current.timeSeries));
+
+    let minMax = timeSeries.reduce((acum, current) => ({
       min: Math.min(acum.min, current.minValue),
       max: Math.max(acum.max, current.maxValue)
     }),
@@ -67,6 +77,7 @@ export default class Components extends React.Component {
       <Component
         graphConfig={this.props.graphConfig.components}
         ref={this.getOrCreateRef(name)}
+        showPoolGraph={this.state.showPoolGraph}
         linkMinMax={this.state.linkMinMax}
         key={name}
         name={name}
@@ -86,12 +97,19 @@ export default class Components extends React.Component {
             <Title>COMPONENTS ({numComponents})</Title> <Title>{numComponentInstances} instances</Title>
           </TitleGroup>
           <input
-              type="checkbox"
-              id="linkminmax"
-              checked={this.state.linkMinMax}
-              value={this.state.linkMinMax}
-              onChange={this.linkMinMaxChanged}/>
-              <label htmlFor="linkminmax">Link mix/max graphs</label>
+            type="checkbox"
+            id="linkminmax"
+            checked={this.state.linkMinMax}
+            value={this.state.linkMinMax}
+            onChange={this.linkMinMaxChanged}/>
+            <label htmlFor="linkminmax">Link mix/max graphs</label>
+          <input
+            type="checkbox"
+            id="showPoolGraph"
+            checked={this.state.showPoolGraph}
+            value={this.state.showPoolGraph}
+            onChange={this.showPoolGraphChanged}/>
+            <label htmlFor="showPoolGraph">show pool graph</label>
           {
             showGraphs &&
             <SmoothieComponent
