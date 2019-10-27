@@ -157,6 +157,7 @@ export default class Systems extends React.Component {
 
     // @todo Move to a function or property
     let totalSystemsTime = systems.reduce((acum, s) => acum + s.executeTime, 0);
+    let maxSystemTime = systems.reduce((acum, s) => Math.max(acum, s.executeTime), 0);
 
     let chartData = systems.map((s, i) => {
       return {
@@ -270,6 +271,7 @@ export default class Systems extends React.Component {
                 graphConfig={this.props.graphConfig.systems}
                 linkMinMax={this.state.linkMinMax}
                 totalSystemsTime={totalSystemsTime}
+                maxSystemTime={maxSystemTime}
                 showQueries={state.showQueries}
                 showGraphs={showGraphs}
                 overQueries={overQueries}
