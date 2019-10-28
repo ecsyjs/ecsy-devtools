@@ -103,10 +103,10 @@ export default class System extends React.Component {
 
 
   render() {
-    const { playingSystems, system, data, showGraphs, overQueries, overComponents, overSystem } = this.props
+    const { allSystemsStopped, system, data, showGraphs, overQueries, overComponents, overSystem } = this.props
     const percTime = this.props.totalSystemsTime > 0 ? system.executeTime / this.props.totalSystemsTime * 100 : 0;
 
-    const running = !playingSystems && data.nextSystemToExecute === system.name;
+    const running = allSystemsStopped && data.nextSystemToExecute === system.name;
 
     const classes = classNames({
       system: true,

@@ -179,10 +179,13 @@ export default class Systems extends React.Component {
     var t = new Date().getTime();
     this.timeSeries.append(t, totalSystemsTime);
 
+    let allSystemsStopped = systems.reduce((acum, s) => acum && !s.enabled);
+
     return (
       <div>
       <SectionHeader2>
         <div>
+        <h1>{allSystemsStopped ? 'true': 'false'}</h1>
           <TitleGroup>
             <Title>SYSTEMS ({systems.length})</Title> <Title>{totalSystemsTime.toFixed(2)}ms</Title>
           </TitleGroup>
@@ -272,7 +275,7 @@ export default class Systems extends React.Component {
           {
             systems.map(system => (
               <System
-                playingSystems={this.state.playing}
+                allSystemsStopped={allSystemsStopped}
                 graphConfig={this.props.graphConfig.systems}
                 ref={this.getOrCreateRef(system.name)}
                 key={system.name}
