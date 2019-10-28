@@ -101,20 +101,20 @@ export default class Components extends React.Component {
             <Title>COMPONENTS ({numComponents})</Title> <Title>{numComponentInstances} instances</Title>
           </TitleGroup>
 
-          <input
-            type="checkbox"
-            id="linkminmax"
-            checked={this.state.linkMinMax}
-            value={this.state.linkMinMax}
-            onChange={this.linkMinMaxChanged}/>
-            <label htmlFor="linkminmax">Link mix/max graphs</label>
-          <input
-            type="checkbox"
-            id="showPoolGraph"
-            checked={this.state.showPoolGraph}
-            value={this.state.showPoolGraph}
-            onChange={this.showPoolGraphChanged}/>
-            <label htmlFor="showPoolGraph">show pool graph</label>
+          { showGraphs &&
+            <Checkbox
+              checked={this.state.linkMinMax}
+              value={this.state.linkMinMax}
+              description="Link mix/max graphs"
+              onChange={this.linkMinMaxChanged}/>
+          }
+          { showGraphs &&
+            <Checkbox
+              checked={this.state.showPoolGraph}
+              value={this.state.showPoolGraph}
+              description="show pool graph"
+              onChange={this.showPoolGraphChanged}/>
+          }
           {
             showGraphs &&
             <SmoothieComponent

@@ -67,11 +67,13 @@ export default class Queries extends React.Component {
           <TitleGroup>
             <Title>QUERIES ({queries.length})</Title>
           </TitleGroup>
-          <Checkbox
-            checked={this.state.linkMinMax}
-            value={this.state.linkMinMax}
-            description="Link mix/max graphs"
-            onChange={this.linkMinMaxChanged}/>
+          { showGraphs &&
+            <Checkbox
+              checked={this.state.linkMinMax}
+              value={this.state.linkMinMax}
+              description="Link mix/max graphs"
+              onChange={this.linkMinMaxChanged}/>
+          }
         </SectionHeader>
         <ul>{queriesHtml}</ul>
       </div>

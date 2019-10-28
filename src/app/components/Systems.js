@@ -7,6 +7,7 @@ import SmoothieComponent, { TimeSeries } from 'react-smoothie';
 import {Button, SectionHeader2, Title, TitleGroup } from './StyledComponents';
 import Bindings from '../ECSYBindings';
 import Events from '../Events';
+import Checkbox from './Checkbox';
 
 import {
   FaStripeS,
@@ -179,13 +180,14 @@ export default class Systems extends React.Component {
           <TitleGroup>
             <Title>SYSTEMS ({systems.length})</Title> <Title>{totalSystemsTime.toFixed(2)}ms</Title>
           </TitleGroup>
-          <input
-              type="checkbox"
-              id="linkminmaxsystems"
+
+          { showGraphs &&
+            <Checkbox
               checked={this.state.linkMinMax}
               value={this.state.linkMinMax}
+              description="Link mix/max graphs"
               onChange={this.linkMinMaxChanged}/>
-              <label htmlFor="linkminmaxsystems">Link mix/max graphs</label>
+          }
           {
             showGraphs &&
             <SmoothieComponent
