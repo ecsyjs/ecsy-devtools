@@ -88,7 +88,7 @@ if( !window.__ECSY_DEVTOOLS_INJECTED ) {
 		console.log.apply( console, args );
 	}
 
-	log( 'ECSYInspector injected', document.location.href );
+	// log( 'ECSYInspector injected', document.location.href );
 
 	window.__ECSY_DEVTOOLS_INJECTED = true;
 }
