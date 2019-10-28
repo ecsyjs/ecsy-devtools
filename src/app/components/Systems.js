@@ -10,7 +10,6 @@ import Events from '../Events';
 import Checkbox from './Checkbox';
 
 import {
-  FaStripeS,
   FaPlay,
   FaPause,
   FaFastForward,
@@ -23,17 +22,6 @@ const PieContainer = styled.div`
   padding-left: 20px;
 `;
 
-
-function getRandomColor() {
-  var letters = '0123456789ABCDEF';
-  var color = '#';
-  for (var i = 0; i < 6; i++) {
-    color += letters[Math.floor(Math.random() * 16)];
-  }
-  return color;
-}
-
-
 function getGradientColor(i) {
   return `hsl(${(54 - i * 20) % 255}, 100%, 57%)`
 }
@@ -43,13 +31,11 @@ for (var i = 0; i < 100; i++) {
   colors.push(getGradientColor(i));
 }
 
-
 export const GraphsGroup = styled.div`
   font-size: 1.4em;
   color: #bbb;
   font-weight: light;
 `;
-
 
 export default class Systems extends React.Component {
   linkMinMaxChanged = (e) => {

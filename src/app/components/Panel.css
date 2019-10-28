@@ -53,8 +53,18 @@ li.query:hover
   background-color: #646032;
 }
 
-div.running {
+div.running,
+.system.running li {
   background-color: #ff9;
+}
+
+div.system.running .systemData {
+  border-left-color: #DBD166;
+  background-color: #646032;
+}
+
+.system.running .name {
+  color: #fff;
 }
 
 li {
