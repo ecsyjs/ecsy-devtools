@@ -185,7 +185,6 @@ export default class Systems extends React.Component {
       <div>
       <SectionHeader2>
         <div>
-        <h1>{allSystemsStopped ? 'true': 'false'}</h1>
           <TitleGroup>
             <Title>SYSTEMS ({systems.length})</Title> <Title>{totalSystemsTime.toFixed(2)}ms</Title>
           </TitleGroup>
@@ -273,8 +272,9 @@ export default class Systems extends React.Component {
         </label>
         <ul>
           {
-            systems.map(system => (
+            systems.map((system, i) => (
               <System
+                color={colors[i]}
                 allSystemsStopped={allSystemsStopped}
                 graphConfig={this.props.graphConfig.systems}
                 ref={this.getOrCreateRef(system.name)}

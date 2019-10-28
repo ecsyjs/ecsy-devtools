@@ -103,7 +103,7 @@ export default class System extends React.Component {
 
 
   render() {
-    const { allSystemsStopped, system, data, showGraphs, overQueries, overComponents, overSystem } = this.props
+    const { color, allSystemsStopped, system, data, showGraphs, overQueries, overComponents, overSystem } = this.props
     const percTime = this.props.totalSystemsTime > 0 ? system.executeTime / this.props.totalSystemsTime * 100 : 0;
 
     const running = allSystemsStopped && data.nextSystemToExecute === system.name;
@@ -126,7 +126,7 @@ export default class System extends React.Component {
         onMouseLeave={this.onLeave}
       >
         <div className={classes}>
-          <div className="systemData">
+          <div className="systemData" style={{borderLeft: `5px solid ${color}`}}>
             {
               running && <div className="arrow"></div>
             }
