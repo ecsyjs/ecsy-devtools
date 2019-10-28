@@ -58,8 +58,9 @@ export default class System extends React.Component {
     };
   }
 
-  toggle = () => {
+  togglePlay = () => {
     Bindings.toggleSystem(this.props.system);
+    Events.emit('togglePlaySystem', this.props.system);
   }
 
   step = () => {
@@ -156,7 +157,7 @@ export default class System extends React.Component {
             }
               <div className="buttons">
               <Button
-                  onClick={this.toggle}
+                  onClick={this.togglePlay}
                   title={system.enabled ? 'Pause system' : 'Play system'}>
                   {
                     system.enabled ? <FaPause></FaPause> : <FaPlay></FaPlay>

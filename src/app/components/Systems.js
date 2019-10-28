@@ -68,6 +68,26 @@ export default class Systems extends React.Component {
 
     this.timeSeries = new TimeSeries({});
 
+    Events.on('togglePlaySystem', system => {
+      var system = this.props.data.systems.find(s => s.name === system.name);
+      system.enabled = !system.enabled;
+
+/*
+      let playingAny = this.props.data.systems.reduce( (acum, current) => {
+        return acum.enabled || current.enabled;
+      });
+*/
+
+      let pausedAny = this.props.data.systems.reduce( (acum, current) => {
+        return acum || !current.enabled
+      }, false);
+
+      this.setState({
+        playing: !pausedAny,
+        prevSystemsState: {}
+      });
+    });
+
     Events.on('soloPlaySystem', system => {
       let prevSystemsState = this.props.data.systems.map(s =>
         ({
