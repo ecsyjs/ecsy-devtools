@@ -66,9 +66,9 @@ function setIconAndPopup(type, tabId) {
   chrome.browserAction.setIcon({
     tabId: tabId,
     path: {
-      '32': '../../assets/icon_128_' + type + '.png',
-      '48': '../../assets/icon_128_' + type + '.png',
-      '64': '../../assets/icon_128_' + type + '.png',
+      '32': '../../assets/icon_32_' + type + '.png',
+      '48': '../../assets/icon_48_' + type + '.png',
+      '64': '../../assets/icon_64_' + type + '.png',
       '128': '../../assets/icon_128_' + type + '.png'
     },
   });

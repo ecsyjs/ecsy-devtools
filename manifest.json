@@ -8,12 +8,18 @@
   "version_name": "0.1",
 
   "icons": {
+    "32": "assets/icon_32_detected.png",
+    "48": "assets/icon_48_detected.png",
+    "64": "assets/icon_64_detected.png",
     "128": "assets/icon_128_detected.png"
   },
 
   "browser_action" : {
     "default_title": "ECSY",
     "default_icon": {
+      "32": "assets/icon_32_disabled.png",
+      "48": "assets/icon_48_disabled.png",
+      "64": "assets/icon_64_disabled.png",
       "128": "assets/icon_128_disabled.png"
     },
     "default_popup": "src/extension/popups/disabled.html"
