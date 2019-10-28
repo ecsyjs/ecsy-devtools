@@ -301,3 +301,24 @@ ul.SystemsQueries {
   opacity: 0;
   pointer-events:none;
 }
+
+.arrow {
+	position: relative;
+  background: #DBD166;
+  margin-left: -15px;
+  margin-right: 30px;
+}
+.arrow:after {
+	left: 100%;
+	top: 50%;
+	border: solid transparent;
+	content: " ";
+	height: 0;
+	width: 0;
+	position: absolute;
+	pointer-events: none;
+	border-color: rgba(136, 183, 213, 0);
+	border-left-color: #DBD166;
+	border-width: 20px;
+	margin-top: -20px;
+}

@@ -106,10 +106,12 @@ export default class System extends React.Component {
     const { playingSystems, system, data, showGraphs, overQueries, overComponents, overSystem } = this.props
     const percTime = this.props.totalSystemsTime > 0 ? system.executeTime / this.props.totalSystemsTime * 100 : 0;
 
+    const running = !playingSystems && data.nextSystemToExecute === system.name;
+
     const classes = classNames({
       system: true,
       disabled: !system.enabled,
-      running: !playingSystems && data.nextSystemToExecute === system.name
+      running: running
     });
 
     this.timeSeries.append(new Date().getTime(), system.executeTime);
@@ -125,6 +127,9 @@ export default class System extends React.Component {
       >
         <div className={classes}>
           <div className="systemData">
+            {
+              running && <div className="arrow"></div>
+            }
             <div className="name-stats">
               <span className="name">{system.name}</span>
               <span className="stats">
