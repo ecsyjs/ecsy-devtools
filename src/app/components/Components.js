@@ -112,7 +112,7 @@ export default class Components extends React.Component {
             <Checkbox
               checked={this.state.showPoolGraph}
               value={this.state.showPoolGraph}
-              description="show pool graph"
+              description="Show pool graph"
               onChange={this.showPoolGraphChanged}/>
           }
           {

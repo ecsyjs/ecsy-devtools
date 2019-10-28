@@ -160,6 +160,10 @@ class App extends Component {
       graphConfig.queries.globalMin = Math.min(graphConfig.queries.globalMin, minMaxQueries.min);
       graphConfig.queries.globalMax = Math.max(graphConfig.queries.globalMax, minMaxQueries.max);
 
+      // Compute prev system to be executed
+      let lastExecutedIndex = data.systems.indexOf(data.systems.find(s => s.name === data.lastExecutedSystem));
+      data.nextSystemToExecute = data.systems[(lastExecutedIndex + 1) % data.systems.length].name;
+
       this.setState({
         data: m.data,
         graphConfig: graphConfig

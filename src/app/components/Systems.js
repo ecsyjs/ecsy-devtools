@@ -272,6 +272,7 @@ export default class Systems extends React.Component {
           {
             systems.map(system => (
               <System
+                playingSystems={this.state.playing}
                 graphConfig={this.props.graphConfig.systems}
                 ref={this.getOrCreateRef(system.name)}
                 key={system.name}
