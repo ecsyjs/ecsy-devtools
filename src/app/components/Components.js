@@ -46,7 +46,8 @@ export default class Components extends React.Component {
   }
 
   componentWillReceiveProps() {
-    if (this.props.linkMinMax) {
+    if (this.state.linkMinMax)
+    {
       let timeSeries = [];
       Object.values(this.references).forEach(e => timeSeries = timeSeries.concat(e.current.timeSeries));
   

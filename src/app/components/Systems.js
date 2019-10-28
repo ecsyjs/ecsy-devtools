@@ -142,8 +142,8 @@ export default class Systems extends React.Component {
           max: Number.MIN_VALUE
         }
       );
-  
-      this.setState({chartRange: minMax});  
+
+      this.setState({chartRange: minMax});
     }
   }
 
