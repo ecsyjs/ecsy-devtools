@@ -114,7 +114,7 @@ export default class System extends React.Component {
     this.timeSeries.append(new Date().getTime(), system.executeTime);
 
     let style = {
-      color: getColorForPercentage(system.executeTime / this.props.maxSystemTime)
+      color: getColorForPercentage(this.props.maxSystemTime > 0 ? system.executeTime / this.props.maxSystemTime: 0)
     };
 
     return (
