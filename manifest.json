@@ -5,7 +5,6 @@
   "author": "Fernando Serrano",
   "homepage_url": "https://github.com/fernandojsg/ecsy-devtools",
   "version": "0.1",
-  "version_name": "0.1",
 
   "icons": {
     "32": "assets/icon_32_detected.png",
