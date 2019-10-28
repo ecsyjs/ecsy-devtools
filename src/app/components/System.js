@@ -67,6 +67,8 @@ export default class System extends React.Component {
   }
 
   componentWillReceiveProps() {
+    if (!this.props.showGraphs) { return; }
+
     let config = this.props.chartRange;
     if (this.props.linkMinMax) {
       this.refs.chart.smoothie.options.minValue = config.min;
@@ -75,7 +77,6 @@ export default class System extends React.Component {
       delete this.refs.chart.smoothie.options.minValue
       delete this.refs.chart.smoothie.options.maxValue
     }
-    this.forceUpdate();
   }
 
   toggleSolo = () => {

@@ -10,9 +10,7 @@ import { Half, Half2, Button } from './StyledComponents';
 
 import {
   FaInfoCircle,
-  FaArrowDown,
-  FaCog,
-  FaPlus
+  FaArrowDown
  } from 'react-icons/fa';
 
 const WarningIcon = styled.span`
@@ -59,22 +57,22 @@ export default class Component extends React.Component {
   }
 
   componentWillReceiveProps() {
-    let config = this.props.chartRange;
-    if (this.props.linkMinMax) {
-      this.refs.chart.smoothie.options.minValue = config.min;
-      this.refs.chart.smoothie.options.maxValue = config.max;
-    } else {
-      delete this.refs.chart.smoothie.options.minValue
-      delete this.refs.chart.smoothie.options.maxValue
+    if (this.props.showGraphs) {
+      let config = this.props.chartRange;
+      if (this.props.linkMinMax) {
+        this.refs.chart.smoothie.options.minValue = config.min;
+        this.refs.chart.smoothie.options.maxValue = config.max;
+      } else {
+        delete this.refs.chart.smoothie.options.minValue
+        delete this.refs.chart.smoothie.options.maxValue
+      }
+
+      this.refs.chart.smoothie.seriesSet[1].options.strokeStyle = this.props.showPoolGraph ? '#F1421C' : 'none';
     }
-
-    this.refs.chart.smoothie.seriesSet[1].options.strokeStyle = this.props.showPoolGraph ? '#F1421C' : 'none';
-
-    this.forceUpdate();
   }
 
   render() {
-    const { showPoolGraph, data, value, name, showGraphs, overQueries } = this.props;
+    const { data, value, name, showGraphs, overQueries } = this.props;
 
     const classes = classNames({
       component: true,
@@ -90,7 +88,6 @@ export default class Component extends React.Component {
 
     const poolIncreased = poolSize !== this.prevPoolSize;
     this.prevPoolSize = poolSize;
-    //const poolIncreased = true;
 
     const classesPoolIncreased = classNames({
       poolIncreased: true,

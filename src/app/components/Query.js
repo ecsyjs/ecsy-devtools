@@ -25,6 +25,8 @@ export default class Query extends React.Component {
   }
 
   componentWillReceiveProps() {
+    if (!this.props.showGraphs) { return; }
+
     let config = this.props.chartRange;
     if (this.props.linkMinMax) {
       this.refs.chart.smoothie.options.minValue = config.min;
@@ -33,7 +35,6 @@ export default class Query extends React.Component {
       delete this.refs.chart.smoothie.options.minValue
       delete this.refs.chart.smoothie.options.maxValue
     }
-    this.forceUpdate();
   }
 
   onEnter = () => {
@@ -70,8 +71,7 @@ export default class Query extends React.Component {
     return (
       <li className={classes}
         onMouseEnter={this.onEnter}
-        onMouseLeave={this.onLeave}
-      >
+        onMouseLeave={this.onLeave}>
         <Half2 title={'Query key: ' + query.key}>
           <span>{components}</span>
           <span className="value">{query.numEntities}</span>
@@ -104,7 +104,6 @@ export default class Query extends React.Component {
         <Button className="logbutton" onClick={this.logQuery} title="Log queries to the console">
           <FaArrowDown></FaArrowDown>
         </Button>
-
       </li>
     );
   }

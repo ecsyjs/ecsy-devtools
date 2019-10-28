@@ -3,6 +3,7 @@ import './Panel.css';
 import Component from './Component';
 import SmoothieComponent, { TimeSeries } from 'react-smoothie';
 import {SectionHeader, Title, TitleGroup } from './StyledComponents';
+import Checkbox from './Checkbox';
 
 export default class Components extends React.Component {
 
@@ -45,20 +46,22 @@ export default class Components extends React.Component {
   }
 
   componentWillReceiveProps() {
-    let timeSeries = [];
-    Object.values(this.references).forEach(e => timeSeries = timeSeries.concat(e.current.timeSeries));
-
-    let minMax = timeSeries.reduce((acum, current) => ({
-      min: Math.min(acum.min, current.minValue),
-      max: Math.max(acum.max, current.maxValue)
-    }),
-      {
-        min: Number.MAX_VALUE,
-        max: Number.MIN_VALUE
-      }
-    );
-
-    this.setState({chartRange: minMax});
+    if (this.props.linkMinMax) {
+      let timeSeries = [];
+      Object.values(this.references).forEach(e => timeSeries = timeSeries.concat(e.current.timeSeries));
+  
+      let minMax = timeSeries.reduce((acum, current) => ({
+        min: Math.min(acum.min, current.minValue),
+        max: Math.max(acum.max, current.maxValue)
+      }),
+        {
+          min: Number.MAX_VALUE,
+          max: Number.MIN_VALUE
+        }
+      );
+  
+      this.setState({chartRange: minMax});
+    }
   }
 
   render() {
@@ -96,6 +99,7 @@ export default class Components extends React.Component {
           <TitleGroup>
             <Title>COMPONENTS ({numComponents})</Title> <Title>{numComponentInstances} instances</Title>
           </TitleGroup>
+
           <input
             type="checkbox"
             id="linkminmax"

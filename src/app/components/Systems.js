@@ -132,17 +132,19 @@ export default class Systems extends React.Component {
   }
 
   componentWillReceiveProps() {
-    let minMax = Object.values(this.references).map(e => e.current.timeSeries).reduce((acum, current) => ({
-      min: Math.min(acum.min, current.minValue),
-      max: Math.max(acum.max, current.maxValue)
-    }),
-      {
-        min: Number.MAX_VALUE,
-        max: Number.MIN_VALUE
-      }
-    );
-
-    this.setState({chartRange: minMax});
+    if (this.state.linkMinMax) {
+      let minMax = Object.values(this.references).map(e => e.current.timeSeries).reduce((acum, current) => ({
+        min: Math.min(acum.min, current.minValue),
+        max: Math.max(acum.max, current.maxValue)
+      }),
+        {
+          min: Number.MAX_VALUE,
+          max: Number.MIN_VALUE
+        }
+      );
+  
+      this.setState({chartRange: minMax});  
+    }
   }
 
   render() {

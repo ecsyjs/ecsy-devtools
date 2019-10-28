@@ -1,6 +1,7 @@
 import React from 'react';
 import Query from './Query';
 import {SectionHeader, Title, TitleGroup } from './StyledComponents';
+import Checkbox from './Checkbox';
 
 export default class Queries extends React.Component {
   constructor(props) {
@@ -24,17 +25,19 @@ export default class Queries extends React.Component {
   }
 
   componentWillReceiveProps() {
-    let minMax = Object.values(this.references).map(e => e.current.timeSeries).reduce((acum, current) => ({
-      min: Math.min(acum.min, current.minValue),
-      max: Math.max(acum.max, current.maxValue)
-    }),
-      {
-        min: Number.MAX_VALUE,
-        max: Number.MIN_VALUE
-      }
-    );
+    if (this.state.linkMinMax) {
+      let minMax = Object.values(this.references).map(e => e.current.timeSeries).reduce((acum, current) => ({
+        min: Math.min(acum.min, current.minValue),
+        max: Math.max(acum.max, current.maxValue)
+      }),
+        {
+          min: Number.MAX_VALUE,
+          max: Number.MIN_VALUE
+        }
+      );
 
-    this.setState({chartRange: minMax});
+      this.setState({chartRange: minMax});
+    }
   }
 
   linkMinMaxChanged = (e) => {
@@ -64,13 +67,11 @@ export default class Queries extends React.Component {
           <TitleGroup>
             <Title>QUERIES ({queries.length})</Title>
           </TitleGroup>
-          <input
-          type="checkbox"
-          id="linkminmaxqueries"
-          checked={this.state.linkMinMax}
-          value={this.state.linkMinMax}
-          onChange={this.linkMinMaxChanged}/>
-          <label htmlFor="linkminmaxqueries">Link mix/max graphs</label>
+          <Checkbox
+            checked={this.state.linkMinMax}
+            value={this.state.linkMinMax}
+            description="Link mix/max graphs"
+            onChange={this.linkMinMaxChanged}/>
         </SectionHeader>
         <ul>{queriesHtml}</ul>
       </div>
