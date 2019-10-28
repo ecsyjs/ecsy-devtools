@@ -9,6 +9,10 @@ ReactDOM.render(<Panel />, document.getElementById('app'));
 
 var globalBrowser =  chrome || browser;
 
+var backgroundPageConnection = chrome.runtime.connect({
+  name: "devtools"
+});
+
 window.ecsyDevtools = {
 
   toggleWorld: function (enabled) {

@@ -48,6 +48,7 @@ class App extends Component {
     super();
 
     this.state = {
+      worldExist: false,
       debug: false,
       showComponents: true,
       showEntities: true,
@@ -116,60 +117,61 @@ class App extends Component {
     });
 
     backgroundPageConnection.onMessage.addListener(m => {
-      let data = m.data;
-      let graphConfig = Object.assign({}, this.state.graphConfig);  // creating copy of state variable jasper
-
-      // Components
-      var minMax = Object.values(data.components).reduce((a, c) =>
-        ({
-          min: Math.min(a.min, c),
-          max: Math.max(a.max, c)
+      if (m.method === 'refreshData') {
+        let data = m.data;
+        let graphConfig = Object.assign({}, this.state.graphConfig);  // creating copy of state variable jasper
+  
+        // Components
+        var minMax = Object.values(data.components).reduce((a, c) =>
+          ({
+            min: Math.min(a.min, c),
+            max: Math.max(a.max, c)
+          }),
+          {
+            min: Number.MAX_VALUE,
+            max: Number.MIN_VALUE
+          }
+        );
+  
+        graphConfig.components.globalMin = Math.min(graphConfig.components.globalMin, minMax.min);
+        graphConfig.components.globalMax = Math.max(graphConfig.components.globalMax, minMax.max);
+  
+        // Systems
+        let minMaxSystems = data.systems.reduce((acum, actual) => ({
+          min: Math.min(acum.min, actual.executeTime),
+          max: Math.max(acum.max, actual.executeTime)
         }),
         {
           min: Number.MAX_VALUE,
           max: Number.MIN_VALUE
-        }
-      );
-
-      graphConfig.components.globalMin = Math.min(graphConfig.components.globalMin, minMax.min);
-      graphConfig.components.globalMax = Math.max(graphConfig.components.globalMax, minMax.max);
-
-      // Systems
-      let minMaxSystems = data.systems.reduce((acum, actual) => ({
-        min: Math.min(acum.min, actual.executeTime),
-        max: Math.max(acum.max, actual.executeTime)
-      }),
-      {
-        min: Number.MAX_VALUE,
-        max: Number.MIN_VALUE
-      });
-
-      graphConfig.systems.globalMin = Math.min(graphConfig.systems.globalMin, minMaxSystems.min);
-      graphConfig.systems.globalMax = Math.max(graphConfig.systems.globalMax, minMaxSystems.max);
-
-      // Queries
-      let minMaxQueries = data.queries.reduce((acum, actual) => ({
-        min: Math.min(acum.min, actual.numEntities),
-        max: Math.max(acum.max, actual.numEntities)
-      }),
-      {
-        min: Number.MAX_VALUE,
-        max: Number.MIN_VALUE
-      });
-
-      graphConfig.queries.globalMin = Math.min(graphConfig.queries.globalMin, minMaxQueries.min);
-      graphConfig.queries.globalMax = Math.max(graphConfig.queries.globalMax, minMaxQueries.max);
-
-      // Compute prev system to be executed
-      let lastExecutedIndex = data.systems.indexOf(data.systems.find(s => s.name === data.lastExecutedSystem));
-      data.nextSystemToExecute = data.systems[(lastExecutedIndex + 1) % data.systems.length].name;
-
-      this.setState({
-        data: m.data,
-        graphConfig: graphConfig
-      });
+        });
+  
+        graphConfig.systems.globalMin = Math.min(graphConfig.systems.globalMin, minMaxSystems.min);
+        graphConfig.systems.globalMax = Math.max(graphConfig.systems.globalMax, minMaxSystems.max);
+  
+        // Queries
+        let minMaxQueries = data.queries.reduce((acum, actual) => ({
+          min: Math.min(acum.min, actual.numEntities),
+          max: Math.max(acum.max, actual.numEntities)
+        }),
+        {
+          min: Number.MAX_VALUE,
+          max: Number.MIN_VALUE
+        });
+  
+        graphConfig.queries.globalMin = Math.min(graphConfig.queries.globalMin, minMaxQueries.min);
+        graphConfig.queries.globalMax = Math.max(graphConfig.queries.globalMax, minMaxQueries.max);
+  
+        // Compute prev system to be executed
+        let lastExecutedIndex = data.systems.indexOf(data.systems.find(s => s.name === data.lastExecutedSystem));
+        data.nextSystemToExecute = data.systems[(lastExecutedIndex + 1) % data.systems.length].name;
+  
+        this.setState({
+          data: m.data,
+          graphConfig: graphConfig
+        });
+      }
     });
-
   }
 
   dumpData = e => {

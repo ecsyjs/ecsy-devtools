@@ -9,7 +9,7 @@
     "page": "src/extension/background.html"
   },
   "icons": {
-    "128": "assets/icon_128.png"
+    "128": "assets/icon_128_detected.png"
   },
   "content_scripts": [{
     "matches": ["http://*/*", "https://*/*"],
@@ -28,8 +28,9 @@
   "browser_action" : {
     "default_title": "ECSY",
     "default_icon": {
-      "128": "assets/icon_128.png"
-    }
+      "128": "assets/icon_128_disabled.png"
+    },
+    "default_popup": "src/extension/popups/disabled.html"
   },
   "devtools_page": "src/extension/devtools.html",
   "content_security_policy": "style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-eval'; connect-src *; frame-src *;",

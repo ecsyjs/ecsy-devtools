@@ -76,7 +76,8 @@ if( !window.__ECSY_DEVTOOLS_INJECTED ) {
 			};
 			sendMessage('refreshData', data);
 		}
-		sendMessage('worldCreated');
+
+		sendMessage('worldCreated', {});
 	});
 
 	function log() {

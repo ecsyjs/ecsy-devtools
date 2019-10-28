@@ -11,6 +11,14 @@ function log() {
 // background.js
 var connections = {};
 
+chrome.runtime.onMessage.addListener(
+  function(request, sender, sendResponse) {
+    if (request.method === 'worldCreated') {
+      setIconAndPopup('detected', sender.tab.id);
+    }
+  }
+);
+
 chrome.runtime.onConnect.addListener(function (port) {
   var extensionListener = function (message, sender, sendResponse) {
     // The original connection event doesn't include the tab ID of the
@@ -54,4 +62,34 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   return true;
 });
 
-log("Background file loaded");
+function setIconAndPopup(type, tabId) {
+  chrome.browserAction.setIcon({
+    tabId: tabId,
+    path: {
+      '32': '../../assets/icon_128_' + type + '.png',
+      '48': '../../assets/icon_128_' + type + '.png',
+      '64': '../../assets/icon_128_' + type + '.png',
+      '128': '../../assets/icon_128_' + type + '.png'
+    },
+  });
+
+  chrome.browserAction.setPopup({
+    tabId: tabId,
+    popup: 'src/extension/popups/' + type + '.html',
+  });
+
+  chrome.browserAction.setTitle({
+    tabId: tabId,
+    title: type === 'disabled' ? 'ECSY not detected on this page' : 'ECSY detected on this page'
+  });
+}
+
+chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+  if (tab.active && changeInfo.status === 'loading') {
+    setIconAndPopup('disabled', tabId);
+  }
+});
+
+// log("Background file loaded");
+
+//'icon_128_detected'

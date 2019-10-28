@@ -259,10 +259,10 @@ export default class Systems extends React.Component {
             }
           </Button>
 
-          <Button onClick={this.stepNextSystem} title="Step next system">
+          <Button className={allSystemsStopped ? 'disabled': ''} onClick={this.stepNextSystem} title="Step next system">
             <FaStepForward></FaStepForward>
           </Button>
-          <Button onClick={this.stepSystems} title="Step all systems">
+          <Button className={allSystemsStopped ? 'disabled': ''} onClick={this.stepSystems} title="Step all systems">
             <FaFastForward></FaFastForward>
           </Button>
         </div>
