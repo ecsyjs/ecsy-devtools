@@ -31,11 +31,12 @@ if( !window.__ECSY_DEVTOOLS_INJECTED ) {
 		}
 
 		window.__ECSY_DEVTOOLS.refreshStats = function() {
-			const systems = world.systemManager._systems.map(system => {
-				var json = system.toJSON();
-				// Clear executeTime if it's not enabled
-				if (!json.enabled) json.executeTime = 0;
-				return json;
+			const systems = world.systemManager._systems.map(system => system.toJSON());
+
+			// Reset time for next step
+			// @todo Do it on core?
+			world.systemManager._systems.forEach(system => {
+				system.executeTime = 0;
 			});
 
 			const queries = Object.values(world.entityManager._queryManager._queries).map(q => {
