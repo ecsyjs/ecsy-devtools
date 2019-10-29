@@ -9,8 +9,6 @@ if( !window.__ECSY_DEVTOOLS_INJECTED ) {
 		}, '*');
 	}
 
-	sendMessage('reset');
-
 	window.addEventListener('ecsy-world-created', e => {
 
 		if (!window.__ECSY_DEVTOOLS) {

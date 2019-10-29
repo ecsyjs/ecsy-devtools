@@ -12,7 +12,7 @@ function log() {
 var connections = {};
 
 chrome.runtime.onMessage.addListener(
-  function(request, sender, sendResponse) {
+  function(request, sender) {
     if (request.method === 'worldCreated') {
       setIconAndPopup('detected', sender.tab.id);
     }
@@ -91,5 +91,3 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 });
 
 // log("Background file loaded");
-
-//'icon_128_detected'

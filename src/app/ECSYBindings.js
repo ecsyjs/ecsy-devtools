@@ -35,14 +35,15 @@ class Bindings {
     var world = 'window.__ECSY_DEVTOOLS.worlds[0]';
     var string = `
       window.$data = JSON.parse('${JSON.stringify(data)}');
-      console.log("Data: ", window.$data);
+      console.log("Data (accessible on $data)", window.$data);
     `;
     globalBrowser.devtools.inspectedWindow.eval(string);
   }
   logQuery(query) {
     var world = 'window.__ECSY_DEVTOOLS.worlds[0]';
     var string = `
-      console.log("Query: ${query.key} (${query.components.included.join(', ')})", ${world}.entityManager._queryManager._queries['${query.key}'].entities);
+      window.$query = ${world}.entityManager._queryManager._queries['${query.key}'].entities;
+      console.log("Query: ${query.key} (${query.components.included.join(', ')}) accesible on '$query'", window.$query);
     `;
     globalBrowser.devtools.inspectedWindow.eval(string);
   }
@@ -50,10 +51,10 @@ class Bindings {
     // @todo Move this to ecsy core?
     var world = 'window.__ECSY_DEVTOOLS.worlds[0]';
     var string = `
-      console.log("Component: ${componentName}", ${world}.entityManager._entities
+      window.$component = ${world}.entityManager._entities
         .filter(e => e._ComponentTypes.map(ct => ct.name).indexOf("${componentName}")!== -1)
-        .map(c => c._components["${componentName}"])
-      );
+        .map(c => c._components["${componentName}"]);
+      console.log("Component: ${componentName} accesible on '$component'", window.$component);
     `;
 
     globalBrowser.devtools.inspectedWindow.eval(string);
