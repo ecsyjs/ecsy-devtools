@@ -2,7 +2,7 @@ import React from 'react';
 import classNames from 'classnames';
 import SmoothieComponent, { TimeSeries } from 'react-smoothie';
 import styled from 'styled-components';
-import Events from '../Events';
+import Events from '../utils/Events';
 import Bindings from '../ECSYBindings';
 import { Half, Half2, Button } from './StyledComponents';
 

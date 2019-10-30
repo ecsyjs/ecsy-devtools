@@ -6,7 +6,7 @@ import styled from 'styled-components';
 import SmoothieComponent, { TimeSeries } from 'react-smoothie';
 import {Button, SectionHeader2, Title, TitleGroup } from './StyledComponents';
 import Bindings from '../ECSYBindings';
-import Events from '../Events';
+import Events from '../utils/Events';
 import Checkbox from './Checkbox';
 
 import {

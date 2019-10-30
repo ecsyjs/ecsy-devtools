@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import Bindings from '../ECSYBindings';
 import SystemQueries from './SystemQueries';
 import SmoothieComponent, { TimeSeries } from 'react-smoothie';
-import Events from '../Events';
+import Events from '../utils/Events';
 import { Button } from './StyledComponents';
 
 import {

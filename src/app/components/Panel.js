@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import Bindings from '../ECSYBindings';
 import Queries from './Queries';
 import Entities from './Entities';
-import Events from '../Events';
+import Events from '../utils/Events';
 import JSONTree from 'react-json-tree';
 
 const Container = styled.div`

@@ -2,7 +2,7 @@ import React from 'react';
 import './Panel.css';
 import classNames from 'classnames';
 import SmoothieComponent, { TimeSeries } from 'react-smoothie';
-import Events from '../Events';
+import Events from '../utils/Events';
 import Bindings from '../ECSYBindings';
 import styled from 'styled-components';
 
