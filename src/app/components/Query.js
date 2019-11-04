@@ -1,6 +1,6 @@
 import React from 'react';
 import classNames from 'classnames';
-import SmoothieComponent, { TimeSeries } from 'react-smoothie';
+import SmoothieComponent, { TimeSeries } from './SmoothieChart';
 import styled from 'styled-components';
 import Events from '../utils/Events';
 import Bindings from '../ECSYBindings';
@@ -55,9 +55,9 @@ export default class Query extends React.Component {
     const { query, showGraphs, overComponents, overQueries } = this.props;
 
     const components = query.components.included.map(name => (
-      <span class="ComponentName">{name}</span>
+      <span className="ComponentName" key={name}>{name}</span>
     )).concat(query.components.not.map(name => (
-      <span class="ComponentName">NOT {name}</span>
+      <span className="ComponentName" key={name}>NOT {name}</span>
     )));
 
     this.timeSeries.append(new Date().getTime(), query.numEntities);

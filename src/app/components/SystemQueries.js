@@ -28,7 +28,7 @@ export default class SystemQueries extends React.Component {
       let key = queries[queryName].key;
       let query = data.queries.find(q => q.key === key);
       const components = query.components.included.map(name => (
-        <span class="ComponentName">{name}</span>
+        <span className="ComponentName">{name}</span>
       ));
 
       const classes = classNames({
@@ -52,8 +52,8 @@ export default class SystemQueries extends React.Component {
 
     return (
       <Queries>
-        <span class="queriesTitle">QUERIES</span>
-        <ul class="SystemsQueries">{queriesHtml}</ul>
+        <span className="queriesTitle">QUERIES</span>
+        <ul className="SystemsQueries">{queriesHtml}</ul>
       </Queries>
     );
   }

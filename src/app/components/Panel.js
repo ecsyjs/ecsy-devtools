@@ -1,4 +1,11 @@
 import React, { Component } from 'react';
+
+//if (process.env.NODE_ENV !== 'production')
+{
+  const {whyDidYouUpdate} = require('why-did-you-update');
+  //whyDidYouUpdate(React);
+}
+
 import Components from './Components';
 import Systems from './Systems';
 import styled from 'styled-components';
@@ -6,7 +13,9 @@ import Bindings from '../ECSYBindings';
 import Queries from './Queries';
 import Entities from './Entities';
 import Events from '../utils/Events';
-import JSONTree from 'react-json-tree';
+import Checkbox from './Checkbox';
+
+var globalBrowser =  chrome || browser;
 
 const Container = styled.div`
   background-color: #292929;
@@ -107,70 +116,79 @@ class App extends Component {
       }
     });
 
-    var backgroundPageConnection = chrome.runtime.connect({
-      name: "devtools"
-    });
+    if (globalBrowser && globalBrowser.devtools) {
+      var backgroundPageConnection = globalBrowser.runtime.connect({
+        name: "devtools"
+      });
 
-    backgroundPageConnection.postMessage({
-      name: 'init',
-      tabId: chrome.devtools.inspectedWindow.tabId
-    });
+      backgroundPageConnection.postMessage({
+        name: 'init',
+        tabId: globalBrowser.devtools.inspectedWindow.tabId
+      });
 
-    backgroundPageConnection.onMessage.addListener(m => {
-      if (m.method === 'refreshData') {
-        let data = m.data;
-        let graphConfig = Object.assign({}, this.state.graphConfig);  // creating copy of state variable jasper
-  
-        // Components
-        var minMax = Object.values(data.components).reduce((a, c) =>
-          ({
-            min: Math.min(a.min, c),
-            max: Math.max(a.max, c)
-          }),
-          {
-            min: Number.MAX_VALUE,
-            max: Number.MIN_VALUE
-          }
-        );
-  
-        graphConfig.components.globalMin = Math.min(graphConfig.components.globalMin, minMax.min);
-        graphConfig.components.globalMax = Math.max(graphConfig.components.globalMax, minMax.max);
-  
-        // Systems
-        let minMaxSystems = data.systems.reduce((acum, actual) => ({
-          min: Math.min(acum.min, actual.executeTime),
-          max: Math.max(acum.max, actual.executeTime)
-        }),
-        {
-          min: Number.MAX_VALUE,
-          max: Number.MIN_VALUE
-        });
-  
-        graphConfig.systems.globalMin = Math.min(graphConfig.systems.globalMin, minMaxSystems.min);
-        graphConfig.systems.globalMax = Math.max(graphConfig.systems.globalMax, minMaxSystems.max);
-  
-        // Queries
-        let minMaxQueries = data.queries.reduce((acum, actual) => ({
-          min: Math.min(acum.min, actual.numEntities),
-          max: Math.max(acum.max, actual.numEntities)
-        }),
-        {
-          min: Number.MAX_VALUE,
-          max: Number.MIN_VALUE
-        });
-  
-        graphConfig.queries.globalMin = Math.min(graphConfig.queries.globalMin, minMaxQueries.min);
-        graphConfig.queries.globalMax = Math.max(graphConfig.queries.globalMax, minMaxQueries.max);
-  
-        // Compute prev system to be executed
-        let lastExecutedIndex = data.systems.indexOf(data.systems.find(s => s.name === data.lastExecutedSystem));
-        data.nextSystemToExecute = data.systems[(lastExecutedIndex + 1) % data.systems.length].name;
-  
-        this.setState({
-          data: m.data,
-          graphConfig: graphConfig
-        });
+      backgroundPageConnection.onMessage.addListener(m => {
+        if (m.method === 'refreshData') {
+          this.processData(m.data);
+        }
+      });
+    } else {
+      window.addEventListener('refreshData', (evt) => {
+        this.processData(evt.detail);
+      });
+    }
+  }
+
+  processData(data) {
+    let graphConfig = Object.assign({}, this.state.graphConfig);  // creating copy of state variable jasper
+
+    // Components
+    var minMax = Object.values(data.components).reduce((a, c) =>
+      ({
+        min: Math.min(a.min, c),
+        max: Math.max(a.max, c)
+      }),
+      {
+        min: Number.MAX_VALUE,
+        max: Number.MIN_VALUE
       }
+    );
+
+    graphConfig.components.globalMin = Math.min(graphConfig.components.globalMin, minMax.min);
+    graphConfig.components.globalMax = Math.max(graphConfig.components.globalMax, minMax.max);
+
+    // Systems
+    let minMaxSystems = data.systems.reduce((acum, actual) => ({
+      min: Math.min(acum.min, actual.executeTime),
+      max: Math.max(acum.max, actual.executeTime)
+    }),
+    {
+      min: Number.MAX_VALUE,
+      max: Number.MIN_VALUE
+    });
+
+    graphConfig.systems.globalMin = Math.min(graphConfig.systems.globalMin, minMaxSystems.min);
+    graphConfig.systems.globalMax = Math.max(graphConfig.systems.globalMax, minMaxSystems.max);
+
+    // Queries
+    let minMaxQueries = data.queries.reduce((acum, actual) => ({
+      min: Math.min(acum.min, actual.numEntities),
+      max: Math.max(acum.max, actual.numEntities)
+    }),
+    {
+      min: Number.MAX_VALUE,
+      max: Number.MIN_VALUE
+    });
+
+    graphConfig.queries.globalMin = Math.min(graphConfig.queries.globalMin, minMaxQueries.min);
+    graphConfig.queries.globalMax = Math.max(graphConfig.queries.globalMax, minMaxQueries.max);
+
+    // Compute prev system to be executed
+    let lastExecutedIndex = data.systems.indexOf(data.systems.find(s => s.name === data.lastExecutedSystem));
+    data.nextSystemToExecute = data.systems[(lastExecutedIndex + 1) % data.systems.length].name;
+
+    this.setState({
+      data: data,
+      graphConfig: graphConfig
     });
   }
 
@@ -224,15 +242,28 @@ class App extends Component {
           <ToggleSection title="Show Systems Panel" onClick={this.toggleSystems} disabled={!state.showSystems}>S</ToggleSection>
           <ToggleSection title="Show Queries Panel" onClick={this.toggleQueries} disabled={!state.showQueries}>Q</ToggleSection>
 
-          <input type="checkbox" id="highlight" checked={this.state.highlight} value={this.state.highlight} onChange={this.onHighlightChanged}/><label htmlFor="highlight">Highlight relationships</label>
-          <input type="checkbox" id="show-debug" checked={this.state.debug} value={this.state.debug} onChange={this.onShowDebugChanged}/><label htmlFor="show-debug">Show debug</label>
+          <Checkbox
+            checked={this.state.highlight}
+            value={this.state.highlight}
+            description="Highlight relationships"
+            onChange={this.onHighlightChanged}/>
+          <Checkbox
+            checked={this.state.debug}
+            value={this.state.debug}
+            description="Show debug"
+            onChange={this.onShowDebugChanged}/>
           {
-            false && this.state.debug && <JSONTree data={data} theme={theme} invertTheme={false} />
+            this.state.debug &&
+            <Code>
+              <button onClick={this.dumpData}>dump to console ($data)</button><br/>
+              {JSON.stringify(data, null, 2)}
+            </Code>
           }
-          {
-            this.state.debug && <Code><button onClick={this.dumpData}>dump to console (and assign it to $data)</button><br/>{JSON.stringify(data, null, 2)}</Code>
-          }
-          <input type="checkbox" id="show-graphs" checked={this.state.showGraphs} value={this.state.showGraphs} onChange={this.onShowGraphChanged}/><label htmlFor="show-graphs">Show graphs</label>
+          <Checkbox
+            checked={this.state.showGraphs}
+            value={this.state.showGraphs}
+            description="Show graphs"
+            onChange={this.onShowGraphChanged}/>
         </div>
         <Columns>
           <div className="column">
@@ -240,6 +271,7 @@ class App extends Component {
               state.showEntities &&
               <Entities
                 data={data}
+                numEntities={data.numEntities}
                 showGraphs={this.state.showGraphs}
               />
             }
@@ -253,7 +285,7 @@ class App extends Component {
                 showGraphs={this.state.showGraphs}
               />
             }
-            {
+            { 
               state.showQueries &&
               <Queries
                 graphConfig={this.state.graphConfig}

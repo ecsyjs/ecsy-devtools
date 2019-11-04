@@ -1,7 +1,7 @@
 import React from 'react';
 import './Panel.css';
 import Component from './Component';
-import SmoothieComponent, { TimeSeries } from 'react-smoothie';
+import SmoothieComponent, { TimeSeries } from './SmoothieChart';
 import {SectionHeader, Title, TitleGroup } from './StyledComponents';
 import Checkbox from './Checkbox';
 
@@ -89,7 +89,7 @@ export default class Components extends React.Component {
         showGraphs={showGraphs}
         chartRange={this.state.chartRange}
         overQueries={overQueries}
-        data={data}
+        pool={data.componentsPools[name]}
       />
     ));
     this.timeSeries.append(new Date().getTime(), numComponentInstances);

@@ -1,7 +1,7 @@
 import React from 'react';
 import './Panel.css';
 import classNames from 'classnames';
-import SmoothieComponent, { TimeSeries } from 'react-smoothie';
+import SmoothieComponent, { TimeSeries } from './SmoothieChart';
 import Events from '../utils/Events';
 import Bindings from '../ECSYBindings';
 import styled from 'styled-components';
@@ -29,7 +29,7 @@ const Warn = styled.span`
   vertical-align: middle;
 `;
 
-export default class Component extends React.Component {
+export default class Component extends React.PureComponent {
   constructor(props) {
     super(props);
 
@@ -72,14 +72,13 @@ export default class Component extends React.Component {
   }
 
   render() {
-    const { data, value, name, showGraphs, overQueries } = this.props;
+    const { pool, value, name, linkMinMax, graphConfig, showGraphs, overQueries } = this.props;
 
     const classes = classNames({
       component: true,
       highlighted: overQueries.find(e => e.components.included.indexOf(name) !== -1 || e.components.not.indexOf(name) !== -1)
     });
 
-    const pool = data.componentsPools[name];
     const notPool = pool && pool.valid !== true;
     const poolSize = pool ? pool.size : 0;
 
@@ -94,8 +93,7 @@ export default class Component extends React.Component {
       hide: !poolIncreased
     });
 
-    let config = this.props.graphConfig;
-    let opts = this.props.linkMinMax ? {minValue: config.globalMin, maxValue: config.globalMax} : {};
+    let opts = linkMinMax ? {minValue: graphConfig.globalMin, maxValue: graphConfig.globalMax} : {};
 
     return (
       <li className={classes}

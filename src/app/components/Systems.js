@@ -3,7 +3,7 @@ import './Panel.css';
 import System from './System';
 import PieChart from 'react-minimal-pie-chart';
 import styled from 'styled-components';
-import SmoothieComponent, { TimeSeries } from 'react-smoothie';
+import SmoothieComponent, { TimeSeries } from './SmoothieChart';
 import {Button, SectionHeader2, Title, TitleGroup } from './StyledComponents';
 import Bindings from '../ECSYBindings';
 import Events from '../utils/Events';

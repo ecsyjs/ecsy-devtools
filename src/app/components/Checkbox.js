@@ -1,8 +1,8 @@
 import React from 'react';
 import newId from '../utils/newId';
 
-export default class Checkbox extends React.Component {
-  componentWillMount() {
+export default class Checkbox extends React.PureComponent {
+  componentDidMount() {
     this.id = newId();
   }
 
