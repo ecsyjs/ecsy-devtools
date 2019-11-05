@@ -62,7 +62,6 @@ export default class Queries extends React.Component {
           query={query}
           ref={this.getOrCreateRef(query.key)}
           chartRange={this.state.chartRange}
-          graphConfig={this.props.graphConfig.queries}
           linkMinMax={this.state.linkMinMax}
           showGraphs={showGraphs}
           highlighted={highlighted}

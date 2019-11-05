@@ -42,16 +42,14 @@ export default class Component extends React.Component {
       new TimeSeries({})
     ];
 
+    this.poolIncreaseWarning = true;
     this.prevPoolSize = 0;
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    return true;
-    /*
-    return !isEqual(this.props, nextProps) ||
-      ( !== this.prevPoolSize ||
-      !isEqual(this.state, nextState);
-      */
+    return this.poolIncreaseWarning ||
+            !isEqual(this.props, nextProps) ||
+            !isEqual(this.state, nextState);
   }
 
   onEnter = () => {
@@ -82,11 +80,11 @@ export default class Component extends React.Component {
   }
 
   render() {
-    const { pool, value, name, linkMinMax, graphConfig, showGraphs, overQueries, prevOverQueries } = this.props;
+    const { pool, value, name, highlighted, linkMinMax, graphConfig, showGraphs } = this.props;
 
     const classes = classNames({
       component: true,
-      highlighted: overQueries.find(e => e.components.included.indexOf(name) !== -1 || e.components.not.indexOf(name) !== -1)
+      highlighted: highlighted
     });
 
     const notPool = pool && pool.valid !== true;
@@ -95,12 +93,12 @@ export default class Component extends React.Component {
     this.timeSeries[0].append(new Date().getTime(), value);
     this.timeSeries[1].append(new Date().getTime(), poolSize);
 
-    const poolIncreased = poolSize !== this.prevPoolSize;
+    this.poolIncreaseWarning = poolSize !== this.prevPoolSize;
     this.prevPoolSize = poolSize;
 
     const classesPoolIncreased = classNames({
       poolIncreased: true,
-      hide: !poolIncreased
+      hide: !this.poolIncreaseWarning
     });
 
     let opts = linkMinMax ? {minValue: graphConfig.globalMin, maxValue: graphConfig.globalMax} : {};

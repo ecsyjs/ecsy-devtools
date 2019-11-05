@@ -72,7 +72,7 @@ export default class Components extends React.Component {
   }
 
   render() {
-    const { components, componentsPools, showGraphs, overQueries, prevOverQueries } = this.props;
+    const { components, componentsPools, showGraphs, overQueries } = this.props;
 
     if (!components) {
       return (
@@ -83,8 +83,11 @@ export default class Components extends React.Component {
     const numComponents = components ? Object.keys(components).length : 0;
     const numComponentInstances = components && Object.values(components).length > 0 ? Object.values(components).reduce((a, c) => a + c) : undefined;
 
-    let componentsHtml = Object.keys(components).map(name => (
-      <Component
+    let componentsHtml = Object.keys(components).map(name => {
+      const highlighted = overQueries.find(e => e.components.included.indexOf(name) !== -1 ||
+                          e.components.not.indexOf(name) !== -1)
+
+      return <Component
         graphConfig={this.props.graphConfig.components}
         ref={this.getOrCreateRef(name)}
         showPoolGraph={this.state.showPoolGraph}
@@ -94,11 +97,10 @@ export default class Components extends React.Component {
         value={components[name]}
         showGraphs={showGraphs}
         chartRange={this.state.chartRange}
-        overQueries={overQueries}
-        prevOverQueries={prevOverQueries}
+        highlighted={highlighted}
         pool={componentsPools[name]}
-      />
-    ));
+      />;
+    });
     this.timeSeries.append(new Date().getTime(), numComponentInstances);
 
     return (
