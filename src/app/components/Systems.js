@@ -8,6 +8,7 @@ import {Button, SectionHeader2, Title, TitleGroup } from './StyledComponents';
 import Bindings from '../ECSYBindings';
 import Events from '../utils/Events';
 import Checkbox from './Checkbox';
+import isEqual from 'react-fast-compare';
 
 import {
   FaPlay,
@@ -38,6 +39,12 @@ export const GraphsGroup = styled.div`
 `;
 
 export default class Systems extends React.Component {
+
+  shouldComponentUpdate(nextProps, nextState) {
+    return !isEqual(this.props, nextProps) ||
+      !isEqual(this.state, nextState);
+  }
+
   linkMinMaxChanged = (e) => {
     this.setState({linkMinMax: e.target.checked});
   }
@@ -58,7 +65,6 @@ export default class Systems extends React.Component {
       },
       playing: true,
       showQueries: false,
-      data: [],
       stats: [],
       linkMinMax: false,
       prevSystemsState: {}
@@ -69,16 +75,16 @@ export default class Systems extends React.Component {
     this.timeSeries = new TimeSeries({});
 
     Events.on('togglePlaySystem', system => {
-      var system = this.props.data.systems.find(s => s.name === system.name);
+      var system = this.props.systems.find(s => s.name === system.name);
       system.enabled = !system.enabled;
 
 /*
-      let playingAny = this.props.data.systems.reduce( (acum, current) => {
+      let playingAny = this.props.systems.reduce( (acum, current) => {
         return acum.enabled || current.enabled;
       });
 */
 
-      let pausedAny = this.props.data.systems.reduce( (acum, current) => {
+      let pausedAny = this.props.systems.reduce( (acum, current) => {
         return acum || !current.enabled
       }, false);
 
@@ -89,7 +95,7 @@ export default class Systems extends React.Component {
     });
 
     Events.on('soloPlaySystem', system => {
-      let prevSystemsState = this.props.data.systems.map(s =>
+      let prevSystemsState = this.props.systems.map(s =>
         ({
           name: s.name,
           enabled: s.enabled
@@ -155,7 +161,7 @@ export default class Systems extends React.Component {
   }
 
   render() {
-    const { systems, data, showGraphs, overComponents, overQueries, overSystem } = this.props;
+    const { systems, dataQueries, nextSystemToExecute, showGraphs, overComponents, overQueries, overSystem } = this.props;
     const state = this.state;
 
     if (!Array.isArray(systems)) {
@@ -275,12 +281,13 @@ export default class Systems extends React.Component {
             systems.map((system, i) => (
               <System
                 color={colors[i]}
+                nextSystemToExecute={nextSystemToExecute}
+                dataQueries={dataQueries}
                 allSystemsStopped={allSystemsStopped}
                 graphConfig={this.props.graphConfig.systems}
                 ref={this.getOrCreateRef(system.name)}
                 key={system.name}
                 system={system}
-                data={data}
                 chartRange={this.state.chartRange}
                 graphConfig={this.props.graphConfig.systems}
                 linkMinMax={this.state.linkMinMax}

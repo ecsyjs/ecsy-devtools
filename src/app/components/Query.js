@@ -5,12 +5,10 @@ import styled from 'styled-components';
 import Events from '../utils/Events';
 import Bindings from '../ECSYBindings';
 import { Half, Half2, Button } from './StyledComponents';
+import isEqual from 'react-fast-compare';
 
 import {
-  FaArrowDown,
-  FaSearch,
-  FaEye,
-  FaRegEye
+  FaArrowDown
  } from 'react-icons/fa';
 
 export default class Query extends React.Component {
@@ -22,6 +20,11 @@ export default class Query extends React.Component {
       hover: false
     }
     this.timeSeries = new TimeSeries({});
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    return !isEqual(this.props, nextProps) ||
+            !isEqual(this.state, nextState);
   }
 
   componentWillReceiveProps() {
@@ -38,12 +41,12 @@ export default class Query extends React.Component {
   }
 
   onEnter = () => {
-    Events.emit('componentQuery', [this.props.query]);
+    Events.emit('queryOver', [this.props.query]);
     this.setState({hover: true});
   }
 
   onLeave = () => {
-    Events.emit('componentQuery', []);
+    Events.emit('queryOver', []);
     this.setState({hover: false});
   }
 
@@ -52,7 +55,7 @@ export default class Query extends React.Component {
   }
 
   render() {
-    const { query, showGraphs, overComponents, overQueries } = this.props;
+    const { query, showGraphs, highlighted } = this.props;
 
     const components = query.components.included.map(name => (
       <span className="ComponentName" key={name}>{name}</span>
@@ -64,8 +67,7 @@ export default class Query extends React.Component {
 
     const classes = classNames({
       query: true,
-      highlighted: query.components.included.find(c => overComponents.indexOf(c) !== -1)
-          || !this.state.hover && overQueries.find(q => q.key === query.key)
+      highlighted: this.state.hover || highlighted
     });
 
     return (

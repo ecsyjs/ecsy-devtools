@@ -2,6 +2,7 @@ import React from 'react';
 import Query from './Query';
 import {SectionHeader, Title, TitleGroup } from './StyledComponents';
 import Checkbox from './Checkbox';
+import isEqual from 'react-fast-compare';
 
 export default class Queries extends React.Component {
   constructor(props) {
@@ -15,6 +16,11 @@ export default class Queries extends React.Component {
     };
 
     this.references = {};
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    return !isEqual(this.props, nextProps) ||
+      this.state.linkMinMax != nextState.linkMinMax;
   }
 
   getOrCreateRef(id) {
@@ -47,19 +53,22 @@ export default class Queries extends React.Component {
   render() {
     const { queries, showGraphs, overQueries, overComponents } = this.props;
 
-    let queriesHtml = queries.map(query => (
-      <Query
-        key={query.key}
-        query={query}
-        ref={this.getOrCreateRef(query.key)}
-        chartRange={this.state.chartRange}
-        graphConfig={this.props.graphConfig.queries}
-        linkMinMax={this.state.linkMinMax}
-        showGraphs={showGraphs}
-        overComponents={overComponents}
-        overQueries={overQueries}
-      />
-    ));
+
+    let queriesHtml = queries.map(query => {
+      const highlighted = query.components.included.find(c => overComponents.indexOf(c) !== -1)
+                        || overQueries.find(q => q.key === query.key)
+      return <Query
+          key={query.key}
+          query={query}
+          ref={this.getOrCreateRef(query.key)}
+          chartRange={this.state.chartRange}
+          graphConfig={this.props.graphConfig.queries}
+          linkMinMax={this.state.linkMinMax}
+          showGraphs={showGraphs}
+          highlighted={highlighted}
+        />
+      }
+    );
 
     return (
       <div>

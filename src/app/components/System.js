@@ -103,10 +103,10 @@ export default class System extends React.Component {
 
 
   render() {
-    const { color, allSystemsStopped, system, data, showGraphs, overQueries, overComponents, overSystem } = this.props
+    const { color, dataQueries, allSystemsStopped, system, nextSystemToExecute, showGraphs, overQueries, overComponents, overSystem } = this.props
     const percTime = this.props.totalSystemsTime > 0 ? system.executeTime / this.props.totalSystemsTime * 100 : 0;
 
-    const running = allSystemsStopped && data.nextSystemToExecute === system.name;
+    const running = allSystemsStopped && nextSystemToExecute === system.name;
 
     const classes = classNames({
       system: true,
@@ -178,7 +178,15 @@ export default class System extends React.Component {
               </div>
             </div>
           </div>
-          { this.props.showQueries && <SystemQueries queries={system.queries} overSystem={overSystem} overQueries={overQueries} overComponents={overComponents} data={data}/> }
+          { this.props.showQueries &&
+            <SystemQueries
+              queries={system.queries}
+              dataQueries={dataQueries}
+              overSystem={overSystem}
+              overQueries={overQueries}
+              overComponents={overComponents}
+            />
+          }
         </div>
       </li>
     );

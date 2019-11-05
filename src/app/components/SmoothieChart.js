@@ -201,7 +201,6 @@ class SmoothieComponent extends React.Component {
   }
 
   render() {
-
     let style = {};
 
     if (this.props.responsive === true) {

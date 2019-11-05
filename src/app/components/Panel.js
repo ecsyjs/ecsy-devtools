@@ -63,9 +63,11 @@ class App extends Component {
       showEntities: true,
       showQueries: true,
       showSystems: true,
-      showGraphs: true,
+      showGraphs: false,
       overComponents: [],
+      prevOverComponents: [],
       overQueries: [],
+      prevOverQueries: [],
       overSystem: false,
       highlight: true,
       graphConfig: {
@@ -87,12 +89,14 @@ class App extends Component {
     Events.on('componentOver', detail => {
       if (!this.state.highlight) return;
 
+      this.setState({prevOverComponents: this.state.overComponents});
       this.setState({overComponents: detail});
     });
 
-    Events.on('componentQuery', detail => {
+    Events.on('queryOver', detail => {
       if (!this.state.highlight) return;
 
+      this.setState({prevOverQueries: this.state.overQueries});
       this.setState({overQueries: detail});
     });
 
@@ -104,11 +108,13 @@ class App extends Component {
         let overQueries = Object.keys(system.queries).map(querySystemName =>
           this.state.data.queries.find(q => q.key === system.queries[querySystemName].key)
         );
+        this.setState({prevOverQueries: this.state.overQueries});
         this.setState({
           overQueries: overQueries,
           overSystem: true
         });
       } else {
+        this.setState({prevOverQueries: this.state.overQueries});
         this.setState({
           overQueries: [],
           overSystem: false
@@ -139,7 +145,7 @@ class App extends Component {
   }
 
   processData(data) {
-    let graphConfig = Object.assign({}, this.state.graphConfig);  // creating copy of state variable jasper
+    let graphConfig = this.state.graphConfig
 
     // Components
     var minMax = Object.values(data.components).reduce((a, c) =>
@@ -280,31 +286,39 @@ class App extends Component {
               <Components
                 graphConfig={this.state.graphConfig}
                 components={data.components}
-                data={data}
+                componentsPools={data.componentsPools}
                 overQueries={this.state.overQueries}
                 showGraphs={this.state.showGraphs}
               />
             }
-            { 
+            {
               state.showQueries &&
               <Queries
                 graphConfig={this.state.graphConfig}
                 queries={data.queries}
-                data={data}
                 overQueries={this.state.overQueries}
+                prevOverQueries={this.state.prevOverQueries}
                 overComponents={this.state.overComponents}
+                prevOverComponents={this.state.prevOverComponents}
                 showGraphs={this.state.showGraphs}
               />
             }
           </div>
           <div className="column">
             {
-              state.showSystems && <Systems systems={data.systems} data={data}
-              showGraphs={this.state.showGraphs}
-              graphConfig={this.state.graphConfig}
-              overQueries={this.state.overQueries}
-              overSystem={this.state.overSystem}
-              overComponents={this.state.overComponents} />
+              state.showSystems && <Systems
+                systems={data.systems}
+                nextSystemToExecute={data.nextSystemToExecute}
+                dataQueries={data.queries}
+                data={data}
+                showGraphs={this.state.showGraphs}
+                graphConfig={this.state.graphConfig}
+                overQueries={this.state.overQueries}
+                prevOverQueries={this.state.prevOverQueries}
+                overSystem={this.state.overSystem}
+                overComponents={this.state.overComponents}
+                prevOverComponents={this.state.prevOverComponents}
+              />
             }
           </div>
         </Columns>

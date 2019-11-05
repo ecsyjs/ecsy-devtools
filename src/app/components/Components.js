@@ -4,6 +4,7 @@ import Component from './Component';
 import SmoothieComponent, { TimeSeries } from './SmoothieChart';
 import {SectionHeader, Title, TitleGroup } from './StyledComponents';
 import Checkbox from './Checkbox';
+import isEqual from 'react-fast-compare';
 
 export default class Components extends React.Component {
 
@@ -50,7 +51,7 @@ export default class Components extends React.Component {
     {
       let timeSeries = [];
       Object.values(this.references).forEach(e => timeSeries = timeSeries.concat(e.current.timeSeries));
-  
+
       let minMax = timeSeries.reduce((acum, current) => ({
         min: Math.min(acum.min, current.minValue),
         max: Math.max(acum.max, current.maxValue)
@@ -60,13 +61,18 @@ export default class Components extends React.Component {
           max: Number.MIN_VALUE
         }
       );
-  
+
       this.setState({chartRange: minMax});
     }
   }
 
+  shouldComponentUpdate(nextProps, nextState) {
+    return !isEqual(this.props, nextProps) ||
+      !isEqual(this.state, nextState);
+  }
+
   render() {
-    const { components, data, showGraphs, overQueries } = this.props;
+    const { components, componentsPools, showGraphs, overQueries, prevOverQueries } = this.props;
 
     if (!components) {
       return (
@@ -74,8 +80,8 @@ export default class Components extends React.Component {
       );
     }
 
-    const numComponents = data.components ? Object.keys(data.components).length : 0;
-    const numComponentInstances = data.components && Object.values(data.components).length > 0 ? Object.values(data.components).reduce((a, c) => a + c) : undefined;
+    const numComponents = components ? Object.keys(components).length : 0;
+    const numComponentInstances = components && Object.values(components).length > 0 ? Object.values(components).reduce((a, c) => a + c) : undefined;
 
     let componentsHtml = Object.keys(components).map(name => (
       <Component
@@ -89,7 +95,8 @@ export default class Components extends React.Component {
         showGraphs={showGraphs}
         chartRange={this.state.chartRange}
         overQueries={overQueries}
-        pool={data.componentsPools[name]}
+        prevOverQueries={prevOverQueries}
+        pool={componentsPools[name]}
       />
     ));
     this.timeSeries.append(new Date().getTime(), numComponentInstances);

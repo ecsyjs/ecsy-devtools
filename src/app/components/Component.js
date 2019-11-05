@@ -5,6 +5,7 @@ import SmoothieComponent, { TimeSeries } from './SmoothieChart';
 import Events from '../utils/Events';
 import Bindings from '../ECSYBindings';
 import styled from 'styled-components';
+import isEqual from 'react-fast-compare';
 
 import { Half, Half2, Button } from './StyledComponents';
 
@@ -29,7 +30,7 @@ const Warn = styled.span`
   vertical-align: middle;
 `;
 
-export default class Component extends React.PureComponent {
+export default class Component extends React.Component {
   constructor(props) {
     super(props);
 
@@ -42,6 +43,15 @@ export default class Component extends React.PureComponent {
     ];
 
     this.prevPoolSize = 0;
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    return true;
+    /*
+    return !isEqual(this.props, nextProps) ||
+      ( !== this.prevPoolSize ||
+      !isEqual(this.state, nextState);
+      */
   }
 
   onEnter = () => {
@@ -72,7 +82,7 @@ export default class Component extends React.PureComponent {
   }
 
   render() {
-    const { pool, value, name, linkMinMax, graphConfig, showGraphs, overQueries } = this.props;
+    const { pool, value, name, linkMinMax, graphConfig, showGraphs, overQueries, prevOverQueries } = this.props;
 
     const classes = classNames({
       component: true,

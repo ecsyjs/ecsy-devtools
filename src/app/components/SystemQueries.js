@@ -22,11 +22,11 @@ const QueryNumEntities = styled.span`
 export default class SystemQueries extends React.Component {
 
   render() {
-    const { queries, data, overSystem, overComponents, overQueries } = this.props;
+    const { queries, dataQueries, overSystem, overComponents, overQueries } = this.props;
 
     let queriesHtml = Object.keys(queries).map(queryName => {
       let key = queries[queryName].key;
-      let query = data.queries.find(q => q.key === key);
+      let query = dataQueries.find(q => q.key === key);
       const components = query.components.included.map(name => (
         <span className="ComponentName">{name}</span>
       ));
