@@ -25,7 +25,19 @@ const Container = styled.div`
 
 const Columns = styled.div`
   display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  width: 100%;
 `;
+
+const Column = styled.div`
+  display: flex;
+  flex-direction: column;
+  flex-basis: 100%;
+  flex: 1;
+  margin-right: 20px;
+`;
+
 
 const Code = styled.pre`
   background-color: #1e1e1e;
@@ -272,7 +284,7 @@ class App extends Component {
             onChange={this.onShowGraphChanged}/>
         </div>
         <Columns>
-          <div className="column">
+          <Column>
             {
               state.showEntities &&
               <Entities
@@ -291,6 +303,8 @@ class App extends Component {
                 showGraphs={this.state.showGraphs}
               />
             }
+          </Column>
+          <Column>
             {
               state.showQueries &&
               <Queries
@@ -303,8 +317,8 @@ class App extends Component {
                 showGraphs={this.state.showGraphs}
               />
             }
-          </div>
-          <div className="column">
+          </Column>
+          <Column>
             {
               state.showSystems && <Systems
                 systems={data.systems}
@@ -320,7 +334,7 @@ class App extends Component {
                 prevOverComponents={this.state.prevOverComponents}
               />
             }
-          </div>
+          </Column>
         </Columns>
       </Container>
     );
