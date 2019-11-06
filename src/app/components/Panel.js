@@ -15,6 +15,21 @@ import Entities from './Entities';
 import Events from '../utils/Events';
 import Checkbox from './Checkbox';
 
+import { ToggleButton, OptionsGroup, Button, SectionHeader2, Title, TitleGroup } from './StyledComponents';
+import {
+  FaPlay,
+  FaPause,
+  FaFastForward,
+  FaStepForward,
+  FaChartArea,
+  FaChartBar,
+  FaLink,
+  FaBoxes,
+  FaChartLine,
+  FaChartPie
+ } from 'react-icons/fa';
+
+
 var globalBrowser =  chrome || browser;
 
 const Container = styled.div`
@@ -107,8 +122,9 @@ class App extends Component {
 
     Events.on('toggleGraphs', detail => {
       this.graphStatus[detail.group] = detail.value;
-      console.log(this.graphStatus);
-      //{group: 'systems', value: !this.state.showGraphs});
+      this.setState({
+        showGraphs: Object.values(this.graphStatus).reduce((a,c) => a && c)
+      })
     });
 
     Events.on('componentOver', detail => {
@@ -235,8 +251,9 @@ class App extends Component {
     this.setState({highlight: e.target.checked});
   }
 
-  onShowGraphChanged = e => {
-    this.setState({showGraphs: e.target.checked});
+  toggleShowGraph = () => {
+    Events.emit('toggleAllGraphs', !this.state.showGraphs);
+    this.setState({showGraphs: !this.state.showGraphs});
   }
 
   toggleComponents = () => {
@@ -290,11 +307,12 @@ class App extends Component {
               {JSON.stringify(data, null, 2)}
             </Code>
           }
-          <Checkbox
-            checked={this.state.showGraphs}
-            value={this.state.showGraphs}
-            description="Show graphs"
-            onChange={this.onShowGraphChanged}/>
+          <ToggleButton
+            onClick={this.toggleShowGraph}
+            disabled={!this.state.showGraphs}
+            title="Show charts">
+            <FaChartArea/>
+          </ToggleButton>
         </div>
         <Columns>
           <Column>

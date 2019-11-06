@@ -69,6 +69,11 @@ export default class Systems extends React.Component {
 
   constructor() {
     super();
+
+    Events.on('toggleAllGraphs', value => {
+      this.setState({showGraphs: value});
+    });
+
     this.state = {
       chartRange: {
         min: 0,

@@ -21,6 +21,11 @@ import {
 export default class Queries extends React.Component {
   constructor(props) {
     super(props);
+
+    Events.on('toggleAllGraphs', value => {
+      this.setState({showGraphs: value});
+    });
+
     this.state = {
       chartRange: {
         min: 0,

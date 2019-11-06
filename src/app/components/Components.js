@@ -32,6 +32,11 @@ export default class Components extends React.Component {
 
   constructor(props) {
     super(props);
+
+    Events.on('toggleAllGraphs', value => {
+      this.setState({showGraphs: value});
+    });
+
     this.timeSeries = new TimeSeries({
       resetBounds: true,
       resetBoundsInterval: 3000
