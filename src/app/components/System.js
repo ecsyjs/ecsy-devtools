@@ -5,6 +5,7 @@ import SystemQueries from './SystemQueries';
 import SmoothieComponent, { TimeSeries } from './SmoothieChart';
 import Events from '../utils/Events';
 import { Button } from './StyledComponents';
+import isEqual from 'react-fast-compare';
 
 import {
   FaStripeS,
@@ -45,6 +46,12 @@ var getColorForPercentage = function(pct) {
 
 
 export default class System extends React.Component {
+
+  shouldComponentUpdate(nextProps, nextState) {
+    return !isEqual(this.props, nextProps) ||
+            !isEqual(this.state, nextState);
+  }
+
   constructor(props) {
     super(props);
 
@@ -103,7 +110,7 @@ export default class System extends React.Component {
 
 
   render() {
-    const { color, dataQueries, allSystemsStopped, system, nextSystemToExecute, showGraphs, overQueries, overComponents, overSystem } = this.props
+    const { color, highlighted, allSystemsStopped, system, nextSystemToExecute, showGraphs, overQueries, overComponents, overSystem } = this.props
     const percTime = this.props.totalSystemsTime > 0 ? system.executeTime / this.props.totalSystemsTime * 100 : 0;
 
     const running = allSystemsStopped && nextSystemToExecute === system.name;
@@ -113,6 +120,13 @@ export default class System extends React.Component {
       disabled: !system.enabled,
       running: running
     });
+
+    const systemDataClasses = classNames({
+      systemData: true,
+      highlighted: highlighted
+    });
+
+    const borderLeft = {borderLeft: `5px solid ${color}`};
 
     this.timeSeries.append(new Date().getTime(), system.executeTime);
 
@@ -126,7 +140,7 @@ export default class System extends React.Component {
         onMouseLeave={this.onLeave}
       >
         <div className={classes}>
-          <div className="systemData" style={{borderLeft: `5px solid ${color}`}}>
+          <div className={systemDataClasses} style={borderLeft}>
             {
               running && <div className="arrow"></div>
             }
@@ -181,7 +195,6 @@ export default class System extends React.Component {
           { this.props.showQueries &&
             <SystemQueries
               queries={system.queries}
-              dataQueries={dataQueries}
               overSystem={overSystem}
               overQueries={overQueries}
               overComponents={overComponents}

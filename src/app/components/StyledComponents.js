@@ -10,13 +10,14 @@ export const SectionHeader2 = styled.div`
   padding: 15px;
   padding-right: 0;
   display: flex;
-  align-items: start;
+  align-items: center; /*start;*/
 `;
 
 export const TitleGroup = styled.div`
   display: flex;
+  flex: 1;
   justify-content: space-between;
-  margin-bottom: 10px;
+  /*margin-bottom: 10px;*/
 `;
 
 export const Title = styled.span`
@@ -56,4 +57,24 @@ export const Half2 = styled.div`
   justify-content: space-between;
   margin-right: 10px;
   align-items: center;
+`;
+
+export const OptionsGroup = styled.div`
+  display: block;
+  margin: 5px 0;
+`;
+
+export const ToggleButton = styled.span`
+color: ${(props) => props.disabled ? "#6B6B6B" : "#4AF4FF"};
+cursor: pointer;
+margin-right: 10px;
+font-size: 1.2em;
+
+&:hover {
+  opacity: 0.7;
+}
+
+&:last-of-type {
+  margin-right: 2em;
+}
 `;

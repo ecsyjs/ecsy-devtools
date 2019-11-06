@@ -4,22 +4,28 @@ import System from './System';
 import PieChart from 'react-minimal-pie-chart';
 import styled from 'styled-components';
 import SmoothieComponent, { TimeSeries } from './SmoothieChart';
-import {Button, SectionHeader2, Title, TitleGroup } from './StyledComponents';
+import { ToggleButton, OptionsGroup, Button, SectionHeader2, Title, TitleGroup } from './StyledComponents';
 import Bindings from '../ECSYBindings';
 import Events from '../utils/Events';
 import Checkbox from './Checkbox';
 import isEqual from 'react-fast-compare';
+import classNames from 'classnames';
 
 import {
   FaPlay,
   FaPause,
   FaFastForward,
-  FaStepForward
+  FaStepForward,
+  FaChartArea,
+  FaChartBar,
+  FaLink,
+  FaBoxes,
+  FaChartLine,
+  FaChartPie
  } from 'react-icons/fa';
 
-
 const PieContainer = styled.div`
-  width: 150px;
+  width: 100px;
   padding-left: 20px;
 `;
 
@@ -45,8 +51,13 @@ export default class Systems extends React.Component {
       !isEqual(this.state, nextState);
   }
 
-  linkMinMaxChanged = (e) => {
-    this.setState({linkMinMax: e.target.checked});
+  toggleLinkMinMax = (e) => {
+    this.setState({linkMinMax: !this.state.linkMinMax});
+  }
+
+  toggleShowGraph = () => {
+    Events.emit('toggleGraphs', {group: 'systems', value: !this.state.showGraphs});
+    this.setState({showGraphs: !this.state.showGraphs});
   }
 
   getOrCreateRef(id) {
@@ -63,8 +74,9 @@ export default class Systems extends React.Component {
         min: 0,
         max: 0
       },
+      showGraphs: false,
       playing: true,
-      showQueries: false,
+      showQueries: true,
       stats: [],
       linkMinMax: false,
       prevSystemsState: {}
@@ -140,8 +152,8 @@ export default class Systems extends React.Component {
     Bindings.stepNextSystem();
   }
 
-  onShowQueriesChanged = e => {
-    this.setState({showQueries: e.target.checked});
+  toggleShowQueries = e => {
+    this.setState({showQueries: !this.state.showQueries});
   }
 
   componentWillReceiveProps() {
@@ -161,7 +173,7 @@ export default class Systems extends React.Component {
   }
 
   render() {
-    const { systems, dataQueries, nextSystemToExecute, showGraphs, overComponents, overQueries, overSystem } = this.props;
+    const { systems, dataQueries, nextSystemToExecute, /*showGraphs,*/ overComponents, overQueries, overSystem } = this.props;
     const state = this.state;
 
     if (!Array.isArray(systems)) {
@@ -187,21 +199,42 @@ export default class Systems extends React.Component {
 
     let allSystemsStopped = systems.reduce((acum, s) => acum && !s.enabled);
 
+    const headerContainerClasses = classNames({
+      'textOnly': !showGraphs
+    });
+
+    const showGraphs = this.state.showGraphs;
+
     return (
       <div>
       <SectionHeader2>
-        <div>
+        <div className={headerContainerClasses}>
           <TitleGroup>
             <Title>SYSTEMS ({systems.length})</Title> <Title>{totalSystemsTime.toFixed(2)}ms</Title>
           </TitleGroup>
-
-          { showGraphs &&
-            <Checkbox
-              checked={this.state.linkMinMax}
-              value={this.state.linkMinMax}
-              description="Link mix/max graphs"
-              onChange={this.linkMinMaxChanged}/>
-          }
+          <OptionsGroup>
+            <ToggleButton
+              onClick={this.toggleShowQueries}
+              disabled={!this.state.showQueries}
+              title="Show queries">
+              <FaBoxes/>
+            </ToggleButton>
+            <ToggleButton
+              onClick={this.toggleShowGraph}
+              disabled={!this.state.showGraphs}
+              title="Show charts">
+              <FaChartArea/>
+            </ToggleButton>
+            {
+              showGraphs &&
+              <ToggleButton
+                onClick={this.toggleLinkMinMax}
+                disabled={!this.state.linkMinMax}
+                title="Link min/max graphs">
+                <FaLink/>
+              </ToggleButton>
+            }
+          </OptionsGroup>
           {
             showGraphs &&
             <SmoothieComponent
@@ -229,9 +262,6 @@ export default class Systems extends React.Component {
             showGraphs &&
             <PieContainer>
               <PieChart
-                animate={false}
-                animationDuration={500}
-                animationEasing="ease-out"
                 cx={50}
                 cy={50}
                 data={chartData}
@@ -255,7 +285,6 @@ export default class Systems extends React.Component {
               />
             </PieContainer>
           }
-
         <div className="buttons">
           <Button
             onClick={state.playing ? this.stopSystems : this.playSystems}
@@ -274,15 +303,18 @@ export default class Systems extends React.Component {
         </div>
 
       </SectionHeader2>
-        <label htmlFor="show-queries" id="showqueries"><input type="checkbox" id="show-queries" checked={state.showQueries} value={state.showQueries} onChange={this.onShowQueriesChanged}/>Show queries
-        </label>
         <ul>
           {
-            systems.map((system, i) => (
-              <System
+            systems.map((system, i) => {
+              const highlighted = Object.values(system.queries).find(sq =>
+                  overQueries.find(oq =>
+                    oq.key === sq.key) !== undefined ||
+                    sq.components.included.find(c => overComponents.indexOf(c) !== -1)) !== undefined;
+
+              return <System
                 color={colors[i]}
+                highlighted={highlighted}
                 nextSystemToExecute={nextSystemToExecute}
-                dataQueries={dataQueries}
                 allSystemsStopped={allSystemsStopped}
                 graphConfig={this.props.graphConfig.systems}
                 ref={this.getOrCreateRef(system.name)}
@@ -298,8 +330,8 @@ export default class Systems extends React.Component {
                 overQueries={overQueries}
                 overSystem={overSystem}
                 overComponents={overComponents}
-              />
-            ))
+              />;
+            })
           }
         </ul>
       </div>

@@ -1,8 +1,22 @@
 import React from 'react';
 import Query from './Query';
-import {SectionHeader, Title, TitleGroup } from './StyledComponents';
+import { ToggleButton, OptionsGroup, SectionHeader, Title, TitleGroup } from './StyledComponents';
 import Checkbox from './Checkbox';
 import isEqual from 'react-fast-compare';
+import Events from '../utils/Events';
+
+import {
+  FaPlay,
+  FaPause,
+  FaFastForward,
+  FaStepForward,
+  FaChartArea,
+  FaChartBar,
+  FaLink,
+  FaBoxes,
+  FaChartLine,
+  FaChartPie
+ } from 'react-icons/fa';
 
 export default class Queries extends React.Component {
   constructor(props) {
@@ -12,6 +26,7 @@ export default class Queries extends React.Component {
         min: 0,
         max: 0
       },
+      showGraphs: false,
       linkMinMax: false
     };
 
@@ -46,13 +61,19 @@ export default class Queries extends React.Component {
     }
   }
 
-  linkMinMaxChanged = (e) => {
-    this.setState({linkMinMax: e.target.checked});
+  toggleLinkMinMax = (e) => {
+    this.setState({linkMinMax: !this.state.linkMinMax});
+  }
+
+  toggleShowGraph = () => {
+    Events.emit('toggleGraphs', {group: 'queries', value: !this.state.showGraphs});
+    this.setState({showGraphs: !this.state.showGraphs});
   }
 
   render() {
-    const { queries, showGraphs, overQueries, overComponents } = this.props;
+    const { queries,/* showGraphs,*/ overQueries, overComponents } = this.props;
 
+    const showGraphs = this.state.showGraphs;
 
     let queriesHtml = queries.map(query => {
       const highlighted = query.components.included.find(c => overComponents.indexOf(c) !== -1)
@@ -75,13 +96,23 @@ export default class Queries extends React.Component {
           <TitleGroup>
             <Title>QUERIES ({queries.length})</Title>
           </TitleGroup>
-          { showGraphs &&
-            <Checkbox
-              checked={this.state.linkMinMax}
-              value={this.state.linkMinMax}
-              description="Link mix/max graphs"
-              onChange={this.linkMinMaxChanged}/>
-          }
+          <OptionsGroup>
+            <ToggleButton
+              onClick={this.toggleShowGraph}
+              disabled={!this.state.showGraphs}
+              title="Show charts">
+              <FaChartArea/>
+            </ToggleButton>
+            {
+              showGraphs &&
+              <ToggleButton
+                onClick={this.toggleLinkMinMax}
+                disabled={!this.state.linkMinMax}
+                title="Link min/max graphs">
+                <FaLink/>
+              </ToggleButton>
+            }
+          </OptionsGroup>
         </SectionHeader>
         <ul>{queriesHtml}</ul>
       </div>

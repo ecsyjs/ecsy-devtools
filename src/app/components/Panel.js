@@ -98,6 +98,19 @@ class App extends Component {
       }
     };
 
+    this.graphStatus = {
+      systems: false,
+      components: false,
+      queries: false,
+      entities: false
+    }
+
+    Events.on('toggleGraphs', detail => {
+      this.graphStatus[detail.group] = detail.value;
+      console.log(this.graphStatus);
+      //{group: 'systems', value: !this.state.showGraphs});
+    });
+
     Events.on('componentOver', detail => {
       if (!this.state.highlight) return;
 

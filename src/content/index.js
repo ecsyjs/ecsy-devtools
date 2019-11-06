@@ -29,14 +29,6 @@ if( !window.__ECSY_DEVTOOLS_INJECTED ) {
 		}
 
 		window.__ECSY_DEVTOOLS.refreshStats = function() {
-			const systems = world.systemManager._systems.map(system => system.toJSON());
-
-			// Reset time for next step
-			// @todo Do it on core?
-			world.systemManager._systems.forEach(system => {
-				system.executeTime = 0;
-			});
-
 			const queries = Object.values(world.entityManager._queryManager._queries).map(q => {
 				return {
 					key: q.key,
@@ -47,6 +39,25 @@ if( !window.__ECSY_DEVTOOLS_INJECTED ) {
 					numEntities: q.entities.length
 				}
 			});
+
+			const systems = world.systemManager._systems.map(system => {
+				let data = system.toJSON();
+				for (name in data.queries) {
+					var query = data.queries[name];
+					var queryData = queries.find(q => q.key === query.key);
+					query.numEntities = queryData.numEntities;
+					query.components = queryData.components;
+				}
+
+				return data;
+			});
+
+			// Reset time for next step
+			// @todo Do it on core?
+			world.systemManager._systems.forEach(system => {
+				system.executeTime = 0;
+			});
+
 
 			let components = world.componentsManager.numComponents;
 			let componentsPools = {};

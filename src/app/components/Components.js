@@ -2,11 +2,33 @@ import React from 'react';
 import './Panel.css';
 import Component from './Component';
 import SmoothieComponent, { TimeSeries } from './SmoothieChart';
-import {SectionHeader, Title, TitleGroup } from './StyledComponents';
+import { ToggleButton, OptionsGroup, SectionHeader, Title, TitleGroup } from './StyledComponents';
 import Checkbox from './Checkbox';
 import isEqual from 'react-fast-compare';
+import Events from '../utils/Events';
+
+import {
+  FaPlay,
+  FaPause,
+  FaFastForward,
+  FaStepForward,
+  FaChartArea,
+  FaChartBar,
+  FaLink,
+  FaBoxes,
+  FaChartLine,
+  FaChartPie
+ } from 'react-icons/fa';
 
 export default class Components extends React.Component {
+  toggleShowGraph = () => {
+    Events.emit('toggleGraphs', {group: 'components', value: !this.state.showGraphs});
+    this.setState({showGraphs: !this.state.showGraphs});
+  }
+
+  toggleShowPoolGraph = () => {
+    this.setState({showPoolGraph: !this.state.showPoolGraph});
+  }
 
   constructor(props) {
     super(props);
@@ -17,6 +39,11 @@ export default class Components extends React.Component {
 
     this.state = {
       linkMinMax: false,
+      chartRange: {
+        min: 0,
+        max: 0
+      },
+      showGraphs: false,
       showPoolGraph: false
     };
 
@@ -29,13 +56,7 @@ export default class Components extends React.Component {
     }
     return this.references[id];
   }
-
-  showPoolGraphChanged = (e) => {
-    this.setState({
-      showPoolGraph: e.target.checked
-    });
-  }
-
+/*
   linkMinMaxChanged = (e) => {
     this.setState({
       linkMinMax: e.target.checked,
@@ -44,6 +65,11 @@ export default class Components extends React.Component {
         max: 0
       }
     });
+  }
+*/
+
+  toggleLinkMinMax = (e) => {
+    this.setState({linkMinMax: !this.state.linkMinMax});
   }
 
   componentWillReceiveProps() {
@@ -72,7 +98,7 @@ export default class Components extends React.Component {
   }
 
   render() {
-    const { components, componentsPools, showGraphs, overQueries } = this.props;
+    const { components, componentsPools, /*showGraphs,*/ overQueries } = this.props;
 
     if (!components) {
       return (
@@ -80,6 +106,7 @@ export default class Components extends React.Component {
       );
     }
 
+    const showGraphs = this.state.showGraphs;
     const numComponents = components ? Object.keys(components).length : 0;
     const numComponentInstances = components && Object.values(components).length > 0 ? Object.values(components).reduce((a, c) => a + c) : undefined;
 
@@ -109,21 +136,33 @@ export default class Components extends React.Component {
           <TitleGroup>
             <Title>COMPONENTS ({numComponents})</Title> <Title>{numComponentInstances} instances</Title>
           </TitleGroup>
+            <OptionsGroup>
+              <ToggleButton
+                onClick={this.toggleShowGraph}
+                disabled={!this.state.showGraphs}
+                title="Show charts">
+                <FaChartArea/>
+              </ToggleButton>
+              {
+                showGraphs &&
+                <ToggleButton
+                  onClick={this.toggleLinkMinMax}
+                  disabled={!this.state.linkMinMax}
+                  title="Link min/max graphs">
+                  <FaLink/>
+                </ToggleButton>
+              }
+              {
+                showGraphs &&
+                <ToggleButton
+                  onClick={this.toggleShowPoolGraph}
+                  disabled={!this.state.showPoolGraph}
+                  title="Show pool graph">
+                  <FaChartLine/>
+                </ToggleButton>
+              }
+            </OptionsGroup>
 
-          { showGraphs &&
-            <Checkbox
-              checked={this.state.linkMinMax}
-              value={this.state.linkMinMax}
-              description="Link mix/max graphs"
-              onChange={this.linkMinMaxChanged}/>
-          }
-          { showGraphs &&
-            <Checkbox
-              checked={this.state.showPoolGraph}
-              value={this.state.showPoolGraph}
-              description="Show pool graph"
-              onChange={this.showPoolGraphChanged}/>
-          }
           {
             showGraphs &&
             <SmoothieComponent

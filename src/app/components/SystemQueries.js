@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import classNames from 'classnames';
+import isEqual from 'react-fast-compare';
 
 const Queries = styled.div`
   margin-left: 20px;
@@ -21,12 +22,17 @@ const QueryNumEntities = styled.span`
 
 export default class SystemQueries extends React.Component {
 
+  shouldComponentUpdate(nextProps, nextState) {
+    return !isEqual(this.props, nextProps) ||
+            !isEqual(this.state, nextState);
+  }
+
   render() {
-    const { queries, dataQueries, overSystem, overComponents, overQueries } = this.props;
+    const { queries, overSystem, overComponents, overQueries } = this.props;
 
     let queriesHtml = Object.keys(queries).map(queryName => {
-      let key = queries[queryName].key;
-      let query = dataQueries.find(q => q.key === key);
+      let query = queries[queryName];
+      let key = query.key;
       const components = query.components.included.map(name => (
         <span className="ComponentName">{name}</span>
       ));
@@ -41,7 +47,7 @@ export default class SystemQueries extends React.Component {
       });
 
       return (
-        <li className={classes}>
+        <li className={classes} key={queryName}>
           <div>{ components }</div>
           <QueryNumEntities>{query.numEntities}</QueryNumEntities>
         </li>

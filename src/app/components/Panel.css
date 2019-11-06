@@ -90,11 +90,6 @@ div.system {
   margin-bottom: 4px;
 }
 
-#showqueries {
-  display: block;
-  margin: 5px;
-}
-
 li.component {
   display: flex;
 }
@@ -230,6 +225,7 @@ li.query {
   display: flex;
 }
 
+.systemData.highlighted,
 li.systemQueryLi.highlighted,
 li.component.highlighted,
 li.query.highlighted {
@@ -311,4 +307,11 @@ ul.SystemsQueries {
 	border-left-color: #DBD166;
 	border-width: 20px;
 	margin-top: -20px;
+}
+
+.textOnly {
+  display: flex;
+  width: 50%;
+  margin-right: 8px;
+  flex-direction: column;
 }
