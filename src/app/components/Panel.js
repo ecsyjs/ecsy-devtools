@@ -22,6 +22,8 @@ import {
   FaFastForward,
   FaStepForward,
   FaChartArea,
+  FaCode,
+  FaProjectDiagram,
   FaChartBar,
   FaLink,
   FaBoxes,
@@ -64,7 +66,7 @@ const ToggleSection = styled.span`
   color: ${(props) => props.disabled ? "#6B6B6B" : "#4AF4FF"};
   cursor: pointer;
   margin-right: 10px;
-  font-size: 15px;
+  font-size: 1.2em;
 
   &:hover {
     opacity: 0.7;
@@ -243,12 +245,12 @@ class App extends Component {
     Bindings.logData(this.state.data);
   }
 
-  onShowDebugChanged = e => {
-    this.setState({debug: e.target.checked});
+  toggleShowDebug = () => {
+    this.setState({debug: !this.state.debug});
   }
 
-  onHighlightChanged = e => {
-    this.setState({highlight: e.target.checked});
+  toggleHighlightRelationships = () => {
+    this.setState({highlight: !this.state.highlight});
   }
 
   toggleShowGraph = () => {
@@ -285,28 +287,22 @@ class App extends Component {
     return (
       <Container>
         <div id="header">
-          <ToggleSection title="Show Entities Panel" onClick={this.toggleEntities} disabled={!state.showEntities}>E</ToggleSection>
-          <ToggleSection title="Show Components Panel" onClick={this.toggleComponents} disabled={!state.showComponents}>C</ToggleSection>
-          <ToggleSection title="Show Systems Panel" onClick={this.toggleSystems} disabled={!state.showSystems}>S</ToggleSection>
-          <ToggleSection title="Show Queries Panel" onClick={this.toggleQueries} disabled={!state.showQueries}>Q</ToggleSection>
-
-          <Checkbox
-            checked={this.state.highlight}
-            value={this.state.highlight}
-            description="Highlight relationships"
-            onChange={this.onHighlightChanged}/>
-          <Checkbox
-            checked={this.state.debug}
-            value={this.state.debug}
-            description="Show debug"
-            onChange={this.onShowDebugChanged}/>
-          {
-            this.state.debug &&
-            <Code>
-              <button onClick={this.dumpData}>dump to console ($data)</button><br/>
-              {JSON.stringify(data, null, 2)}
-            </Code>
-          }
+          <ToggleButton title="Show Entities Panel" onClick={this.toggleEntities} disabled={!state.showEntities}>E</ToggleButton>
+          <ToggleButton title="Show Components Panel" onClick={this.toggleComponents} disabled={!state.showComponents}>C</ToggleButton>
+          <ToggleButton title="Show Systems Panel" onClick={this.toggleSystems} disabled={!state.showSystems}>S</ToggleButton>
+          <ToggleButton title="Show Queries Panel" onClick={this.toggleQueries} disabled={!state.showQueries}>Q</ToggleButton>
+          <ToggleButton
+            onClick={this.toggleHighlightRelationships}
+            disabled={!this.state.highlight}
+            title="Highlight relatinships">
+            <FaProjectDiagram/>
+          </ToggleButton>
+          <ToggleButton
+            onClick={this.toggleShowDebug}
+            disabled={!this.state.debug}
+            title="Show debug">
+            <FaCode/>
+          </ToggleButton>
           <ToggleButton
             onClick={this.toggleShowGraph}
             disabled={!this.state.showGraphs}
@@ -314,6 +310,13 @@ class App extends Component {
             <FaChartArea/>
           </ToggleButton>
         </div>
+        {
+          this.state.debug &&
+          <Code>
+            <button onClick={this.dumpData}>dump to console ($data)</button><br/>
+            {JSON.stringify(data, null, 2)}
+          </Code>
+        }
         <Columns>
           <Column>
             {

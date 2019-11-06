@@ -20,6 +20,8 @@ body {
   background: #1E1E1E;
   padding: 10px 15px;
   width: calc(100% - 50px);
+  display: flex;
+  vertical-align: center;
 }
 
 label {
