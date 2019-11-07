@@ -2,6 +2,11 @@ import React from 'react';
 import styled from 'styled-components';
 import classNames from 'classnames';
 import isEqual from 'react-fast-compare';
+import { ToggleButton } from './StyledComponents';
+
+import {
+  FaBolt
+ } from 'react-icons/fa';
 
 const Queries = styled.div`
   margin-left: 20px;
@@ -20,7 +25,30 @@ const QueryNumEntities = styled.span`
   color: #2CEBBD;
 `;
 
+const ReactiveLists = styled.ul`
+  margin-left: 40px;
+  margin-top: 10px;
+  margin-bottom: 5px;
+`;
+
+const ReactiveList = styled.li`
+ display:flex;
+ justify-content: space-between;
+`;
+
 export default class SystemQueries extends React.Component {
+
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      showReactive: false
+    }
+  }
+
+  toggleShowReactive = e => {
+    this.setState({showReactive: !this.state.showReactive});
+  }
 
   shouldComponentUpdate(nextProps, nextState) {
     return !isEqual(this.props, nextProps) ||
@@ -48,8 +76,30 @@ export default class SystemQueries extends React.Component {
 
       return (
         <li className={classes} key={queryName}>
-          <div>{ components }</div>
-          <QueryNumEntities>{query.numEntities}</QueryNumEntities>
+          <div style={{display: "flex", justifyContent: "space-between"}}>
+            <div>{ components }
+            {
+              query.reactive &&
+              <ToggleButton
+                onClick={this.toggleShowReactive}
+                disabled={!this.state.showReactive}
+                title="Show reactive lists">
+                <FaBolt style={{color: '#99f'}}/>
+              </ToggleButton>
+
+
+            }
+            </div>
+            <QueryNumEntities>{query.numEntities}</QueryNumEntities>
+          </div>
+            {
+              query.listen && this.state.showReactive &&
+                <ReactiveLists>
+                  { query.listen.added && <ReactiveList><span>added:</span> <span>{query.listen.added.entities}</span></ReactiveList> }
+                  { query.listen.removed && <ReactiveList><span>removed:</span> <span>{query.listen.removed.entities}</span></ReactiveList> }
+                  { query.listen.changed && <ReactiveList><span>changed:</span> <span>{query.listen.changed.entities}</span></ReactiveList> }
+                </ReactiveLists>
+            }
         </li>
       );
     });

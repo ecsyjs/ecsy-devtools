@@ -29,16 +29,7 @@ if( !window.__ECSY_DEVTOOLS_INJECTED ) {
 		}
 
 		window.__ECSY_DEVTOOLS.refreshStats = function() {
-			const queries = Object.values(world.entityManager._queryManager._queries).map(q => {
-				return {
-					key: q.key,
-					components: {
-						included: q.Components.map(C => C.name),
-						not: q.NotComponents.map(C => C.name)
-					},
-					numEntities: q.entities.length
-				}
-			});
+			const queries = Object.values(world.entityManager._queryManager._queries).map(q => q.toJSON());
 
 			const systems = world.systemManager._systems.map(system => {
 				let data = system.toJSON();

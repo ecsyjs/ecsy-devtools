@@ -8,7 +8,8 @@ import { Half, Half2, Button } from './StyledComponents';
 import isEqual from 'react-fast-compare';
 
 import {
-  FaArrowDown
+  FaArrowDown,
+  FaBolt
  } from 'react-icons/fa';
 
 export default class Query extends React.Component {
@@ -75,7 +76,13 @@ export default class Query extends React.Component {
         onMouseEnter={this.onEnter}
         onMouseLeave={this.onLeave}>
         <Half2 title={'Query key: ' + query.key}>
-          <span>{components}</span>
+          <span>
+            {components}
+            {
+              query.reactive &&
+              <FaBolt style={{color: '#99f'}} title="Reactive query"/>
+            }
+          </span>
           <span className="value">{query.numEntities}</span>
         </Half2>
         <Half>

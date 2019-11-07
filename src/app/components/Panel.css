@@ -216,7 +216,7 @@ li.system .queries li {
 .systemQueryLi {
   padding: 9px 6px;
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
 }
 
 .queriesTitle {
