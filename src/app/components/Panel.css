@@ -177,7 +177,7 @@ li.system .queries li {
 
 .graph-controls {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
 }
 
@@ -311,9 +311,21 @@ ul.SystemsQueries {
 	margin-top: -20px;
 }
 
-.textOnly {
-  display: flex;
-  width: 50%;
+.containerlol {
+  display: grid;
   margin-right: 8px;
-  flex-direction: column;
+}
+
+.textOnly {
+  grid-template-columns: 1fr 1fr !important;
+}
+
+.containerrrr {
+  display: flex;
+  flex: 1;
+}
+
+.containerright {
+  display: flex;
+  justify-content: flex-end;
 }

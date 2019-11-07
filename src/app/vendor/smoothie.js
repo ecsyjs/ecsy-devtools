@@ -628,6 +628,7 @@
       height = this.canvas.offsetHeight;
 
       if (width !== this.lastWidth) {
+
         this.lastWidth = width;
         this.canvas.setAttribute('width', (Math.floor(width * dpr)).toString());
         this.canvas.getContext('2d').scale(dpr, dpr);

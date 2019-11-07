@@ -204,16 +204,16 @@ export default class Systems extends React.Component {
 
     let allSystemsStopped = systems.reduce((acum, s) => acum && !s.enabled);
 
+    const showGraphs = this.state.showGraphs;
+
     const headerContainerClasses = classNames({
       'textOnly': !showGraphs
     });
 
-    const showGraphs = this.state.showGraphs;
-
     return (
       <div>
-      <SectionHeader2>
-        <div className={headerContainerClasses}>
+      <SectionHeader2 className={headerContainerClasses}>
+        <div className="containerlol">
           <TitleGroup>
             <Title>SYSTEMS ({systems.length})</Title> <Title>{totalSystemsTime.toFixed(2)}ms</Title>
           </TitleGroup>
@@ -242,6 +242,7 @@ export default class Systems extends React.Component {
           </OptionsGroup>
           {
             showGraphs &&
+            <div className="containerrrr">
             <SmoothieComponent
               responsive
               height={30}
@@ -261,35 +262,37 @@ export default class Systems extends React.Component {
                   lineWidth: 1,
                 }
               ]}/>
+            </div>
           }
           </div>
-          {
-            showGraphs &&
-            <PieContainer>
-              <PieChart
-                cx={50}
-                cy={50}
-                data={chartData}
-                label={false}
-                labelPosition={50}
-                labelStyle={{
-                  fill: '#121212',
-                  fontFamily: 'sans-serif',
-                  fontSize: '5px'
-                }}
-                lineWidth={15}
-                lengthAngle={360}
-                onClick={undefined}
-                onMouseOut={undefined}
-                onMouseOver={undefined}
-                paddingAngle={8}
-                radius={50}
-                ratio={1}
-                rounded={false}
-                startAngle={0}
-              />
-            </PieContainer>
-          }
+      <div className="containerright">
+        {
+          showGraphs &&
+          <PieContainer>
+            <PieChart
+              cx={50}
+              cy={50}
+              data={chartData}
+              label={false}
+              labelPosition={50}
+              labelStyle={{
+                fill: '#121212',
+                fontFamily: 'sans-serif',
+                fontSize: '5px'
+              }}
+              lineWidth={15}
+              lengthAngle={360}
+              onClick={undefined}
+              onMouseOut={undefined}
+              onMouseOver={undefined}
+              paddingAngle={8}
+              radius={50}
+              ratio={1}
+              rounded={false}
+              startAngle={0}
+            />
+          </PieContainer>
+        }
         <div className="buttons">
           <Button
             onClick={state.playing ? this.stopSystems : this.playSystems}
@@ -306,7 +309,7 @@ export default class Systems extends React.Component {
             <FaFastForward></FaFastForward>
           </Button>
         </div>
-
+    </div>
       </SectionHeader2>
         <ul>
           {

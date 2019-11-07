@@ -9,8 +9,11 @@ export const SectionHeader2 = styled.div`
   background-color: #1E1E1E;
   padding: 15px;
   padding-right: 0;
-  display: flex;
+  /*display: flex;*/
+  display: grid;
+  grid-template-columns: auto 240px;
   align-items: center; /*start;*/
+  justify-content: space-between;
 `;
 
 export const TitleGroup = styled.div`

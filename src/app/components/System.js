@@ -153,7 +153,7 @@ export default class System extends React.Component {
             </div>
             <div className="graph-controls">
             {
-              showGraphs && <SmoothieComponent
+              showGraphs && <div style={{flex: 1}}><SmoothieComponent
               ref="chart"
               responsive
               grid={{
@@ -172,7 +172,7 @@ export default class System extends React.Component {
                   fillStyle: 'rgba(44, 200, 235, 0.1)',
                   lineWidth: 1,
                 }
-              ]}/>
+              ]}/></div>
             }
               <div className="buttons">
               <Button
