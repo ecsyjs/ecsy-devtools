@@ -81,3 +81,36 @@ font-size: 1.2em;
   margin-right: 2em;
 }
 `;
+
+export const Queries = styled.div`
+  margin-left: 20px;
+  color: #1B856B;
+  background-color: #273635;
+  display: flex;
+  align-items: center;
+`;
+
+export const QueryKey = styled.span`
+  color: #2CEBBD;
+  font-size: 0.9em;
+`;
+
+export const QueryNumEntities = styled.span`
+  color: #2CEBBD;
+`;
+
+export const ReactiveLists = styled.ul`
+  margin-left: 40px;
+  margin-top: 10px;
+  margin-bottom: 5px;
+  color: #2CEBBD;
+`;
+
+export const ReactiveList = styled.li`
+ display:flex;
+ justify-content: space-between;
+
+ .deferredRemoval & {
+    color: #727272;
+ }
+`;

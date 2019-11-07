@@ -10,6 +10,7 @@ import Events from '../utils/Events';
 import Checkbox from './Checkbox';
 import isEqual from 'react-fast-compare';
 import classNames from 'classnames';
+import DeferredRemovalStep from './DeferredRemovalStep';
 
 import {
   FaPlay,
@@ -20,6 +21,8 @@ import {
   FaChartBar,
   FaLink,
   FaBoxes,
+  FaTrashAlt,
+  FaTrash,
   FaChartLine,
   FaChartPie
  } from 'react-icons/fa';
@@ -75,6 +78,7 @@ export default class Systems extends React.Component {
     });
 
     this.state = {
+      showDeferredRemoval: false,
       chartRange: {
         min: 0,
         max: 0
@@ -157,8 +161,12 @@ export default class Systems extends React.Component {
     Bindings.stepNextSystem();
   }
 
-  toggleShowQueries = e => {
+  toggleShowQueries = () => {
     this.setState({showQueries: !this.state.showQueries});
+  }
+
+  toggleDeferredRemoval = () => {
+    this.setState({showDeferredRemoval: !this.state.showDeferredRemoval});
   }
 
   componentWillReceiveProps() {
@@ -178,7 +186,7 @@ export default class Systems extends React.Component {
   }
 
   render() {
-    const { systems, dataQueries, nextSystemToExecute, /*showGraphs,*/ overComponents, overQueries, overSystem } = this.props;
+    const { systems, deferredRemoval, nextSystemToExecute, /*showGraphs,*/ overComponents, overQueries, overSystem } = this.props;
     const state = this.state;
 
     if (!Array.isArray(systems)) {
@@ -239,6 +247,12 @@ export default class Systems extends React.Component {
                 <FaLink/>
               </ToggleButton>
             }
+            <ToggleButton
+              onClick={this.toggleDeferredRemoval}
+              disabled={!this.state.showDeferredRemoval}
+              title="Show deferred removal step">
+              <FaTrashAlt/>
+            </ToggleButton>
           </OptionsGroup>
           {
             showGraphs &&
@@ -340,6 +354,9 @@ export default class Systems extends React.Component {
                 overComponents={overComponents}
               />;
             })
+          }
+          { this.state.showDeferredRemoval &&
+            <DeferredRemovalStep deferredData={deferredRemoval}/>
           }
         </ul>
       </div>

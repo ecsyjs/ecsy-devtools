@@ -108,6 +108,21 @@ class Bindings {
     var string = `${world}.systemManager._systems.forEach(s => s.stop());`;
     globalBrowser.devtools.inspectedWindow.eval(string);
   }
+  toggleDeferredRemoval() {
+    var world = 'window.__ECSY_DEVTOOLS.worlds[0]';
+    var string = `${world}.entityManager.deferredRemovalEnabled = !${world}.entityManager.deferredRemovalEnabled;`;
+    globalBrowser.devtools.inspectedWindow.eval(string);
+  }
+  stepDeferredRemoval() {
+    var world = 'window.__ECSY_DEVTOOLS.worlds[0]';
+    var string = `
+      let prevState = ${world}.entityManager.deferredRemovalEnabled;
+      ${world}.entityManager.deferredRemovalEnabled = true;
+      ${world}.entityManager.processDeferredRemoval();
+      ${world}.entityManager.deferredRemovalEnabled = prevState;
+    `;
+    globalBrowser.devtools.inspectedWindow.eval(string);
+  }
 }
 
 export default new Bindings();

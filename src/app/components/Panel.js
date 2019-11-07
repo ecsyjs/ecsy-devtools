@@ -361,7 +361,7 @@ class App extends Component {
               <Systems
               systems={data.systems}
               nextSystemToExecute={data.nextSystemToExecute}
-              dataQueries={data.queries}
+              deferredRemoval={data.deferredRemoval}
               data={data}
               showGraphs={this.state.showGraphs}
               graphConfig={this.state.graphConfig}

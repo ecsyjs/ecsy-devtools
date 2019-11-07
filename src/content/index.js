@@ -22,13 +22,40 @@ if( !window.__ECSY_DEVTOOLS_INJECTED ) {
 		window.__ECSY_DEVTOOLS.worlds.push(world);
 
 		var ori1 = world.execute;
+
+		var stats = {
+			processDeferredRemoval: 0
+		};
+
+		world.execute = function(delta, time) {
+			if (this.enabled) {
+				this.systemManager.execute(delta, time);
+				let t = performance.now();
+				this.entityManager.processDeferredRemoval();
+				stats.processDeferredRemoval = performance.now() - t;
+			}
+			window.__ECSY_DEVTOOLS.refreshStats();
+		}.bind(world);
+
+		/*
 		world.execute = function() {
 			var result = ori1.apply(world, arguments);
 			window.__ECSY_DEVTOOLS.refreshStats();
 			return result;
 		}
+		*/
 
 		window.__ECSY_DEVTOOLS.refreshStats = function() {
+			const entityManager = world.entityManager;
+
+			const deferredRemoval = {
+				enabled: entityManager.deferredRemovalEnabled,
+				executeTime: stats.processDeferredRemoval,
+				entitiesToRemove: entityManager.entitiesToRemove.length,
+				entitiesWithComponentsToRemove: entityManager.entitiesWithComponentsToRemove.length,
+				totalComponentsToRemove: entityManager.entitiesWithComponentsToRemove.reduce((a, c) => a + c._ComponentTypesToRemove.length, 0)
+			};
+
 			const queries = Object.values(world.entityManager._queryManager._queries).map(q => q.toJSON());
 
 			const systems = world.systemManager._systems.map(system => {
@@ -72,6 +99,7 @@ if( !window.__ECSY_DEVTOOLS_INJECTED ) {
 				systems: systems,
 				queries: queries,
 				components: components,
+				deferredRemoval: deferredRemoval,
 				componentsPools: componentsPools
 			};
 			sendMessage('refreshData', data);

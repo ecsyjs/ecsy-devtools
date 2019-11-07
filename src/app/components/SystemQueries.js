@@ -2,42 +2,13 @@ import React from 'react';
 import styled from 'styled-components';
 import classNames from 'classnames';
 import isEqual from 'react-fast-compare';
-import { ToggleButton } from './StyledComponents';
+import { Queries, QueryKey, QueryNumEntities, ReactiveLists, ReactiveList, ToggleButton } from './StyledComponents';
 
 import {
   FaBolt,
   FaExclamation,
   FaExclamationCircle
  } from 'react-icons/fa';
-
-const Queries = styled.div`
-  margin-left: 20px;
-  color: #1B856B;
-  background-color: #273635;
-  display: flex;
-  align-items: center;
-`;
-
-const QueryKey = styled.span`
-  color: #2CEBBD;
-  font-size: 0.9em;
-`;
-
-const QueryNumEntities = styled.span`
-  color: #2CEBBD;
-`;
-
-const ReactiveLists = styled.ul`
-  margin-left: 40px;
-  margin-top: 10px;
-  margin-bottom: 5px;
-  color: #2CEBBD;
-`;
-
-const ReactiveList = styled.li`
- display:flex;
- justify-content: space-between;
-`;
 
 export default class SystemQueries extends React.Component {
 
