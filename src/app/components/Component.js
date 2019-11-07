@@ -11,6 +11,7 @@ import { Half, Half2, Button } from './StyledComponents';
 
 import {
   FaInfoCircle,
+  FaExclamationTriangle,
   FaArrowDown
  } from 'react-icons/fa';
 
@@ -25,7 +26,7 @@ const PoolIncreased = styled.span`
 `;
 
 const Warn = styled.span`
-  color: #F1421C;
+  color: #EB932C;
   margin-left: 0.5em;
   vertical-align: middle;
 `;
@@ -113,7 +114,7 @@ export default class Component extends React.Component {
             notPool &&
             (
               <Warn>
-                <FaInfoCircle title="This component is not using automatic pooling"></FaInfoCircle>
+                <FaExclamationTriangle title="This component is not using automatic pooling"/>
               </Warn>
             )
           }

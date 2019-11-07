@@ -83,7 +83,7 @@ export default class SystemQueries extends React.Component {
             <div>{ components }
             {
               query.mandatory &&
-                <FaExclamation style={{fontSize: "1.2em", color: "#AA6"}} title="Mandatory query: It should have at least one element to execute"/>
+                <FaExclamation style={{fontSize: "1.2em", color: "#27CEA5"}} title="Mandatory query: It should have at least one element to execute"/>
             }
             {
               query.reactive &&
@@ -91,7 +91,7 @@ export default class SystemQueries extends React.Component {
                 onClick={this.toggleShowReactive}
                 disabled={!this.state.showReactive}
                 title="Show reactive lists">
-                <FaBolt style={{color: '#99f'}}/>
+                <FaBolt/>
               </ToggleButton>
             }
             </div>

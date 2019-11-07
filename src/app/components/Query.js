@@ -80,7 +80,7 @@ export default class Query extends React.Component {
             {components}
             {
               query.reactive &&
-              <FaBolt style={{color: '#99f'}} title="Reactive query"/>
+              <FaBolt style={{color: '#27CEA5'}} title="Reactive query"/>
             }
           </span>
           <span className="value">{query.numEntities}</span>
