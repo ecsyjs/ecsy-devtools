@@ -1,4 +1,4 @@
-var globalBrowser =  chrome || browser;
+var globalBrowser =  typeof chrome !== 'undefined' ? chrome : typeof browser !== 'undefined' ? browser : null;
 
 function log() {
 	var args = Array.from(arguments);

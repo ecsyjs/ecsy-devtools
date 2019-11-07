@@ -1,4 +1,4 @@
-var globalBrowser =  chrome || browser;
+var globalBrowser =  typeof chrome !== 'undefined' ? chrome : typeof browser !== 'undefined' ? browser : null;
 
 class Bindings {
   toggleWorld (enabled) {

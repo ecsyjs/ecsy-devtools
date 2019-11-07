@@ -6,11 +6,9 @@ import ReactDOM from 'react-dom';
 ReactDOM.render(<Panel />, document.getElementById('app'));
 
 
-var globalBrowser =  chrome || browser;
+var globalBrowser =  typeof chrome !== 'undefined' ? chrome : typeof browser !== 'undefined' ? browser : null;
 
-const devtools = globalBrowser.devtools;
-
-if (devtools) {
+if (globalBrowser && globalBrowser.devtools) {
   var backgroundPageConnection = globalBrowser.runtime.connect({
     name: "devtools"
   });

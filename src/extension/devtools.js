@@ -1,4 +1,4 @@
-var globalBrowser =  chrome || browser;
+var globalBrowser =  typeof chrome !== 'undefined' ? chrome : typeof browser !== 'undefined' ? browser : null;
 
 // @todo Import browser polyfill
 globalBrowser.devtools.panels.create(
