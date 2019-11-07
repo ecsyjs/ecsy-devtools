@@ -63,7 +63,7 @@ export const Half2 = styled.div`
 `;
 
 export const OptionsGroup = styled.div`
-  display: block;
+  display: flex;
   margin: 5px 0;
 `;
 

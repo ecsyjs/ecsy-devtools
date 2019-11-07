@@ -222,7 +222,7 @@ export default class Systems extends React.Component {
               onClick={this.toggleShowQueries}
               disabled={!this.state.showQueries}
               title="Show queries">
-              <FaBoxes/>
+              Q
             </ToggleButton>
             <ToggleButton
               onClick={this.toggleShowGraph}

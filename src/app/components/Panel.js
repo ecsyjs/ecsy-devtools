@@ -13,7 +13,6 @@ import Bindings from '../ECSYBindings';
 import Queries from './Queries';
 import Entities from './Entities';
 import Events from '../utils/Events';
-import Checkbox from './Checkbox';
 
 import { ToggleButton, OptionsGroup, Button, SectionHeader2, Title, TitleGroup } from './StyledComponents';
 import {
@@ -41,10 +40,11 @@ const Container = styled.div`
 `;
 
 const Columns = styled.div`
-  display: flex;
+  display: grid;
   flex-direction: row;
   flex-wrap: wrap;
   width: 100%;
+  grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
 `;
 
 const Column = styled.div`
@@ -318,29 +318,32 @@ class App extends Component {
           </Code>
         }
         <Columns>
-          <Column>
-            {
-              state.showEntities &&
-              <Entities
-                data={data}
-                numEntities={data.numEntities}
-                showGraphs={this.state.showGraphs}
-              />
-            }
-            {
-              state.showComponents &&
-              <Components
-                graphConfig={this.state.graphConfig}
-                components={data.components}
-                componentsPools={data.componentsPools}
-                overQueries={this.state.overQueries}
-                showGraphs={this.state.showGraphs}
-              />
-            }
-          </Column>
-          <Column>
-            {
-              state.showQueries &&
+          {
+            (state.showEntities || state.showComponents) &&
+            <Column>
+              {
+                state.showEntities &&
+                <Entities
+                  data={data}
+                  numEntities={data.numEntities}
+                  showGraphs={this.state.showGraphs}
+                />
+              }
+              {
+                state.showComponents &&
+                <Components
+                  graphConfig={this.state.graphConfig}
+                  components={data.components}
+                  componentsPools={data.componentsPools}
+                  overQueries={this.state.overQueries}
+                  showGraphs={this.state.showGraphs}
+                />
+              }
+            </Column>
+          }
+          {
+            state.showQueries &&
+            <Column>
               <Queries
                 graphConfig={this.state.graphConfig}
                 queries={data.queries}
@@ -350,25 +353,26 @@ class App extends Component {
                 prevOverComponents={this.state.prevOverComponents}
                 showGraphs={this.state.showGraphs}
               />
-            }
-          </Column>
-          <Column>
-            {
-              state.showSystems && <Systems
-                systems={data.systems}
-                nextSystemToExecute={data.nextSystemToExecute}
-                dataQueries={data.queries}
-                data={data}
-                showGraphs={this.state.showGraphs}
-                graphConfig={this.state.graphConfig}
-                overQueries={this.state.overQueries}
-                prevOverQueries={this.state.prevOverQueries}
-                overSystem={this.state.overSystem}
-                overComponents={this.state.overComponents}
-                prevOverComponents={this.state.prevOverComponents}
+            </Column>
+          }
+          {
+            state.showSystems &&
+            <Column>
+              <Systems
+              systems={data.systems}
+              nextSystemToExecute={data.nextSystemToExecute}
+              dataQueries={data.queries}
+              data={data}
+              showGraphs={this.state.showGraphs}
+              graphConfig={this.state.graphConfig}
+              overQueries={this.state.overQueries}
+              prevOverQueries={this.state.prevOverQueries}
+              overSystem={this.state.overSystem}
+              overComponents={this.state.overComponents}
+              prevOverComponents={this.state.prevOverComponents}
               />
-            }
-          </Column>
+            </Column>
+          }
         </Columns>
       </Container>
     );
