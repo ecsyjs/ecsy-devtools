@@ -210,7 +210,7 @@ export default class Systems extends React.Component {
     var t = new Date().getTime();
     this.timeSeries.append(t, totalSystemsTime);
 
-    let allSystemsStopped = systems.reduce((acum, s) => acum && !s.enabled);
+    let allSystemsStopped = systems.reduce((acum, s) => acum && !s.enabled, true);
 
     const showGraphs = this.state.showGraphs;
 
