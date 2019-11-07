@@ -40,6 +40,7 @@ export default class Queries extends React.Component {
 
   shouldComponentUpdate(nextProps, nextState) {
     return !isEqual(this.props, nextProps) ||
+      this.state.showGraphs != nextState.showGraphs ||
       this.state.linkMinMax != nextState.linkMinMax;
   }
 

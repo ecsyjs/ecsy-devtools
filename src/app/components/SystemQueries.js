@@ -5,7 +5,9 @@ import isEqual from 'react-fast-compare';
 import { ToggleButton } from './StyledComponents';
 
 import {
-  FaBolt
+  FaBolt,
+  FaExclamation,
+  FaExclamationCircle
  } from 'react-icons/fa';
 
 const Queries = styled.div`
@@ -29,6 +31,7 @@ const ReactiveLists = styled.ul`
   margin-left: 40px;
   margin-top: 10px;
   margin-bottom: 5px;
+  color: #2CEBBD;
 `;
 
 const ReactiveList = styled.li`
@@ -79,6 +82,10 @@ export default class SystemQueries extends React.Component {
           <div style={{display: "flex", justifyContent: "space-between"}}>
             <div>{ components }
             {
+              query.mandatory &&
+                <FaExclamation style={{fontSize: "1.2em", color: "#AA6"}} title="Mandatory query: It should have at least one element to execute"/>
+            }
+            {
               query.reactive &&
               <ToggleButton
                 onClick={this.toggleShowReactive}
@@ -86,8 +93,6 @@ export default class SystemQueries extends React.Component {
                 title="Show reactive lists">
                 <FaBolt style={{color: '#99f'}}/>
               </ToggleButton>
-
-
             }
             </div>
             <QueryNumEntities>{query.numEntities}</QueryNumEntities>
