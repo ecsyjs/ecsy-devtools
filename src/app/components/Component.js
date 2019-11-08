@@ -12,7 +12,8 @@ import { Half, Half2, Button } from './StyledComponents';
 import {
   FaInfoCircle,
   FaExclamationTriangle,
-  FaArrowDown
+  FaArrowDown,
+  FaTag
  } from 'react-icons/fa';
 
 const WarningIcon = styled.span`
@@ -81,12 +82,15 @@ export default class Component extends React.Component {
   }
 
   render() {
-    const { pool, value, name, highlighted, linkMinMax, graphConfig, showGraphs } = this.props;
+    const { pool, componentData, name, highlighted, linkMinMax, graphConfig, showGraphs } = this.props;
 
     const classes = classNames({
       component: true,
       highlighted: highlighted
     });
+
+
+    const value = componentData.count;
 
     const notPool = pool && pool.valid !== true;
     const poolSize = pool ? pool.size : 0;
@@ -117,6 +121,10 @@ export default class Component extends React.Component {
                 <FaExclamationTriangle title="This component is not using automatic pooling"/>
               </Warn>
             )
+          }
+          {
+            (componentData.type === 'tag') &&
+            <FaTag style={{marginLeft: '0.5em'}} title="This component inherits from 'TagComponent'"/>
           }
             <span className={classesPoolIncreased}> Pool increased!</span>
           </span>

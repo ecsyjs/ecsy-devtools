@@ -77,7 +77,21 @@ if( !window.__ECSY_DEVTOOLS_INJECTED ) {
 			});
 
 
-			let components = world.componentsManager.numComponents;
+			let componentsNum = world.componentsManager.numComponents;
+			let components = {};
+			for (name in componentsNum) {
+				var component = world.componentsManager.Components[name];
+
+				components[name] = {
+					count: componentsNum[name],
+					type: component.isTagComponent ? 'tag' :
+								(component.isComponent ? 'component' :
+								'none')
+				};
+			}
+
+			window.com = components;
+
 			let componentsPools = {};
 			for (name in world.componentsManager._componentPool) {
 				let pool = world.componentsManager._componentPool[name];

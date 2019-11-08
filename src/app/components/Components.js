@@ -113,7 +113,7 @@ export default class Components extends React.Component {
 
     const showGraphs = this.state.showGraphs;
     const numComponents = components ? Object.keys(components).length : 0;
-    const numComponentInstances = components && Object.values(components).length > 0 ? Object.values(components).reduce((a, c) => a + c) : undefined;
+    const numComponentInstances = components && Object.values(components).length > 0 ? Object.values(components).reduce((a, c) => a + c.count, 0) : undefined;
 
     let componentsHtml = Object.keys(components).map(name => {
       const highlighted = overQueries.find(e => e.components.included.indexOf(name) !== -1 ||
@@ -126,7 +126,7 @@ export default class Components extends React.Component {
         linkMinMax={this.state.linkMinMax}
         key={name}
         name={name}
-        value={components[name]}
+        componentData={components[name]}
         showGraphs={showGraphs}
         chartRange={this.state.chartRange}
         highlighted={highlighted}

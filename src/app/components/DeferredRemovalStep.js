@@ -86,7 +86,7 @@ export default class DeferredRemovalStep extends React.Component {
               </span>
             </div>
             <div className="graph-controls">
-              <div className="buttons">
+              <div className="buttons" style={{marginRight: '10px'}}>
               <Button
                   onClick={this.togglePlay}
                   title={deferredData.enabled ? 'Pause system' : 'Play system'}>
