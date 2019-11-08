@@ -86,6 +86,7 @@ class App extends Component {
     super();
 
     this.state = {
+      ecsyVersion: '',
       worldExist: false,
       debug: false,
       showComponents: true,
@@ -237,6 +238,7 @@ class App extends Component {
 
     this.setState({
       data: data,
+      ecsyVersion: data.ecsyVersion,
       graphConfig: graphConfig
     });
   }
@@ -287,28 +289,31 @@ class App extends Component {
     return (
       <Container>
         <div id="header">
-          <ToggleButton title="Show Entities Panel" onClick={this.toggleEntities} disabled={!state.showEntities}>E</ToggleButton>
-          <ToggleButton title="Show Components Panel" onClick={this.toggleComponents} disabled={!state.showComponents}>C</ToggleButton>
-          <ToggleButton title="Show Systems Panel" onClick={this.toggleSystems} disabled={!state.showSystems}>S</ToggleButton>
-          <ToggleButton title="Show Queries Panel" onClick={this.toggleQueries} disabled={!state.showQueries}>Q</ToggleButton>
-          <ToggleButton
-            onClick={this.toggleHighlightRelationships}
-            disabled={!this.state.highlight}
-            title="Highlight relatinships">
-            <FaProjectDiagram/>
-          </ToggleButton>
-          <ToggleButton
-            onClick={this.toggleShowDebug}
-            disabled={!this.state.debug}
-            title="Show debug">
-            <FaCode/>
-          </ToggleButton>
-          <ToggleButton
-            onClick={this.toggleShowGraph}
-            disabled={!this.state.showGraphs}
-            title="Show charts">
-            <FaChartArea/>
-          </ToggleButton>
+          <div>
+            <ToggleButton title="Show Entities Panel" onClick={this.toggleEntities} disabled={!state.showEntities}>E</ToggleButton>
+            <ToggleButton title="Show Components Panel" onClick={this.toggleComponents} disabled={!state.showComponents}>C</ToggleButton>
+            <ToggleButton title="Show Systems Panel" onClick={this.toggleSystems} disabled={!state.showSystems}>S</ToggleButton>
+            <ToggleButton title="Show Queries Panel" onClick={this.toggleQueries} disabled={!state.showQueries}>Q</ToggleButton>
+            <ToggleButton
+              onClick={this.toggleHighlightRelationships}
+              disabled={!this.state.highlight}
+              title="Highlight relatinships">
+              <FaProjectDiagram/>
+            </ToggleButton>
+            <ToggleButton
+              onClick={this.toggleShowDebug}
+              disabled={!this.state.debug}
+              title="Show debug">
+              <FaCode/>
+            </ToggleButton>
+            <ToggleButton
+              onClick={this.toggleShowGraph}
+              disabled={!this.state.showGraphs}
+              title="Show charts">
+              <FaChartArea/>
+            </ToggleButton>
+          </div>
+          <div>ECSY v{this.state.ecsyVersion}</div>
         </div>
         {
           this.state.debug &&

@@ -21,7 +21,8 @@ body {
   padding: 10px 15px;
   width: calc(100% - 50px);
   display: flex;
-  vertical-align: center;
+  color: #AAA;
+  justify-content: space-between;
 }
 
 label {

@@ -17,9 +17,11 @@ if( !window.__ECSY_DEVTOOLS_INJECTED ) {
 			};
 		}
 
-		var world = e.detail;
+		var world = e.detail.world;
+		var version = e.detail.version;
 
 		window.__ECSY_DEVTOOLS.worlds.push(world);
+		window.__ECSY_DEVTOOLS.ecsyVersion = version;
 
 		var ori1 = world.execute;
 
@@ -114,7 +116,8 @@ if( !window.__ECSY_DEVTOOLS_INJECTED ) {
 				queries: queries,
 				components: components,
 				deferredRemoval: deferredRemoval,
-				componentsPools: componentsPools
+				componentsPools: componentsPools,
+				ecsyVersion: version
 			};
 			sendMessage('refreshData', data);
 		}
