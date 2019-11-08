@@ -137,8 +137,7 @@ li.component div:nth-child(2) {
 }
 
 .disabled {
-  background-color: #262626;
-  color: #7D7D7D;
+  color: #7D7D7D !important;
 }
 
 .disabled .stats,

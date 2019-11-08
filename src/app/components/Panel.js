@@ -289,7 +289,7 @@ class App extends Component {
     return (
       <Container>
         <div id="header">
-          <div>
+          <div style={{display: "flex"}}>
             <ToggleButton title="Show Entities Panel" onClick={this.toggleEntities} disabled={!state.showEntities}>E</ToggleButton>
             <ToggleButton title="Show Components Panel" onClick={this.toggleComponents} disabled={!state.showComponents}>C</ToggleButton>
             <ToggleButton title="Show Systems Panel" onClick={this.toggleSystems} disabled={!state.showSystems}>S</ToggleButton>

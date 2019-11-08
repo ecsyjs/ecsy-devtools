@@ -103,7 +103,7 @@ export default class Components extends React.Component {
   }
 
   render() {
-    const { components, componentsPools, /*showGraphs,*/ overQueries } = this.props;
+    const { components, componentsPools, overQueries } = this.props;
 
     if (!components) {
       return (

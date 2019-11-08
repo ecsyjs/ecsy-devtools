@@ -61,7 +61,6 @@ if (globalBrowser && globalBrowser.devtools) {
       globalBrowser.devtools.inspectedWindow.eval(string);
     },
     stepSystem: function(system) {
-      debugger;
       var world = 'window.__ECSY_DEVTOOLS.worlds[0]';
       var string = `
         var system = ${world}.systemManager._systems.find(s => s.constructor.name === '${system.name}');

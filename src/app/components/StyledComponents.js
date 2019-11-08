@@ -48,6 +48,11 @@ export const Button = styled.a`
   &:disabled {
     color: #ff0;
   }
+
+  &.disabled {
+    color: #7D7D7D;
+    cursor default;
+  }
 `;
 
 export const Half = styled.div`

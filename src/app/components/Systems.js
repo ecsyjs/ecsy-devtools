@@ -21,7 +21,7 @@ import {
   FaChartBar,
   FaLink,
   FaBoxes,
-  FaTrashAlt,
+  FaRecycle,
   FaTrash,
   FaChartLine,
   FaChartPie
@@ -137,6 +137,10 @@ export default class Systems extends React.Component {
   }
 
 
+  stepNextSystem = () => {
+    Bindings.stepNextSystem();
+  }
+
   stepSystems = () => {
     Bindings.stepSystems();
   }
@@ -155,10 +159,6 @@ export default class Systems extends React.Component {
       prevSystemsState: {}
     });
     Bindings.stopSystems();
-  }
-
-  stepNextSystem = () => {
-    Bindings.stepNextSystem();
   }
 
   toggleShowQueries = () => {
@@ -251,7 +251,7 @@ export default class Systems extends React.Component {
               onClick={this.toggleDeferredRemoval}
               disabled={!this.state.showDeferredRemoval}
               title="Show deferred removal step">
-              <FaTrashAlt/>
+              <FaRecycle/>
             </ToggleButton>
           </OptionsGroup>
           {
@@ -316,10 +316,10 @@ export default class Systems extends React.Component {
             }
           </Button>
 
-          <Button className={allSystemsStopped ? 'disabled': ''} onClick={this.stepNextSystem} title="Step next system">
+          <Button className={allSystemsStopped ? '' : 'disabled'} onClick={this.stepNextSystem} title="Step next system">
             <FaStepForward></FaStepForward>
           </Button>
-          <Button className={allSystemsStopped ? 'disabled': ''} onClick={this.stepSystems} title="Step all systems">
+          <Button className={allSystemsStopped ? '' : 'disabled'} onClick={this.stepSystems} title="Step all systems">
             <FaFastForward></FaFastForward>
           </Button>
         </div>

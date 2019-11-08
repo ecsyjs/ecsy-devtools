@@ -29,12 +29,14 @@ if( !window.__ECSY_DEVTOOLS_INJECTED ) {
 			processDeferredRemoval: 0
 		};
 
+		var _pools = {};
+
 		world.execute = function(delta, time) {
 			if (this.enabled) {
 				this.systemManager.execute(delta, time);
 				let t = performance.now();
 				this.entityManager.processDeferredRemoval();
-				stats.processDeferredRemoval = performance.now() - t;
+				stats.processDeferredRemoval = this.entityManager.deferredRemovalEnabled ? performance.now() - t : 0;
 			}
 			window.__ECSY_DEVTOOLS.refreshStats();
 		}.bind(world);
@@ -92,18 +94,25 @@ if( !window.__ECSY_DEVTOOLS_INJECTED ) {
 				};
 			}
 
-			window.com = components;
-
 			let componentsPools = {};
 			for (name in world.componentsManager._componentPool) {
+				if (!_pools[name]) {
+					_pools[name] = {
+						lastPoolSize: 0
+					};
+				}
+
 				let pool = world.componentsManager._componentPool[name];
 				var cName = pool.T.name;
 				componentsPools[cName] = {
 					valid: pool.isObjectPool,
 					used: pool.totalUsed(),
 					free: pool.totalFree(),
-					size: pool.totalSize()
+					size: pool.totalSize(),
+					increased: pool.totalSize() > _pools[name].lastPoolSize
 				}
+
+				_pools[name].lastPoolSize = pool.totalSize();
 			};
 
 			let data = {

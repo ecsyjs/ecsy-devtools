@@ -13,6 +13,7 @@ import {
   FaInfoCircle,
   FaExclamationTriangle,
   FaArrowDown,
+  FaArrowUp,
   FaTag
  } from 'react-icons/fa';
 
@@ -43,15 +44,10 @@ export default class Component extends React.Component {
       }),
       new TimeSeries({})
     ];
-
-    this.poolIncreaseWarning = true;
-    this.prevPoolSize = 0;
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    return this.poolIncreaseWarning ||
-            !isEqual(this.props, nextProps) ||
-            !isEqual(this.state, nextState);
+    return !isEqual(this.props, nextProps) || !isEqual(this.state, nextState);
   }
 
   onEnter = () => {
@@ -98,12 +94,9 @@ export default class Component extends React.Component {
     this.timeSeries[0].append(new Date().getTime(), value);
     this.timeSeries[1].append(new Date().getTime(), poolSize);
 
-    this.poolIncreaseWarning = poolSize !== this.prevPoolSize;
-    this.prevPoolSize = poolSize;
-
     const classesPoolIncreased = classNames({
       poolIncreased: true,
-      hide: !this.poolIncreaseWarning
+      hide: !pool.increased
     });
 
     let opts = linkMinMax ? {minValue: graphConfig.globalMin, maxValue: graphConfig.globalMax} : {};
@@ -126,7 +119,7 @@ export default class Component extends React.Component {
             (componentData.type === 'tag') &&
             <FaTag style={{marginLeft: '0.5em'}} title="This component inherits from 'TagComponent'"/>
           }
-            <span className={classesPoolIncreased}> Pool increased!</span>
+            <span className={classesPoolIncreased}> Pool <FaArrowUp/></span>
           </span>
           <span className="value">{value}</span>
         </Half2>
