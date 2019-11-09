@@ -90,7 +90,7 @@ if( !window.__ECSY_DEVTOOLS_INJECTED ) {
 					count: componentsNum[name],
 					type: component.isTagComponent ? 'tag' :
 								(component.isComponent ? 'component' :
-								'none')
+								(component.isSystemStateComponent ? 'systemstate' : 'none'))
 				};
 			}
 
@@ -128,6 +128,7 @@ if( !window.__ECSY_DEVTOOLS_INJECTED ) {
 				componentsPools: componentsPools,
 				ecsyVersion: version
 			};
+			console.log(data);
 			sendMessage('refreshData', data);
 		}
 

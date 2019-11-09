@@ -96,7 +96,7 @@ export default class Component extends React.Component {
 
     const classesPoolIncreased = classNames({
       poolIncreased: true,
-      hide: !pool.increased
+      hide: !pool || !pool.increased
     });
 
     let opts = linkMinMax ? {minValue: graphConfig.globalMin, maxValue: graphConfig.globalMax} : {};
@@ -117,7 +117,11 @@ export default class Component extends React.Component {
           }
           {
             (componentData.type === 'tag') &&
-            <FaTag style={{marginLeft: '0.5em'}} title="This component inherits from 'TagComponent'"/>
+            <FaTag style={{marginLeft: '0.5em'}} title="Tag component"/>
+          }
+          {
+            (componentData.type === 'systemstate') &&
+            <FaInfoCircle style={{marginLeft: '0.5em'}} title="System state component"/>
           }
             <span className={classesPoolIncreased}> Pool <FaArrowUp/></span>
           </span>
