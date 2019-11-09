@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import classNames from 'classnames';
 import isEqual from 'react-fast-compare';
 import { Queries, QueryKey, QueryNumEntities, ReactiveLists, ReactiveList, ToggleButton } from './StyledComponents';
+import Events from '../utils/Events';
 
 import {
   FaBolt,
@@ -16,8 +17,19 @@ export default class SystemQueries extends React.Component {
     super(props);
 
     this.state = {
+      hover: false,
       showReactive: false
     }
+  }
+
+  onEnter = query => {
+    Events.emit('queryOver', [query]);
+    this.setState({hover: true});
+  }
+
+  onLeave = query => {
+    Events.emit('queryOver', []);
+    this.setState({hover: false});
   }
 
   toggleShowReactive = e => {
@@ -42,14 +54,23 @@ export default class SystemQueries extends React.Component {
       const classes = classNames({
         systemQueryLi: true,
         highlighted: !overSystem && (
+          this.hover ||
           overQueries.filter(q => q.key === key).length > 0
           ||
           query.components.included.find(c => overComponents.indexOf(c) !== -1)
         )
       });
 
+      const onEnter = () => {
+        this.onEnter(query);
+      }
+
       return (
-        <li className={classes} key={queryName}>
+        <li
+          className={classes}
+          key={queryName}
+          onMouseEnter={onEnter}
+          onMouseLeave={this.onLeave}>
           <div style={{display: "flex", justifyContent: "space-between"}}>
             <div>{ components }
             {
