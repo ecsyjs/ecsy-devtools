@@ -128,7 +128,6 @@ if( !window.__ECSY_DEVTOOLS_INJECTED ) {
 				componentsPools: componentsPools,
 				ecsyVersion: version
 			};
-			console.log(data);
 			sendMessage('refreshData', data);
 		}
 
