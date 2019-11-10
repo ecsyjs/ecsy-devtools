@@ -10,7 +10,7 @@ import isEqual from 'react-fast-compare';
 import { Half, Half2, Button } from './StyledComponents';
 
 import {
-  FaInfoCircle,
+  FaPaperclip,
   FaExclamationTriangle,
   FaArrowDown,
   FaArrowUp,
@@ -121,7 +121,7 @@ export default class Component extends React.Component {
           }
           {
             (componentData.type === 'systemstate') &&
-            <FaInfoCircle style={{marginLeft: '0.5em'}} title="System state component"/>
+            <FaPaperclip style={{marginLeft: '0.5em'}} title="System state component"/>
           }
             <span className={classesPoolIncreased}> Pool <FaArrowUp/></span>
           </span>

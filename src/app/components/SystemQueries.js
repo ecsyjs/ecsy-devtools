@@ -1,5 +1,4 @@
 import React from 'react';
-import styled from 'styled-components';
 import classNames from 'classnames';
 import isEqual from 'react-fast-compare';
 import { Queries, QueryKey, QueryNumEntities, ReactiveLists, ReactiveList, ToggleButton } from './StyledComponents';
@@ -8,7 +7,6 @@ import Events from '../utils/Events';
 import {
   FaBolt,
   FaExclamation,
-  FaExclamationCircle
  } from 'react-icons/fa';
 
 export default class SystemQueries extends React.Component {
@@ -100,8 +98,6 @@ export default class SystemQueries extends React.Component {
         </li>
       );
     });
-
-    // query.mandatory
 
     return (
       <Queries>
