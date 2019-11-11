@@ -57,6 +57,8 @@ export const Button = styled.a`
 
 export const Half = styled.div`
   width: 50%;
+  display: flex;
+  align-items: center;
 `;
 
 export const Half2 = styled.div`

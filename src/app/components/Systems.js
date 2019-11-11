@@ -19,6 +19,7 @@ import {
   FaStepForward,
   FaChartArea,
   FaChartBar,
+  FaPercentage,
   FaLink,
   FaBoxes,
   FaRecycle,
@@ -58,6 +59,11 @@ export default class Systems extends React.Component {
     this.setState({linkMinMax: !this.state.linkMinMax});
   }
 
+  toggleShowStats = () => {
+    //Events.emit('toggleAllStats', !this.state.showStats);
+    this.setState({showStats: !this.state.showStats});
+  }
+
   toggleShowGraph = () => {
     Events.emit('toggleGraphs', {group: 'systems', value: !this.state.showGraphs});
     this.setState({showGraphs: !this.state.showGraphs});
@@ -83,6 +89,7 @@ export default class Systems extends React.Component {
         min: 0,
         max: 0
       },
+      showStats: false,
       showGraphs: false,
       playing: true,
       showQueries: true,
@@ -253,6 +260,12 @@ export default class Systems extends React.Component {
               title="Show deferred removal step">
               <FaRecycle/>
             </ToggleButton>
+            <ToggleButton
+              onClick={this.toggleShowStats}
+              disabled={!this.state.showStats}
+              title="Show charts">
+              <FaPercentage/>
+            </ToggleButton>
           </OptionsGroup>
           {
             showGraphs &&
@@ -342,6 +355,7 @@ export default class Systems extends React.Component {
                 ref={this.getOrCreateRef(system.name)}
                 key={system.name}
                 system={system}
+                showStats={this.state.showStats}
                 chartRange={this.state.chartRange}
                 graphConfig={this.props.graphConfig.systems}
                 linkMinMax={this.state.linkMinMax}

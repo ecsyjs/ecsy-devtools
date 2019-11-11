@@ -95,6 +95,7 @@ div.system {
 
 li.component {
   display: flex;
+  align-items: center;
 }
 
 div.systemData {
@@ -210,7 +211,7 @@ li.system .queries li {
   font-size: 1.4em;
   margin-left: 5px;
   margin-right: 5px;
-  min-width: 87px;
+  /*min-width: 87px;*/
 }
 
 .systemQueryLi {

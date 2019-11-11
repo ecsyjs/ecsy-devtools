@@ -13,6 +13,7 @@ import Bindings from '../ECSYBindings';
 import Queries from './Queries';
 import Entities from './Entities';
 import Events from '../utils/Events';
+import PerfStats from 'incremental-stats-lite';
 
 import { ToggleButton, OptionsGroup, Button, SectionHeader2, Title, TitleGroup } from './StyledComponents';
 import {
@@ -22,6 +23,8 @@ import {
   FaStepForward,
   FaChartArea,
   FaCode,
+  FaPercent,
+  FaPercentage,
   FaProjectDiagram,
   FaChartBar,
   FaLink,
@@ -85,6 +88,12 @@ class App extends Component {
   constructor() {
     super();
 
+    this.stats = {
+      components: {},
+      queries: {},
+      systems: {}
+    };
+
     this.state = {
       ecsyVersion: '',
       worldExist: false,
@@ -94,6 +103,7 @@ class App extends Component {
       showQueries: true,
       showSystems: true,
       showGraphs: false,
+      showStats: false,
       overComponents: [],
       prevOverComponents: [],
       overQueries: [],
@@ -236,6 +246,60 @@ class App extends Component {
     let lastExecutedIndex = data.systems.indexOf(data.systems.find(s => s.name === data.lastExecutedSystem));
     data.nextSystemToExecute = data.systems[(lastExecutedIndex + 1) % data.systems.length].name;
 
+    // Stats
+    /*
+        this.stats = {
+        components: {},
+        queries: {},
+        systems: {}
+      };
+    */
+
+    // Update components' stats
+    for (let name in data.components) {
+      let component = data.components[name];
+      if (!this.stats.components[name]) {
+        this.stats.components[name] = new PerfStats();
+      }
+
+      this.stats.components[name].update(component.count);
+      data.components[name].stats = {
+        min: this.stats.components[name].min,
+        max: this.stats.components[name].max,
+        mean: this.stats.components[name].mean
+      }
+    }
+
+    // Queries
+    data.queries.forEach(query => {
+      const key = query.key;
+      if (!this.stats.queries[key]) {
+        this.stats.queries[key] = new PerfStats();
+      }
+
+      this.stats.queries[key].update(query.numEntities);
+      query.stats = {
+        min: this.stats.queries[key].min,
+        max: this.stats.queries[key].max,
+        mean: this.stats.queries[key].mean
+      }
+    });
+
+    // Systems
+    data.systems.forEach(system => {
+      const name = system.name;
+      if (!this.stats.systems[name]) {
+        this.stats.systems[name] = new PerfStats();
+      }
+
+      this.stats.systems[name].update(system.executeTime);
+      system.stats = {
+        min: this.stats.systems[name].min,
+        max: this.stats.systems[name].max,
+        mean: this.stats.systems[name].mean
+      }
+    });
+
     this.setState({
       data: data,
       ecsyVersion: data.ecsyVersion,
@@ -258,6 +322,11 @@ class App extends Component {
   toggleShowGraph = () => {
     Events.emit('toggleAllGraphs', !this.state.showGraphs);
     this.setState({showGraphs: !this.state.showGraphs});
+  }
+
+  toggleShowStats = () => {
+    Events.emit('toggleAllStats', !this.state.showStats);
+    this.setState({showStats: !this.state.showStats});
   }
 
   toggleComponents = () => {
@@ -311,6 +380,12 @@ class App extends Component {
               disabled={!this.state.showGraphs}
               title="Show charts">
               <FaChartArea/>
+            </ToggleButton>
+            <ToggleButton
+              onClick={this.toggleShowStats}
+              disabled={!this.state.showStats}
+              title="Show charts">
+              <FaPercentage/>
             </ToggleButton>
           </div>
           <div>ECSY v{this.state.ecsyVersion}</div>

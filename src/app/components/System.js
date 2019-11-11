@@ -6,6 +6,7 @@ import SmoothieComponent, { TimeSeries } from './SmoothieChart';
 import Events from '../utils/Events';
 import { Button } from './StyledComponents';
 import isEqual from 'react-fast-compare';
+import ElementStats from './ElementStats';
 
 import {
   FaStripeS,
@@ -110,7 +111,7 @@ export default class System extends React.Component {
 
 
   render() {
-    const { color, highlighted, allSystemsStopped, system, nextSystemToExecute, showGraphs, overQueries, overComponents, overSystem } = this.props
+    const { showStats, color, highlighted, allSystemsStopped, system, nextSystemToExecute, showGraphs, overQueries, overComponents, overSystem } = this.props
     const percTime = this.props.totalSystemsTime > 0 ? system.executeTime / this.props.totalSystemsTime * 100 : 0;
 
     const running = allSystemsStopped && nextSystemToExecute === system.name;
@@ -152,6 +153,7 @@ export default class System extends React.Component {
               </span>
             </div>
             <div className="graph-controls">
+            <div style={{width: "100%"}}>
             {
               showGraphs && <div style={{flex: 1}}><SmoothieComponent
               ref="chart"
@@ -174,6 +176,10 @@ export default class System extends React.Component {
                 }
               ]}/></div>
             }
+            {
+              showStats && <ElementStats stats={system.stats}/>
+            }
+            </div>
               <div className="buttons">
               <Button
                   onClick={this.togglePlay}

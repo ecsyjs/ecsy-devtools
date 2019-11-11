@@ -6,6 +6,7 @@ import Events from '../utils/Events';
 import Bindings from '../ECSYBindings';
 import styled from 'styled-components';
 import isEqual from 'react-fast-compare';
+import ElementStats from './ElementStats';
 
 import { Half, Half2, Button } from './StyledComponents';
 
@@ -78,13 +79,12 @@ export default class Component extends React.Component {
   }
 
   render() {
-    const { pool, componentData, name, highlighted, linkMinMax, graphConfig, showGraphs } = this.props;
+    const { showStats, pool, componentData, name, highlighted, linkMinMax, graphConfig, showGraphs } = this.props;
 
     const classes = classNames({
       component: true,
       highlighted: highlighted
     });
-
 
     const value = componentData.count;
 
@@ -125,7 +125,7 @@ export default class Component extends React.Component {
           }
             <span className={classesPoolIncreased}> Pool <FaArrowUp/></span>
           </span>
-          <span className="value">{value}</span>
+          <span className="value" title="Actual number of instances of this component">{value}</span>
         </Half2>
         <Half>
         {
@@ -157,6 +157,9 @@ export default class Component extends React.Component {
             }
           ]}
           />
+        }
+        {
+          showStats && <ElementStats stats={componentData.stats} precision={0}/>
         }
         </Half>
         <Button className="logbutton" onClick={this.logComponent} title="Log components to the console">
