@@ -11,6 +11,7 @@ import {
   FaFastForward,
   FaStepForward,
   FaChartArea,
+  FaPercentage,
   FaChartBar,
   FaLink,
   FaBoxes,
@@ -22,6 +23,10 @@ export default class Queries extends React.Component {
   constructor(props) {
     super(props);
 
+    Events.on('toggleAllStats', value => {
+      this.setState({showStats: value});
+    });
+
     Events.on('toggleAllGraphs', value => {
       this.setState({showGraphs: value});
     });
@@ -31,6 +36,7 @@ export default class Queries extends React.Component {
         min: 0,
         max: 0
       },
+      showStats: false,
       showGraphs: false,
       linkMinMax: false
     };
@@ -38,8 +44,14 @@ export default class Queries extends React.Component {
     this.references = {};
   }
 
+  toggleShowStats = () => {
+    Events.emit('toggleStats', {group: 'queries', value: !this.state.showStats});
+    this.setState({showStats: !this.state.showStats});
+  }
+
   shouldComponentUpdate(nextProps, nextState) {
     return !isEqual(this.props, nextProps) ||
+      !isEqual(this.state, nextState) ||
       this.state.showGraphs != nextState.showGraphs ||
       this.state.linkMinMax != nextState.linkMinMax;
   }
@@ -87,6 +99,7 @@ export default class Queries extends React.Component {
       return <Query
           key={query.key}
           query={query}
+          showStats={this.state.showStats}
           ref={this.getOrCreateRef(query.key)}
           chartRange={this.state.chartRange}
           linkMinMax={this.state.linkMinMax}
@@ -118,6 +131,12 @@ export default class Queries extends React.Component {
                 <FaLink/>
               </ToggleButton>
             }
+            <ToggleButton
+              onClick={this.toggleShowStats}
+              disabled={!this.state.showStats}
+              title="Show stats (avg/min/max)">
+              <FaPercentage/>
+            </ToggleButton>
           </OptionsGroup>
         </SectionHeader>
         <ul>{queriesHtml}</ul>

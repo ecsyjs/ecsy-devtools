@@ -13,6 +13,8 @@ import {
   FaFastForward,
   FaStepForward,
   FaChartArea,
+  FaPercent,
+  FaPercentage,
   FaChartBar,
   FaLink,
   FaBoxes,
@@ -26,12 +28,21 @@ export default class Components extends React.Component {
     this.setState({showGraphs: !this.state.showGraphs});
   }
 
+  toggleShowStats = () => {
+    Events.emit('toggleStats', {group: 'components', value: !this.state.showStats});
+    this.setState({showStats: !this.state.showStats});
+  }
+
   toggleShowPoolGraph = () => {
     this.setState({showPoolGraph: !this.state.showPoolGraph});
   }
 
   constructor(props) {
     super(props);
+
+    Events.on('toggleAllStats', value => {
+      this.setState({showStats: value});
+    });
 
     Events.on('toggleAllGraphs', value => {
       this.setState({showGraphs: value});
@@ -43,6 +54,7 @@ export default class Components extends React.Component {
     });
 
     this.state = {
+      showStats: false,
       linkMinMax: false,
       chartRange: {
         min: 0,
@@ -128,6 +140,7 @@ export default class Components extends React.Component {
         name={name}
         componentData={components[name]}
         showGraphs={showGraphs}
+        showStats={this.state.showStats}
         chartRange={this.state.chartRange}
         highlighted={highlighted}
         pool={componentsPools[name]}
@@ -166,6 +179,12 @@ export default class Components extends React.Component {
                   <FaChartLine/>
                 </ToggleButton>
               }
+              <ToggleButton
+                onClick={this.toggleShowStats}
+                disabled={!this.state.showStats}
+                title="Show stats (avg/min/max)">
+                <FaPercentage/>
+              </ToggleButton>
             </OptionsGroup>
 
           {

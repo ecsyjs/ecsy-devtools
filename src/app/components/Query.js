@@ -6,6 +6,7 @@ import Events from '../utils/Events';
 import Bindings from '../ECSYBindings';
 import { Half, Half2, Button } from './StyledComponents';
 import isEqual from 'react-fast-compare';
+import ElementStats from './ElementStats';
 
 import {
   FaArrowDown,
@@ -56,7 +57,7 @@ export default class Query extends React.Component {
   }
 
   render() {
-    const { query, showGraphs, highlighted } = this.props;
+    const { showStats, query, showGraphs, highlighted } = this.props;
 
     const components = query.components.included.map(name => (
       <span className="ComponentName" key={name}>{name}</span>
@@ -83,32 +84,37 @@ export default class Query extends React.Component {
               <FaBolt style={{color: '#27CEA5'}} title="Reactive query"/>
             }
           </span>
-          <span className="value">{query.numEntities}</span>
+          <span className="value" title="Current value">{query.numEntities}</span>
         </Half2>
         <Half>
-        {
-          showGraphs && <SmoothieComponent
-          ref="chart"
-          responsive
-          grid={ {
-            fillStyle: 'transparent',
-            strokeStyle: 'transparent'
-          }}
-          millisPerPixel={60}
-          labels={ {
-            fillStyle: '#BCFFEF',
-            precision: 0
-          }}
-          height={30}
-          series={[
+          <div style={{width: "100%"}}>
             {
-              data: this.timeSeries,
-              strokeStyle: '#2CEBBD',
-              fillStyle: 'rgba(188, 255, 239, 0.05)',
-              lineWidth: 1,
+              showGraphs && <SmoothieComponent
+              ref="chart"
+              responsive
+              grid={ {
+                fillStyle: 'transparent',
+                strokeStyle: 'transparent'
+              }}
+              millisPerPixel={60}
+              labels={ {
+                fillStyle: '#BCFFEF',
+                precision: 0
+              }}
+              height={30}
+              series={[
+                {
+                  data: this.timeSeries,
+                  strokeStyle: '#2CEBBD',
+                  fillStyle: 'rgba(188, 255, 239, 0.05)',
+                  lineWidth: 1,
+                }
+              ]}/>
             }
-          ]}/>
-        }
+            {
+              showStats && <ElementStats stats={query.stats} precision={0}/>
+            }
+          </div>
         </Half>
         <Button className="logbutton" onClick={this.logQuery} title="Log queries to the console">
           <FaArrowDown></FaArrowDown>
