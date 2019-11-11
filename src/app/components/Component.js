@@ -128,39 +128,41 @@ export default class Component extends React.Component {
           <span className="value" title="Actual number of instances of this component">{value}</span>
         </Half2>
         <Half>
-        {
-          showGraphs && <SmoothieComponent
-          ref="chart"
-          responsive
-          {...opts}
-          grid={{
-            fillStyle: 'transparent',
-            strokeStyle: 'transparent'
-          }}
-          labels={{
-            fillStyle: '#FFD29C',
-            precision: 0
-          }}
-          millisPerPixel={60}
-          height={30}
-          series={[
-            {
-              data: this.timeSeries[0],
-              strokeStyle: '#EB932C',
-              fillStyle: 'rgba(235, 147, 44, 0.08)',
-              lineWidth: 1
-            },
-            {
-              data: this.timeSeries[1],
-              strokeStyle: '#F1421C',
-              lineWidth: 1
-            }
-          ]}
-          />
-        }
-        {
-          showStats && <ElementStats stats={componentData.stats} precision={0}/>
-        }
+          <div style={{width: "100%"}}>
+          {
+            showGraphs && <SmoothieComponent
+            ref="chart"
+            responsive
+            {...opts}
+            grid={{
+              fillStyle: 'transparent',
+              strokeStyle: 'transparent'
+            }}
+            labels={{
+              fillStyle: '#FFD29C',
+              precision: 0
+            }}
+            millisPerPixel={60}
+            height={30}
+            series={[
+              {
+                data: this.timeSeries[0],
+                strokeStyle: '#EB932C',
+                fillStyle: 'rgba(235, 147, 44, 0.08)',
+                lineWidth: 1
+              },
+              {
+                data: this.timeSeries[1],
+                strokeStyle: '#F1421C',
+                lineWidth: 1
+              }
+            ]}
+            />
+          }
+          {
+            showStats && <ElementStats stats={componentData.stats} precision={0}/>
+          }
+          </div>
         </Half>
         <Button className="logbutton" onClick={this.logComponent} title="Log components to the console">
           <FaArrowDown></FaArrowDown>

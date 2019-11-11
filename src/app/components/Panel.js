@@ -133,6 +133,19 @@ class App extends Component {
       entities: false
     }
 
+    this.statsStatus = {
+      systems: false,
+      components: false,
+      queries: false
+    }
+
+    Events.on('toggleStats', detail => {
+      this.statsStatus[detail.group] = detail.value;
+      this.setState({
+        showStats: Object.values(this.statsStatus).reduce((a,c) => a && c)
+      })
+    });
+
     Events.on('toggleGraphs', detail => {
       this.graphStatus[detail.group] = detail.value;
       this.setState({
@@ -300,6 +313,9 @@ class App extends Component {
       }
     });
 
+    // Overall systems
+    this.stats.systemsExecuteTime = data.systems.reduce((acum, s) => acum + s.executeTime, 0);
+
     this.setState({
       data: data,
       ecsyVersion: data.ecsyVersion,
@@ -384,7 +400,7 @@ class App extends Component {
             <ToggleButton
               onClick={this.toggleShowStats}
               disabled={!this.state.showStats}
-              title="Show charts">
+              title="Show stats">
               <FaPercentage/>
             </ToggleButton>
           </div>

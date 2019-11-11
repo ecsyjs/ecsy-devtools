@@ -60,7 +60,7 @@ export default class Systems extends React.Component {
   }
 
   toggleShowStats = () => {
-    //Events.emit('toggleAllStats', !this.state.showStats);
+    Events.emit('toggleStats', {group: 'systems', value: !this.state.showStats});
     this.setState({showStats: !this.state.showStats});
   }
 
@@ -78,6 +78,10 @@ export default class Systems extends React.Component {
 
   constructor() {
     super();
+
+    Events.on('toggleAllStats', value => {
+      this.setState({showStats: value});
+    });
 
     Events.on('toggleAllGraphs', value => {
       this.setState({showGraphs: value});
@@ -263,7 +267,7 @@ export default class Systems extends React.Component {
             <ToggleButton
               onClick={this.toggleShowStats}
               disabled={!this.state.showStats}
-              title="Show charts">
+              title="Show stats (avg/min/max)">
               <FaPercentage/>
             </ToggleButton>
           </OptionsGroup>

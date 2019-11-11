@@ -84,7 +84,7 @@ export default class Query extends React.Component {
               <FaBolt style={{color: '#27CEA5'}} title="Reactive query"/>
             }
           </span>
-          <span className="value">{query.numEntities}</span>
+          <span className="value" title="Current value">{query.numEntities}</span>
         </Half2>
         <Half>
           <div style={{width: "100%"}}>
