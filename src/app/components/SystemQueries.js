@@ -46,7 +46,7 @@ export default class SystemQueries extends React.Component {
       let query = queries[queryName];
       let key = query.key;
       const components = query.components.included.map(name => (
-        <span className="ComponentName">{name}</span>
+        <span key={name} className="ComponentName">{name}</span>
       ));
 
       const classes = classNames({
@@ -70,20 +70,23 @@ export default class SystemQueries extends React.Component {
           onMouseEnter={onEnter}
           onMouseLeave={this.onLeave}>
           <div style={{display: "flex", justifyContent: "space-between"}}>
-            <div>{ components }
-            {
-              query.mandatory &&
-                <FaExclamation style={{fontSize: "1.2em", color: "#27CEA5"}} title="Mandatory query: It should have at least one element to execute"/>
-            }
-            {
-              query.reactive &&
-              <ToggleButton
-                onClick={this.toggleShowReactive}
-                disabled={!this.state.showReactive}
-                title="Show reactive lists">
-                <FaBolt/>
-              </ToggleButton>
-            }
+            <div>
+              {
+                components
+              }
+              {
+                query.mandatory &&
+                  <FaExclamation style={{fontSize: "1.2em", color: "#27CEA5"}} title="Mandatory query: It should have at least one element to execute"/>
+              }
+              {
+                query.reactive &&
+                <ToggleButton
+                  onClick={this.toggleShowReactive}
+                  disabled={!this.state.showReactive}
+                  title="Show reactive lists">
+                  <FaBolt/>
+                </ToggleButton>
+              }
             </div>
             <QueryNumEntities>{query.numEntities}</QueryNumEntities>
           </div>

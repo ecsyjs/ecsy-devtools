@@ -7,10 +7,10 @@ import SmoothieComponent, { TimeSeries } from './SmoothieChart';
 import { ToggleButton, OptionsGroup, Button, SectionHeader2, Title, TitleGroup } from './StyledComponents';
 import Bindings from '../ECSYBindings';
 import Events from '../utils/Events';
-import Checkbox from './Checkbox';
 import isEqual from 'react-fast-compare';
 import classNames from 'classnames';
 import DeferredRemovalStep from './DeferredRemovalStep';
+import ElementStats from './ElementStats';
 
 import {
   FaPlay,
@@ -234,7 +234,10 @@ export default class Systems extends React.Component {
       <SectionHeader2 className={headerContainerClasses}>
         <div className="containerlol">
           <TitleGroup>
-            <Title>SYSTEMS ({systems.length})</Title> <Title>{totalSystemsTime.toFixed(2)}ms</Title>
+            <Title>SYSTEMS ({systems.length})</Title>
+            <div>
+              <Title>{totalSystemsTime.toFixed(2)}ms</Title>
+            </div>
           </TitleGroup>
           <OptionsGroup>
             <ToggleButton

@@ -279,7 +279,8 @@ class App extends Component {
       data.components[name].stats = {
         min: this.stats.components[name].min,
         max: this.stats.components[name].max,
-        mean: this.stats.components[name].mean
+        mean: this.stats.components[name].mean,
+        standard_deviation: this.stats.components[name].standard_deviation
       }
     }
 
@@ -294,7 +295,8 @@ class App extends Component {
       query.stats = {
         min: this.stats.queries[key].min,
         max: this.stats.queries[key].max,
-        mean: this.stats.queries[key].mean
+        mean: this.stats.queries[key].mean,
+        standard_deviation: this.stats.queries[key].standard_deviation
       }
     });
 
@@ -309,12 +311,27 @@ class App extends Component {
       system.stats = {
         min: this.stats.systems[name].min,
         max: this.stats.systems[name].max,
-        mean: this.stats.systems[name].mean
+        mean: this.stats.systems[name].mean,
+        standard_deviation: this.stats.systems[name].standard_deviation
       }
     });
 
     // Overall systems
-    this.stats.systemsExecuteTime = data.systems.reduce((acum, s) => acum + s.executeTime, 0);
+    let systemsExecuteTime = data.systems.reduce((acum, s) => acum + s.executeTime, 0);
+    if (!data.allSystems) {
+      data.allSystems = {}
+    }
+    if (!this.stats.allSystems) {
+      this.stats.allSystems = new PerfStats();
+    }
+
+    this.stats.allSystems.update(systemsExecuteTime);
+    data.allSystems.stats = {
+      min: this.stats.allSystems.min,
+      max: this.stats.allSystems.max,
+      mean: this.stats.allSystems.mean,
+      standard_deviation: this.stats.allSystems.standard_deviation
+    };
 
     this.setState({
       data: data,

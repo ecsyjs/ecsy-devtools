@@ -33,6 +33,7 @@ export default class ElementStats extends React.Component {
     return (
       <Mylist>
         <span title="Average value"><span style={{color: "#444"}}>~</span> {stats.mean.toFixed(precision)}</span>
+        <span title="Standard deviation"><span style={{color: "#444"}}>σ</span> {stats.standard_deviation.toFixed(precision)}</span>
         <span title="Minimum value"><FaCaretDown style={{color: "#444"}}/>{stats.min.toFixed(precision)}</span>
         <span title="Maximum value"><FaCaretUp style={{color: "#444"}}/>{stats.max.toFixed(precision)}</span>
       </Mylist>
