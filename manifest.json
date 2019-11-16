@@ -27,7 +27,8 @@
   "devtools_page": "src/extension/devtools.html",
 
   "background": {
-    "page": "src/extension/background.html"
+    "page": "src/extension/background.html",
+    "persistent": false
   },
 
   "content_scripts": [{

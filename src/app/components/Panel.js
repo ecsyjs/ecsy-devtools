@@ -15,24 +15,13 @@ import Entities from './Entities';
 import Events from '../utils/Events';
 import PerfStats from 'incremental-stats-lite';
 
-import { ToggleButton, OptionsGroup, Button, SectionHeader2, Title, TitleGroup } from './StyledComponents';
+import { ToggleButton } from './StyledComponents';
 import {
-  FaPlay,
-  FaPause,
-  FaFastForward,
-  FaStepForward,
   FaChartArea,
   FaCode,
-  FaPercent,
   FaPercentage,
   FaProjectDiagram,
-  FaChartBar,
-  FaLink,
-  FaBoxes,
-  FaChartLine,
-  FaChartPie
  } from 'react-icons/fa';
-
 
 var globalBrowser =  typeof chrome !== 'undefined' ? chrome : typeof browser !== 'undefined' ? browser : null;
 
@@ -64,25 +53,6 @@ const Code = styled.pre`
   color: #CCC;
   padding: 0.5em;
 `;
-
-const ToggleSection = styled.span`
-  color: ${(props) => props.disabled ? "#6B6B6B" : "#4AF4FF"};
-  cursor: pointer;
-  margin-right: 10px;
-  font-size: 1.2em;
-
-  &:hover {
-    opacity: 0.7;
-  }
-
-  &:last-of-type {
-    margin-right: 2em;
-  }
-`;
-
-var stats = {
-  totalSystemsTime: []
-};
 
 class App extends Component {
   constructor() {
@@ -202,6 +172,8 @@ class App extends Component {
       backgroundPageConnection.onMessage.addListener(m => {
         if (m.method === 'refreshData') {
           this.processData(m.data);
+        } else if (m.method === 'disabled') {
+          this.setState({data: null});
         }
       });
     } else {

@@ -20,10 +20,12 @@ chrome.runtime.onMessage.addListener(
 );
 
 chrome.runtime.onConnect.addListener(function (port) {
+  log('Onconnect');
   var extensionListener = function (message, sender, sendResponse) {
     // The original connection event doesn't include the tab ID of the
     // DevTools page, so we need to send it explicitly.
     if (message.name == "init") {
+      log('connected', message.tabId);
       connections[message.tabId] = port;
       return;
     }
@@ -54,10 +56,10 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     if (tabId in connections) {
       connections[tabId].postMessage(request);
     } else {
-      console.log("Tab not found in connection list.");
+      log("Tab not found in connection list.");
     }
   } else {
-    console.log("sender.tab not defined.");
+    log("sender.tab not defined.");
   }
   return true;
 });
@@ -87,7 +89,15 @@ function setIconAndPopup(type, tabId) {
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   if (tab.active && changeInfo.status === 'loading') {
     setIconAndPopup('disabled', tabId);
+    if (tabId in connections) {
+      connections[tabId].postMessage({
+        id: 'ecsy-devtools',
+        method: 'disabled'
+      });
+    } else {
+      // log('Tab ID undefined in', tabId, connections)
+    }
   }
 });
 
-// log("Background file loaded");
+log("Background file loaded");
