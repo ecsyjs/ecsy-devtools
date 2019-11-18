@@ -1,16 +1,23 @@
 'use strict';
 
 if( !window.__ECSY_DEVTOOLS_INJECTED ) {
-	function sendMessage( type, data ) {
-		window.postMessage({
-			id: 'ecsy-devtools',
-			method: type,
-			data,
-		}, '*');
-	}
+	let sendMessage = window.__ECSY_REMOVE_DEVTOOLS_INJECTED ?
+		( type, data ) => {
+			window.conn.send({
+				id: 'ecsy-devtools',
+				method: type,
+				data: JSON.stringify(data)
+			});
+		} :
+		( type, data ) => {
+			window.postMessage({
+				id: 'ecsy-devtools',
+				method: type,
+				data,
+			}, '*');
+		}
 
 	window.addEventListener('ecsy-world-created', e => {
-
 		if (!window.__ECSY_DEVTOOLS) {
 			window.__ECSY_DEVTOOLS = {
 				worlds: []
@@ -40,14 +47,6 @@ if( !window.__ECSY_DEVTOOLS_INJECTED ) {
 			}
 			window.__ECSY_DEVTOOLS.refreshStats();
 		}.bind(world);
-
-		/*
-		world.execute = function() {
-			var result = ori1.apply(world, arguments);
-			window.__ECSY_DEVTOOLS.refreshStats();
-			return result;
-		}
-		*/
 
 		window.__ECSY_DEVTOOLS.refreshStats = function() {
 			const entityManager = world.entityManager;
