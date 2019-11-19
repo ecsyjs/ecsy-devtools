@@ -80,106 +80,18 @@ class App extends Component {
   constructor() {
     super();
 
-    const urlParams = new URLSearchParams(window.location.search);
-
-    if (urlParams.has('remoteConnect')) {
-      console.log('inject remote connect');
-      var script = document.createElement('script');
-      script.src = 'vendor/peer.min.js';
-      //script.src = 'https://cdn.jsdelivr.net/npm/peerjs@0.3.20/dist/peer.min.js';
-      script.onload = () => {
-        let id = urlParams.get('remoteConnect')
-
-        var peer = new Peer();
-        peer.on('open', id => {
-          console.log('My peer ID is: ' + id);
-        });
-
-        //script.parentNode.removeChild(script);
-        var conn = peer.connect('ED23', {serialization: "json"});
-
-        window.conn = conn;
-        conn.on('error', err => {
-          console.log('errrorrrr', err);
-        });
-
-        conn.on('close', () => {
-          this.setState({
-            remoteConnectionMessage: 'close',
-            data: null
-          });
-/*
-          peer.destroy();     // destroy the link
-          connected = false;  // set the connected flag to false
-          conn = null;        // destroy the conn
-          peer = null;        // destroy the peer
-*/
-          // set a variable which means function calls to launchPeer will not overlap
-          //var run_next = true;
-
-          // periodically attempt to reconnect
-          setTimeout(() => {
-            conn = peer.connect('ED23');
-          }, 5000);
-
-        });
-
-        conn.on('disconnected', () => {
-          this.setState({remoteConnectionMessage: 'disconnected'});
-        });
-
-        conn.on('open', () => {
-          this.setState({remoteConnection: true});
-
-          var script = '';
-          fetch( globalBrowser.extension.getURL( 'src/content/index.js' ) )
-            .then(res => res.text())
-            .then(res => {
-              var source = '(function(){' + res + '})();';
-              conn.send({type: 'init', script: source});
-              /*
-              var script = document.createElement('script');
-              script.textContent = source;
-              script.onload = () => {
-                script.parentNode.removeChild(script);
-              }
-              (document.head||document.documentElement).appendChild(script);
-
-              console.log(res);
-              */
-            });
-
-          conn.on('data', msg => {
-            if (msg.method === 'refreshData') {
-              this.processData(JSON.parse(msg.data));
-            } else if (msg.method === 'console') {
-              //console.log('DATA', msg);
-              console[msg.type].apply(null, JSON.parse(msg.args));
-            } else if (msg.method === 'evalReturn') {
-              console.log('<', msg.value);
-              this.refs.consoleLog.value += `< ${msg.value}\n`;
-              this.refs.consoleLog.scrollTop = this.refs.consoleLog.scrollHeight;
-            } else if (msg.method === 'error') {
-              let error = JSON.parse(msg.error);
-              // console.error('<', error.message);
-              console.error('<', error.stack);
-              this.refs.consoleLog.value += `< ${error.stack}\n`;
-              this.refs.consoleLog.scrollTop = this.refs.consoleLog.scrollHeight;
-            }
-
-          });
-        });
-      }
-      (document.head||document.documentElement).appendChild(script);
-    }
-
     this.stats = {
       components: {},
       queries: {},
       systems: {}
     };
 
+    this.commandsHistory = [];
+
     this.state = {
+      remoteConnectionData: {
+        remoteId: ''
+      },
       remoteConnection: false,
       remoteConnectionMessage: '',
       ecsyVersion: '',
@@ -213,6 +125,110 @@ class App extends Component {
         },
       }
     };
+
+    const urlParams = new URLSearchParams(window.location.search);
+    this.commandsHistoryPos = 0;
+
+    if (urlParams.has('remoteConnect')) {
+      let remoteId = urlParams.get('remoteId');
+      let remoteConnectionData = this.state.remoteConnectionData;
+      remoteConnectionData.remoteId = remoteId;
+      this.state.remoteConnectionData = remoteConnectionData;
+
+      console.log('inject remote connect');
+      var script = document.createElement('script');
+      script.src = 'vendor/peer.min.js';
+      script.onload = () => {
+        //let id = urlParams.get('remoteConnect')
+
+        var peer = new Peer();
+        peer.on('open', id => {
+          // console.log('My peer ID is: ' + id);
+        });
+
+        //script.parentNode.removeChild(script);
+        // console.log('Trying to connect to remote peer', remoteId);
+        var conn = peer.connect(remoteId, {serialization: "json"});
+
+        window.__ECSY_REMOTE_DEVTOOLS = {};
+        window.__ECSY_REMOTE_DEVTOOLS.connection = conn;
+        conn.on('error', err => {
+          console.log('errrorrrr', err);
+        });
+
+        conn.on('close', () => {
+          this.setState({
+            remoteConnectionMessage: 'close',
+            data: null
+          });
+/*
+          peer.destroy();     // destroy the link
+          connected = false;  // set the connected flag to false
+          conn = null;        // destroy the conn
+          peer = null;        // destroy the peer
+*/
+          // set a variable which means function calls to launchPeer will not overlap
+          //var run_next = true;
+/*
+          // periodically attempt to reconnect
+          setTimeout(() => {
+            conn = peer.connect('ED23');
+          }, 5000);
+*/
+        });
+
+        conn.on('disconnected', () => {
+          this.setState({remoteConnectionMessage: 'disconnected'});
+        });
+
+        conn.on('open', () => {
+          // console.log('open!');
+          this.setState({remoteConnection: true});
+
+          var script = '';
+          fetch( globalBrowser.extension.getURL( 'src/content/index.js' ) )
+            .then(res => res.text())
+            .then(res => {
+              var source = '(function(){' + res + '})();';
+              conn.send({type: 'init', script: source});
+              // console.log('>>>>>> script');
+              /*
+              var script = document.createElement('script');
+              script.textContent = source;
+              script.onload = () => {
+                script.parentNode.removeChild(script);
+              }
+              (document.head||document.documentElement).appendChild(script);
+
+              console.log(res);
+              */
+            });
+
+          conn.on('data', msg => {
+            // console.log('<<<<<<<<<<< data', msg);
+            if (msg.method === 'refreshData') {
+              this.processData(JSON.parse(msg.data));
+            } else if (msg.method === 'console') {
+              //console.log('DATA', msg);
+              console[msg.type].apply(null, JSON.parse(msg.args));
+            } else if (msg.method === 'evalReturn') {
+              console.log('<', msg.value);
+              this.refs.consoleLog.value += `< ${msg.value}\n`;
+              this.refs.consoleLog.scrollTop = this.refs.consoleLog.scrollHeight;
+            } else if (msg.method === 'error') {
+              let error = JSON.parse(msg.error);
+              // console.error('<', error.message);
+              console.error('<', error.stack);
+              this.refs.consoleLog.value += `< ${error.stack}\n`;
+              this.refs.consoleLog.scrollTop = this.refs.consoleLog.scrollHeight;
+            }
+
+          });
+        });
+      }
+      (document.head||document.documentElement).appendChild(script);
+    }
+
 
     this.graphStatus = {
       systems: false,
@@ -439,6 +455,7 @@ class App extends Component {
   }
 
   toggleShowConsole = () => {
+    this.refs.remoteCommand.focus();
     this.setState({console: !this.state.console});
   }
 
@@ -463,10 +480,12 @@ class App extends Component {
   sendCommand = () => {
     let command = this.refs.remoteCommand.value;
     window.conn.send({type: "executeScript", script: command, returnEval: true});
+    this.commandsHistoryPos = this.commandsHistory.length;
+    this.commandsHistory.push(command);
+
     console.log('>', command);
     this.refs.consoleLog.value += `> ${command}\n`;
     this.refs.consoleLog.scrollTop = this.refs.consoleLog.scrollHeight;
-
     this.refs.remoteCommand.value = '';
   }
 
@@ -483,14 +502,30 @@ class App extends Component {
   }
 
   remoteConnect = () => {
-    globalBrowser.tabs.create({
-      "url": "/src/app/index.html?remoteConnect=BC23"
-    });
+    let remoteId = this.refs.remoteId.value;
+    if (remoteId && remoteId.length === 6) {
+      globalBrowser.tabs.create({
+        "url": "/src/app/index.html?remoteConnect&remoteId=" + remoteId
+      });
+    }
   }
 
   onCommandKeyDown = evt => {
+    // 38 up
+    // 40 down
     if (evt.which === 13) {
       this.sendCommand();
+    }
+
+    if (evt.which === 38 || evt.which === 40) {
+      this.refs.remoteCommand.value = this.commandsHistory[this.commandsHistoryPos];
+      if (evt.which === 38 && this.commandsHistoryPos > 0) {
+        this.commandsHistoryPos--;
+      }
+
+      if (evt.which === 40 && this.commandsHistoryPos < this.commandsHistory.length - 1) {
+        this.commandsHistoryPos++;
+      }
     }
   }
 
@@ -512,6 +547,7 @@ class App extends Component {
       return (
         <div>
         <h1>ECSY not detected on this page. If you want to connect to a remote device, please enter the code here and click connect</h1>
+        <input ref="remoteId" placeholder="Remote connection ID"></input>
         <button onClick={this.remoteConnect}>CONNECT</button>
         </div>
       );
@@ -537,12 +573,15 @@ class App extends Component {
               title="Show debug">
               <FaCode/>
             </ToggleButton>
-            <ToggleButton
-              onClick={this.toggleShowConsole}
-              disabled={!this.state.console}
-              title="Show remote console">
-              <FaTerminal/>
-            </ToggleButton>
+            {
+              this.state.remoteConnection &&
+              <ToggleButton
+                onClick={this.toggleShowConsole}
+                disabled={!this.state.console}
+                title="Show remote console">
+                <FaTerminal/>
+              </ToggleButton>
+            }
             <ToggleButton
               onClick={this.toggleShowGraph}
               disabled={!this.state.showGraphs}
@@ -556,7 +595,15 @@ class App extends Component {
               <FaPercentage/>
             </ToggleButton>
           </div>
-          <div>ECSY v{this.state.ecsyVersion}</div>
+          <div>
+            {
+              this.state.remoteConnection &&
+              <span style={{marginRight: '10px'}}>
+              remote connection (ID: <b>{this.state.remoteConnectionData.remoteId}</b>)
+              </span>
+            }
+            ECSY v{this.state.ecsyVersion}
+          </div>
         </div>
         {
           this.state.debug &&

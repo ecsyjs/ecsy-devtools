@@ -1,9 +1,9 @@
 'use strict';
 
 if( !window.__ECSY_DEVTOOLS_INJECTED ) {
-	let sendMessage = window.__ECSY_REMOVE_DEVTOOLS_INJECTED ?
+	let sendMessage = window.__ECSY_REMOTE_DEVTOOLS_INJECTED ?
 		( type, data ) => {
-			window.conn.send({
+			window.__ECSY_REMOTE_DEVTOOLS.connection.send({
 				id: 'ecsy-devtools',
 				method: type,
 				data: JSON.stringify(data)

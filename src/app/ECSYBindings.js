@@ -1,8 +1,8 @@
 var globalBrowser =  typeof chrome !== 'undefined' ? chrome : typeof browser !== 'undefined' ? browser : null;
 
 function executeScript(script) {
-  if (window.conn) {
-    window.conn.send({
+  if (window.__ECSY_REMOTE_DEVTOOLS_INJECTED && window.__ECSY_REMOTE_DEVTOOLS.connection) {
+    window.__ECSY_REMOTE_DEVTOOLS.connection.send({
       type: 'executeScript',
       script: script
     });
@@ -46,7 +46,6 @@ class Bindings {
     executeScript(string);
   }
   logData(data) {
-    var world = this.getWorld();
     var string = `
       window.$data = JSON.parse('${JSON.stringify(data)}');
       console.log("Data (accessible on $data)", window.$data);
@@ -92,16 +91,11 @@ class Bindings {
         s.stop();
       }
     })`;
-
     executeScript(string);
-
-    //var string = `${world}.systemManager._systems.find(s => s.constructor.name === '${system.name}').play()`;
-    //executeScript(string);
   }
   toggleSystem(system) {
     var world = this.getWorld();
     var string = `${world}.systemManager._systems.find(s => s.constructor.name === '${system.name}').${(system.enabled ? 'stop' : 'play')}()`;
-    //system.enabled = !system.enabled;
     executeScript(string);
   }
   stepSystem(system) {
