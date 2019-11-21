@@ -1,7 +1,7 @@
 var globalBrowser =  typeof chrome !== 'undefined' ? chrome : typeof browser !== 'undefined' ? browser : null;
 
 function executeScript(script) {
-  if (window.__ECSY_REMOTE_DEVTOOLS_INJECTED && window.__ECSY_REMOTE_DEVTOOLS.connection) {
+  if (window.__ECSY_REMOTE_DEVTOOLS && window.__ECSY_REMOTE_DEVTOOLS.connection) {
     window.__ECSY_REMOTE_DEVTOOLS.connection.send({
       type: 'executeScript',
       script: script

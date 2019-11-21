@@ -1,21 +1,20 @@
 'use strict';
 
 if( !window.__ECSY_DEVTOOLS_INJECTED ) {
-	let sendMessage = window.__ECSY_REMOTE_DEVTOOLS_INJECTED ?
-		( type, data ) => {
+	function sendMessage( type, data ) {
+		if (window.__ECSY_REMOTE_DEVTOOLS_INJECTED && window.__ECSY_REMOTE_DEVTOOLS.connection) {
 			window.__ECSY_REMOTE_DEVTOOLS.connection.send({
 				id: 'ecsy-devtools',
 				method: type,
 				data: JSON.stringify(data)
 			});
-		} :
-		( type, data ) => {
-			window.postMessage({
-				id: 'ecsy-devtools',
-				method: type,
-				data,
-			}, '*');
 		}
+		window.postMessage({
+			id: 'ecsy-devtools',
+			method: type,
+			data,
+		}, '*');
+	}
 
 	window.addEventListener('ecsy-world-created', e => {
 		if (!window.__ECSY_DEVTOOLS) {
@@ -49,6 +48,7 @@ if( !window.__ECSY_DEVTOOLS_INJECTED ) {
 		}.bind(world);
 
 		window.__ECSY_DEVTOOLS.refreshStats = function() {
+			let startTime = performance.now();
 			const entityManager = world.entityManager;
 
 			const deferredRemoval = {
@@ -71,6 +71,10 @@ if( !window.__ECSY_DEVTOOLS_INJECTED ) {
 				}
 
 				return data;
+			});
+
+			systems.sort((a, b) => {
+				return a.priority - b.priority || a.order - b.order;
 			});
 
 			// Reset time for next step
@@ -125,7 +129,8 @@ if( !window.__ECSY_DEVTOOLS_INJECTED ) {
 				components: components,
 				deferredRemoval: deferredRemoval,
 				componentsPools: componentsPools,
-				ecsyVersion: version
+				ecsyVersion: version,
+				statsComputeTime: performance.now() - startTime
 			};
 			sendMessage('refreshData', data);
 		}
