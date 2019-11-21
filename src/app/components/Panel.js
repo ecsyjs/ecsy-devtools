@@ -110,7 +110,51 @@ const Code = styled.pre`
   padding: 0.5em;
 `;
 
+const DEFAULT_SETTINGS = {
+  showDebug: false,
+  showConsole: false,
+  showComponents: true,
+  showEntities: true,
+  showQueries: true,
+  showSystems: true,
+  showGraphs: false,
+  showStats: false
+};
+
 class App extends Component {
+
+  loadSettingsFromStorage() {
+    globalBrowser.storage.local.get(["settings"], (results) => {
+      var settings = results.settings;
+      settings = Object.assign({}, DEFAULT_SETTINGS, settings);
+      this.setState({
+          showDebug: settings.showDebug,
+          showConsole: settings.showConsole,
+          showComponents: settings.showComponents,
+          showEntities: settings.showEntities,
+          showQueries: settings.showQueries,
+          showSystems: settings.showSystems,
+          showGraphs: settings.showGraphs,
+          showStats: settings.showStats
+      })
+    });
+  }
+
+  saveSettingsToStorage() {
+    globalBrowser.storage.local.set({
+      settings: {
+        showDebug: this.state.showDebug,
+        showConsole: this.state.showConsole,
+        showComponents: this.state.showComponents,
+        showEntities: this.state.showEntities,
+        showQueries: this.state.showQueries,
+        showSystems: this.state.showSystems,
+        showGraphs: this.state.showGraphs,
+        showStats: this.state.showStats
+      }
+    });
+  }
+
   constructor() {
     super();
 
@@ -130,14 +174,16 @@ class App extends Component {
       remoteConnectionMessage: '',
       ecsyVersion: '',
       worldExist: false,
-      debug: false,
-      console: false,
+
+      showDebug: false,
+      showConsole: false,
       showComponents: true,
       showEntities: true,
       showQueries: true,
       showSystems: true,
       showGraphs: false,
       showStats: false,
+
       overComponents: [],
       prevOverComponents: [],
       overQueries: [],
@@ -159,6 +205,8 @@ class App extends Component {
         },
       }
     };
+
+    this.loadSettingsFromStorage();
 
     const urlParams = new URLSearchParams(window.location.search);
     this.commandsHistoryPos = 0;
@@ -477,30 +525,37 @@ class App extends Component {
   }
 
   toggleShowDebug = () => {
-    this.setState({debug: !this.state.debug});
+    this.setState({showDebug: !this.state.showDebug});
+    this.saveSettingsToStorage();
   }
 
   toggleShowConsole = () => {
     //this.refs.remoteCommand.focus();
-    this.setState({console: !this.state.console});
+    this.setState({showConsole: !this.state.showConsole});
+    this.saveSettingsToStorage();
   }
 
   toggleHighlightRelationships = () => {
     this.setState({highlight: !this.state.highlight});
+    this.saveSettingsToStorage();
   }
 
   toggleShowGraph = () => {
     Events.emit('toggleAllGraphs', !this.state.showGraphs);
     this.setState({showGraphs: !this.state.showGraphs});
+    this.saveSettingsToStorage();
   }
 
   toggleShowStats = () => {
     Events.emit('toggleAllStats', !this.state.showStats);
     this.setState({showStats: !this.state.showStats});
+    this.saveSettingsToStorage();
   }
 
   toggleComponents = () => {
-    this.setState({showComponents: !this.state.showComponents});
+    this.setState({showComponents: !this.state.showComponents}, () => {
+      this.saveSettingsToStorage();
+    });
   }
 
   sendCommand = () => {
@@ -605,7 +660,7 @@ class App extends Component {
             </ToggleButton>
             <ToggleButton
               onClick={this.toggleShowDebug}
-              disabled={!this.state.debug}
+              disabled={!this.state.showDebug}
               title="Show debug">
               <FaCode/>
             </ToggleButton>
@@ -613,7 +668,7 @@ class App extends Component {
               this.state.remoteConnection &&
               <ToggleButton
                 onClick={this.toggleShowConsole}
-                disabled={!this.state.console}
+                disabled={!this.state.showConsole}
                 title="Show remote console">
                 <FaTerminal/>
               </ToggleButton>
@@ -642,14 +697,14 @@ class App extends Component {
           </div>
         </div>
         {
-          this.state.debug &&
+          this.state.showDebug &&
           <Code>
             <button onClick={this.dumpData}>dump to console ($data)</button><br/>
             {JSON.stringify(data, null, 2)}
           </Code>
         }
         {
-          this.state.remoteConnection && this.state.console &&
+          this.state.remoteConnection && this.state.showConsole &&
           <SectionHeader style={{marginRight: '20px', marginBottom: '10px'}}>
             <TitleGroup>
               <Title>REMOTE CONSOLE</Title>
