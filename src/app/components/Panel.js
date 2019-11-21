@@ -118,7 +118,8 @@ const DEFAULT_SETTINGS = {
   showQueries: true,
   showSystems: true,
   showGraphs: false,
-  showStats: false
+  showStats: false,
+  showHighlight: true,
 };
 
 class App extends Component {
@@ -135,8 +136,12 @@ class App extends Component {
           showQueries: settings.showQueries,
           showSystems: settings.showSystems,
           showGraphs: settings.showGraphs,
-          showStats: settings.showStats
-      })
+          showStats: settings.showStats,
+          showHighlight: settings.showHighlight
+      });
+
+      Events.emit('toggleAllStats', settings.showStats);
+      Events.emit('toggleAllGraphs', settings.showGraphs);
     });
   }
 
@@ -150,7 +155,8 @@ class App extends Component {
         showQueries: this.state.showQueries,
         showSystems: this.state.showSystems,
         showGraphs: this.state.showGraphs,
-        showStats: this.state.showStats
+        showStats: this.state.showStats,
+        showHighlight: this.state.showHighlight
       }
     });
   }
@@ -183,13 +189,13 @@ class App extends Component {
       showSystems: true,
       showGraphs: false,
       showStats: false,
+      showHighlight: true,
 
       overComponents: [],
       prevOverComponents: [],
       overQueries: [],
       prevOverQueries: [],
       overSystem: false,
-      highlight: true,
       graphConfig: {
         components: {
           globalMin: Number.MAX_VALUE,
@@ -332,21 +338,21 @@ class App extends Component {
     });
 
     Events.on('componentOver', detail => {
-      if (!this.state.highlight) return;
+      if (!this.state.showHighlight) return;
 
       this.setState({prevOverComponents: this.state.overComponents});
       this.setState({overComponents: detail});
     });
 
     Events.on('queryOver', detail => {
-      if (!this.state.highlight) return;
+      if (!this.state.showHighlight) return;
 
       this.setState({prevOverQueries: this.state.overQueries});
       this.setState({overQueries: detail});
     });
 
     Events.on('systemOver', detail => {
-      if (!this.state.highlight) return;
+      if (!this.state.showHighlight) return;
 
       if (detail.length > 0) {
         var system = detail[0];
@@ -524,38 +530,50 @@ class App extends Component {
     Bindings.logData(this.state.data);
   }
 
+  toggleOption = key => {
+    let option = {};
+    option[key] = !this.state[key]
+    this.setState(option, () => {
+      this.saveSettingsToStorage();
+    });
+  }
+
   toggleShowDebug = () => {
-    this.setState({showDebug: !this.state.showDebug});
-    this.saveSettingsToStorage();
+    this.toggleOption("showDebug");
   }
 
   toggleShowConsole = () => {
-    //this.refs.remoteCommand.focus();
-    this.setState({showConsole: !this.state.showConsole});
-    this.saveSettingsToStorage();
+    this.toggleOption("showConsole");
   }
 
   toggleHighlightRelationships = () => {
-    this.setState({highlight: !this.state.highlight});
-    this.saveSettingsToStorage();
+    this.toggleOption("showHighlight");
   }
 
   toggleShowGraph = () => {
     Events.emit('toggleAllGraphs', !this.state.showGraphs);
-    this.setState({showGraphs: !this.state.showGraphs});
-    this.saveSettingsToStorage();
+    this.toggleOption("showGraphs");
   }
 
   toggleShowStats = () => {
     Events.emit('toggleAllStats', !this.state.showStats);
-    this.setState({showStats: !this.state.showStats});
-    this.saveSettingsToStorage();
+    this.toggleOption("showStats");
   }
 
   toggleComponents = () => {
-    this.setState({showComponents: !this.state.showComponents}, () => {
-      this.saveSettingsToStorage();
-    });
+    this.toggleOption("showComponents");
+  }
+
+  toggleEntities = () => {
+    this.toggleOption("showEntities");
+  }
+
+  toggleQueries = () => {
+    this.toggleOption("showQueries");
+  }
+
+  toggleSystems = () => {
+    this.toggleOption("showSystems");
   }
 
   sendCommand = () => {
@@ -568,18 +586,6 @@ class App extends Component {
     this.refs.consoleLog.value += `> ${command}\n`;
     this.refs.consoleLog.scrollTop = this.refs.consoleLog.scrollHeight;
     this.refs.remoteCommand.value = '';
-  }
-
-  toggleEntities = () => {
-    this.setState({showEntities: !this.state.showEntities});
-  }
-
-  toggleQueries = () => {
-    this.setState({showQueries: !this.state.showQueries});
-  }
-
-  toggleSystems = () => {
-    this.setState({showSystems: !this.state.showSystems});
   }
 
   remoteConnect = () => {
@@ -654,7 +660,7 @@ class App extends Component {
             <ToggleButton title="Show Queries Panel" onClick={this.toggleQueries} disabled={!state.showQueries}>Q</ToggleButton>
             <ToggleButton
               onClick={this.toggleHighlightRelationships}
-              disabled={!this.state.highlight}
+              disabled={!this.state.showHighlight}
               title="Highlight relatinships">
               <FaProjectDiagram/>
             </ToggleButton>
