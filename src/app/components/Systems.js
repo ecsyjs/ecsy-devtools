@@ -65,8 +65,7 @@ export default class Systems extends React.Component {
   }
 
   toggleShowGraph = () => {
-    Events.emit('toggleGraphs', {group: 'systems', value: !this.state.showGraphs});
-    this.setState({showGraphs: !this.state.showGraphs});
+    Events.emit('toggleGraphs', {group: 'systems'});
   }
 
   getOrCreateRef(id) {
@@ -83,10 +82,6 @@ export default class Systems extends React.Component {
       this.setState({showStats: value});
     });
 
-    Events.on('toggleAllGraphs', value => {
-      this.setState({showGraphs: value});
-    });
-
     this.state = {
       showDeferredRemoval: false,
       chartRange: {
@@ -94,7 +89,6 @@ export default class Systems extends React.Component {
         max: 0
       },
       showStats: false,
-      showGraphs: false,
       playing: true,
       showQueries: true,
       stats: [],
@@ -197,7 +191,7 @@ export default class Systems extends React.Component {
   }
 
   render() {
-    const { systems, deferredRemoval, nextSystemToExecute, /*showGraphs,*/ overComponents, overQueries, overSystem } = this.props;
+    const { systems, deferredRemoval, nextSystemToExecute, showGraphs, overComponents, overQueries, overSystem } = this.props;
     const state = this.state;
 
     if (!Array.isArray(systems)) {
@@ -223,8 +217,6 @@ export default class Systems extends React.Component {
 
     let allSystemsStopped = systems.reduce((acum, s) => acum && !s.enabled, true);
 
-    const showGraphs = this.state.showGraphs;
-
     const headerContainerClasses = classNames({
       'textOnly': !showGraphs
     });
@@ -248,7 +240,7 @@ export default class Systems extends React.Component {
             </ToggleButton>
             <ToggleButton
               onClick={this.toggleShowGraph}
-              disabled={!this.state.showGraphs}
+              disabled={!showGraphs}
               title="Show charts">
               <FaChartArea/>
             </ToggleButton>

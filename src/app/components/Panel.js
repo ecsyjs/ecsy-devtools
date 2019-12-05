@@ -154,7 +154,7 @@ class App extends Component {
         showEntities: this.state.showEntities,
         showQueries: this.state.showQueries,
         showSystems: this.state.showSystems,
-        showGraphs: this.state.showGraphs,
+        showGraphs: this.state.showGraphsStatus.all,
         showStats: this.state.showStats,
         showHighlight: this.state.showHighlight
       }
@@ -187,10 +187,24 @@ class App extends Component {
       showEntities: true,
       showQueries: true,
       showSystems: true,
-      showGraphs: false,
       showStats: false,
       showHighlight: true,
 
+      showGraphsStatus: {
+        all: false,
+        groups: {
+          systems: false,
+          components: false,
+          queries: false,
+          entities: false
+        },
+        individuals: {
+          systems: {},
+          components: {},
+          queries: {},
+          entities: {}
+        }
+      },
       overComponents: [],
       prevOverComponents: [],
       overQueries: [],
@@ -331,10 +345,24 @@ class App extends Component {
     });
 
     Events.on('toggleGraphs', detail => {
-      this.graphStatus[detail.group] = detail.value;
-      this.setState({
-        showGraphs: Object.values(this.graphStatus).reduce((a,c) => a && c)
-      })
+      if (detail.elementName) {
+        this.toggleShowGraphOption(detail.group, detail.elementName, () => {
+          //type][key
+
+          /*
+          let allValue = Object.values(this.state.showGraphsStatus.groups).reduce((a,c) => a && c);
+          if (this.state.showGraphsStatus.all !== allValue) {
+            this.setShowGraphOption("all", null, allValue);
+          }*/
+        });
+      } else if (detail.group) {
+        this.toggleShowGraphOption("group", detail.group, () => {
+          let allValue = Object.values(this.state.showGraphsStatus.groups).reduce((a,c) => a && c);
+          if (this.state.showGraphsStatus.all !== allValue) {
+            this.setShowGraphOption("all", null, allValue);
+          }
+        });
+      }
     });
 
     Events.on('componentOver', detail => {
@@ -550,9 +578,45 @@ class App extends Component {
     this.toggleOption("showHighlight");
   }
 
+  setShowGraphOption = (type, key, value, onDone) => {
+    let status = this.state.showGraphsStatus;
+
+    if (type === "all") {
+      status.all = value;
+    } else if (type === "group") {
+      status.groups[key] = value;
+    } else {
+      // component, position, value
+      status.individuals[type][key] = value;
+    }
+
+    this.setState({showGraphsStatus: status}, () => {
+      if (onDone) onDone(value);
+      this.saveSettingsToStorage();
+    });
+  }
+
+  toggleShowGraphOption = (type, key, onDone) => {
+    let status = this.state.showGraphsStatus;
+
+    let value;
+    if (type === "all") {
+      value = status.all;
+    } else if (type === "group") {
+      value = status.groups[key];
+    } else {
+      value = status.individuals[type][key] || false;
+    }
+
+    this.setShowGraphOption(type, key, !value, onDone);
+  }
+
   toggleShowGraph = () => {
-    Events.emit('toggleAllGraphs', !this.state.showGraphs);
-    this.toggleOption("showGraphs");
+    this.toggleShowGraphOption("all", null, value => {
+      Object.keys(this.state.showGraphsStatus.groups).forEach(groupName => {
+        this.setShowGraphOption("group", groupName, value);
+      });
+    });
   }
 
   toggleShowStats = () => {
@@ -650,8 +714,11 @@ class App extends Component {
       );
     }
 
+    const showGraphsStatus = this.state.showGraphsStatus;
+
     return (
       <Container>
+        <pre>>>>>> {JSON.stringify(showGraphsStatus, null ,2)}</pre>
         <div id="header">
           <div style={{display: "flex"}}>
             <ToggleButton title="Show Entities Panel" onClick={this.toggleEntities} disabled={!state.showEntities}>E</ToggleButton>
@@ -681,7 +748,7 @@ class App extends Component {
             }
             <ToggleButton
               onClick={this.toggleShowGraph}
-              disabled={!this.state.showGraphs}
+              disabled={!this.state.showGraphsStatus.all}
               title="Show charts">
               <FaChartArea/>
             </ToggleButton>
@@ -730,7 +797,7 @@ class App extends Component {
                 <Entities
                   data={data}
                   numEntities={data.numEntities}
-                  showGraphs={this.state.showGraphs}
+                  showGraphs={showGraphsStatus.groups.entities}
                 />
               }
               {
@@ -740,7 +807,7 @@ class App extends Component {
                   components={data.components}
                   componentsPools={data.componentsPools}
                   overQueries={this.state.overQueries}
-                  showGraphs={this.state.showGraphs}
+                  showGraphs={showGraphsStatus.groups.components}
                 />
               }
             </Column>
@@ -755,7 +822,7 @@ class App extends Component {
                 prevOverQueries={this.state.prevOverQueries}
                 overComponents={this.state.overComponents}
                 prevOverComponents={this.state.prevOverComponents}
-                showGraphs={this.state.showGraphs}
+                showGraphs={showGraphsStatus.groups.queries}
               />
             </Column>
           }
@@ -767,7 +834,7 @@ class App extends Component {
               nextSystemToExecute={data.nextSystemToExecute}
               deferredRemoval={data.deferredRemoval}
               data={data}
-              showGraphs={this.state.showGraphs}
+              showGraphs={showGraphsStatus.groups.systems}
               graphConfig={this.state.graphConfig}
               overQueries={this.state.overQueries}
               prevOverQueries={this.state.prevOverQueries}

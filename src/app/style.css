@@ -50,6 +50,7 @@ li.component {
 
 li.component {
   display: flex;
+  position: relative;
 }
 
 li.system:hover,
