@@ -20,12 +20,10 @@ chrome.runtime.onMessage.addListener(
 );
 
 chrome.runtime.onConnect.addListener(function (port) {
-  log('Onconnect');
   var extensionListener = function (message, sender, sendResponse) {
     // The original connection event doesn't include the tab ID of the
     // DevTools page, so we need to send it explicitly.
     if (message.name == "init") {
-      log('connected', message.tabId);
       connections[message.tabId] = port;
       return;
     }
@@ -100,4 +98,4 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   }
 });
 
-log("Background file loaded");
+//log("Background file loaded");

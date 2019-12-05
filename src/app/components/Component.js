@@ -14,9 +14,20 @@ import {
   FaPaperclip,
   FaExclamationTriangle,
   FaArrowDown,
+  FaChartArea,
+  FaPercentage,
   FaArrowUp,
-  FaTag
+  FaTag,
+  FaEyeSlash
  } from 'react-icons/fa';
+
+const Toolbar = styled.div`
+  background-color: #333;
+  position: absolute;
+  height: 100%;
+  right: 0px;
+  display: flex;
+`;
 
 const WarningIcon = styled.span`
   color: #F1421C;
@@ -45,10 +56,22 @@ export default class Component extends React.Component {
       }),
       new TimeSeries({})
     ];
+
+    this.state = {
+      id: 0
+    }
   }
 
   shouldComponentUpdate(nextProps, nextState) {
     return !isEqual(this.props, nextProps) || !isEqual(this.state, nextState);
+  }
+
+  onToggleGraph = () => {
+    Events.emit('toggleGraphs', {
+      group: "components",
+      elementName: this.props.name
+    });
+    this.setState({id: this.state.id + 1});
   }
 
   onEnter = () => {
@@ -164,9 +187,23 @@ export default class Component extends React.Component {
           }
           </div>
         </Half>
-        <Button className="logbutton" onClick={this.logComponent} title="Log components to the console">
+        <Button onClick={this.logComponent} title="Log components to the console">
           <FaArrowDown></FaArrowDown>
         </Button>
+        <Toolbar style={{display: "none"}}>
+          <Button onClick={this.logComponent} title="Log components to the console">
+            <FaArrowDown></FaArrowDown>
+          </Button>
+          <Button onClick={this.onToggleGraph} title="Toggle graph">
+            <FaChartArea></FaChartArea>
+          </Button>
+          <Button onClick={this.logComponent} title="Log components to the console">
+            <FaPercentage></FaPercentage>
+          </Button>
+          <Button onClick={this.logComponent} title="Log components to the console">
+            <FaEyeSlash></FaEyeSlash>
+          </Button>
+        </Toolbar>
       </li>
     );
   }

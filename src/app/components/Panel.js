@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 //if (process.env.NODE_ENV !== 'production')
 {
   const {whyDidYouUpdate} = require('why-did-you-update');
-  //whyDidYouUpdate(React);
+//  whyDidYouUpdate(React);
 }
 
 import Components from './Components';
@@ -14,16 +14,72 @@ import Queries from './Queries';
 import Entities from './Entities';
 import Events from '../utils/Events';
 import PerfStats from 'incremental-stats-lite';
-
-import { ToggleButton } from './StyledComponents';
+import { ToggleButton, SectionHeader, TitleGroup, Title } from './StyledComponents';
 import {
   FaChartArea,
   FaCode,
+  FaSpinner,
+  FaTerminal,
   FaPercentage,
   FaProjectDiagram,
  } from 'react-icons/fa';
 
 var globalBrowser =  typeof chrome !== 'undefined' ? chrome : typeof browser !== 'undefined' ? browser : null;
+
+const ConsolePanel = styled.div`
+  width: 100%;
+  margin-top: 5px;
+`;
+
+const Container2 = styled.div`
+  background-color: #292929;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+const RemoteContainer = styled.div`
+ font-size: 1.3em;
+ text-align: center;
+ margin-bottom: 10px;
+ background: #1E1E1E;
+ padding: 20px 25px;
+ display: flex;
+ color: #AAA;
+ flex-direction: column;
+
+ input {
+   background-color: #111;
+   border: 1px solid #333;
+   color: #EEE;
+ }
+
+ button {
+   cursor: pointer;
+   border: 1px solid #4AF4FF;
+   background-color: #333;
+   color: #4AF4FF;
+   margin-left: 10px;
+ }
+`;
+
+const ConsoleInput = styled.input`
+ color: #ccc;
+ background-color: #222;
+ border: 1px solid #333;
+ padding: 5px;
+ width: 100%;
+`;
+
+const ConsoleLog = styled.textarea`
+  color: #ccc;
+  outline: none;
+  background-color: #222;
+  border: 1px solid #333;
+  padding: 5px;
+  width: 100%;
+`;
 
 const Container = styled.div`
   background-color: #292929;
@@ -54,7 +110,68 @@ const Code = styled.pre`
   padding: 0.5em;
 `;
 
+const DEFAULT_SETTINGS = {
+  showDebug: false,
+  showConsole: false,
+  showComponents: true,
+  showEntities: true,
+  showQueries: true,
+  showSystems: true,
+  showGraphsStatus: {
+    all: false,
+    groups: {
+      systems: false,
+      components: false,
+      queries: false,
+      entities: false
+    },
+    individuals: {
+      systems: {},
+      components: {},
+      queries: {},
+      entities: {}
+    }
+  },
+  showStats: false,
+  showHighlight: true,
+};
+
 class App extends Component {
+
+  loadSettingsFromStorage() {
+    globalBrowser.storage.local.get(["settings"], (results) => {
+      var settings = results.settings;
+      settings = Object.assign({}, DEFAULT_SETTINGS, settings);
+      this.setState({
+          showDebug: settings.showDebug,
+          showConsole: settings.showConsole,
+          showComponents: settings.showComponents,
+          showEntities: settings.showEntities,
+          showQueries: settings.showQueries,
+          showSystems: settings.showSystems,
+          showGraphsStatus: settings.showGraphsStatus,
+          showStats: settings.showStats,
+          showHighlight: settings.showHighlight
+      });
+    });
+  }
+
+  saveSettingsToStorage() {
+    globalBrowser.storage.local.set({
+      settings: {
+        showDebug: this.state.showDebug,
+        showConsole: this.state.showConsole,
+        showComponents: this.state.showComponents,
+        showEntities: this.state.showEntities,
+        showQueries: this.state.showQueries,
+        showSystems: this.state.showSystems,
+        showGraphsStatus: this.state.showGraphsStatus,
+        showStats: this.state.showStats,
+        showHighlight: this.state.showHighlight
+      }
+    });
+  }
+
   constructor() {
     super();
 
@@ -64,22 +181,46 @@ class App extends Component {
       systems: {}
     };
 
+    this.commandsHistory = [];
+
     this.state = {
+      remoteConnectionData: {
+        remoteId: ''
+      },
+      remoteConnection: false,
+      remoteConnectionMessage: '',
       ecsyVersion: '',
       worldExist: false,
-      debug: false,
+
+      showDebug: false,
+      showConsole: false,
       showComponents: true,
       showEntities: true,
       showQueries: true,
       showSystems: true,
-      showGraphs: false,
       showStats: false,
+      showHighlight: true,
+
+      showGraphsStatus: {
+        all: false,
+        groups: {
+          systems: false,
+          components: false,
+          queries: false,
+          entities: false
+        },
+        individuals: {
+          systems: {},
+          components: {},
+          queries: {},
+          entities: {}
+        }
+      },
       overComponents: [],
       prevOverComponents: [],
       overQueries: [],
       prevOverQueries: [],
       overSystem: false,
-      highlight: true,
       graphConfig: {
         components: {
           globalMin: Number.MAX_VALUE,
@@ -96,11 +237,101 @@ class App extends Component {
       }
     };
 
-    this.graphStatus = {
-      systems: false,
-      components: false,
-      queries: false,
-      entities: false
+    this.loadSettingsFromStorage();
+
+    const urlParams = new URLSearchParams(window.location.search);
+    this.commandsHistoryPos = 0;
+
+    if (urlParams.has('remoteConnect')) {
+      let remoteId = urlParams.get('remoteId');
+      let remoteConnectionData = this.state.remoteConnectionData;
+      remoteConnectionData.remoteId = remoteId;
+      this.state.remoteConnectionData = remoteConnectionData;
+
+      console.log('inject remote connect');
+      var script = document.createElement('script');
+      script.src = 'vendor/peer.min.js';
+
+      var peer;
+
+      script.onload = () => {
+        window.__ECSY_REMOTE_DEVTOOLS = {};
+
+        let connect = () => {
+          peer = new Peer();
+          peer.on('open', id => {
+            // console.log('My peer ID is: ' + id);
+          });
+
+          // console.log('Trying to connect to remote peer', remoteId);
+          var conn = peer.connect(remoteId, {serialization: "json"});
+
+          window.__ECSY_REMOTE_DEVTOOLS.connection = conn;
+          conn.on('error', err => {
+            console.log('errrorrrr', err);
+          });
+
+          conn.on('close', () => {
+            this.setState({
+              remoteConnectionMessage: 'close. Trying to reconnect...',
+              data: null
+            });
+
+            peer.destroy();     // destroy the link
+            window.__ECSY_REMOTE_DEVTOOLS.connection = conn = null;
+            peer = null;
+
+            // periodically attempt to reconnect
+            setTimeout(() => {
+              connect()
+            }, 5000);
+
+          });
+
+          conn.on('disconnected', () => {
+            this.setState({remoteConnectionMessage: 'disconnected'});
+          });
+
+          conn.on('open', () => {
+            // console.log('open!');
+            this.setState({remoteConnection: true});
+
+            var script = '';
+            fetch( globalBrowser.extension.getURL( 'src/content/index.js' ) )
+              .then(res => res.text())
+              .then(res => {
+                var source = '(function(){' + res + '})();';
+                conn.send({type: 'init', script: source});
+              });
+
+            conn.on('data', msg => {
+              // console.log('<<<<<<<<<<< data', msg);
+              if (msg.method === 'refreshData') {
+                this.processData(JSON.parse(msg.data));
+              } else if (msg.method === 'console') {
+                //console.log('DATA', msg);
+                console[msg.type].apply(null, JSON.parse(msg.args));
+              } else if (msg.method === 'evalReturn') {
+                console.log('<', msg.value);
+                this.refs.consoleLog.value += `< ${msg.value}\n`;
+                this.refs.consoleLog.scrollTop = this.refs.consoleLog.scrollHeight;
+              } else if (msg.method === 'error') {
+                let error = JSON.parse(msg.error);
+                // console.error('<', error.message);
+                console.error('<', error.stack);
+                this.refs.consoleLog.value += `< ${error.stack}\n`;
+                this.refs.consoleLog.scrollTop = this.refs.consoleLog.scrollHeight;
+              }
+
+            });
+          });
+        }
+
+        //let id = urlParams.get('remoteConnect')
+        script.parentNode.removeChild(script);
+        connect();
+      }
+      (document.head||document.documentElement).appendChild(script);
     }
 
     this.statsStatus = {
@@ -117,28 +348,40 @@ class App extends Component {
     });
 
     Events.on('toggleGraphs', detail => {
-      this.graphStatus[detail.group] = detail.value;
-      this.setState({
-        showGraphs: Object.values(this.graphStatus).reduce((a,c) => a && c)
-      })
+      if (detail.elementName) {
+        this.toggleShowGraphOption(detail.group, detail.elementName, () => {
+          /*
+          let allValue = Object.values(this.state.showGraphsStatus.groups).reduce((a,c) => a && c);
+          if (this.state.showGraphsStatus.all !== allValue) {
+            this.setShowGraphOption("all", null, allValue);
+          }*/
+        });
+      } else if (detail.group) {
+        this.toggleShowGraphOption("group", detail.group, () => {
+          let allValue = Object.values(this.state.showGraphsStatus.groups).reduce((a,c) => a && c);
+          if (this.state.showGraphsStatus.all !== allValue) {
+            this.setShowGraphOption("all", null, allValue);
+          }
+        });
+      }
     });
 
     Events.on('componentOver', detail => {
-      if (!this.state.highlight) return;
+      if (!this.state.showHighlight) return;
 
       this.setState({prevOverComponents: this.state.overComponents});
       this.setState({overComponents: detail});
     });
 
     Events.on('queryOver', detail => {
-      if (!this.state.highlight) return;
+      if (!this.state.showHighlight) return;
 
       this.setState({prevOverQueries: this.state.overQueries});
       this.setState({overQueries: detail});
     });
 
     Events.on('systemOver', detail => {
-      if (!this.state.highlight) return;
+      if (!this.state.showHighlight) return;
 
       if (detail.length > 0) {
         var system = detail[0];
@@ -316,49 +559,163 @@ class App extends Component {
     Bindings.logData(this.state.data);
   }
 
+  toggleOption = key => {
+    let option = {};
+    option[key] = !this.state[key]
+    this.setState(option, () => {
+      this.saveSettingsToStorage();
+    });
+  }
+
   toggleShowDebug = () => {
-    this.setState({debug: !this.state.debug});
+    this.toggleOption("showDebug");
+  }
+
+  toggleShowConsole = () => {
+    this.toggleOption("showConsole");
   }
 
   toggleHighlightRelationships = () => {
-    this.setState({highlight: !this.state.highlight});
+    this.toggleOption("showHighlight");
+  }
+
+  setShowGraphOption = (type, key, value, onDone) => {
+    let status = this.state.showGraphsStatus;
+
+    if (type === "all") {
+      status.all = value;
+    } else if (type === "group") {
+      status.groups[key] = value;
+    } else {
+      // component, position, value
+      status.individuals[type][key] = value;
+    }
+
+    this.setState({showGraphsStatus: status}, () => {
+      if (onDone) onDone(value);
+      this.saveSettingsToStorage();
+    });
+  }
+
+  toggleShowGraphOption = (type, key, onDone) => {
+    let status = this.state.showGraphsStatus;
+
+    let value;
+    if (type === "all") {
+      value = status.all;
+    } else if (type === "group") {
+      value = status.groups[key];
+    } else {
+      value = status.individuals[type][key] || false;
+    }
+
+    this.setShowGraphOption(type, key, !value, onDone);
   }
 
   toggleShowGraph = () => {
-    Events.emit('toggleAllGraphs', !this.state.showGraphs);
-    this.setState({showGraphs: !this.state.showGraphs});
+    this.toggleShowGraphOption("all", null, value => {
+      Object.keys(this.state.showGraphsStatus.groups).forEach(groupName => {
+        this.setShowGraphOption("group", groupName, value);
+      });
+    });
   }
 
   toggleShowStats = () => {
     Events.emit('toggleAllStats', !this.state.showStats);
-    this.setState({showStats: !this.state.showStats});
+    this.toggleOption("showStats");
   }
 
   toggleComponents = () => {
-    this.setState({showComponents: !this.state.showComponents});
+    this.toggleOption("showComponents");
   }
 
   toggleEntities = () => {
-    this.setState({showEntities: !this.state.showEntities});
+    this.toggleOption("showEntities");
   }
 
   toggleQueries = () => {
-    this.setState({showQueries: !this.state.showQueries});
+    this.toggleOption("showQueries");
   }
 
   toggleSystems = () => {
-    this.setState({showSystems: !this.state.showSystems});
+    this.toggleOption("showSystems");
+  }
+
+  sendCommand = () => {
+    let command = this.refs.remoteCommand.value;
+    window.__ECSY_REMOTE_DEVTOOLS.connection.send({type: "executeScript", script: command, returnEval: true});
+    this.commandsHistoryPos = this.commandsHistory.length;
+    this.commandsHistory.push(command);
+
+    console.log('>', command);
+    this.refs.consoleLog.value += `> ${command}\n`;
+    this.refs.consoleLog.scrollTop = this.refs.consoleLog.scrollHeight;
+    this.refs.remoteCommand.value = '';
+  }
+
+  remoteConnect = () => {
+    let remoteId = this.refs.remoteId.value;
+    if (remoteId && remoteId.length === 6) {
+      globalBrowser.tabs.create({
+        "url": "/src/app/index.html?remoteConnect&remoteId=" + remoteId
+      });
+    }
+  }
+
+  onCommandKeyDown = evt => {
+    // 38 up
+    // 40 down
+    if (evt.which === 13) {
+      this.sendCommand();
+    }
+
+    if (evt.which === 38 || evt.which === 40) {
+      this.refs.remoteCommand.value = this.commandsHistory[this.commandsHistoryPos];
+      if (evt.which === 38 && this.commandsHistoryPos > 0) {
+        this.commandsHistoryPos--;
+      }
+
+      if (evt.which === 40 && this.commandsHistoryPos < this.commandsHistory.length - 1) {
+        this.commandsHistoryPos++;
+      }
+    }
   }
 
   render() {
     const data = this.state.data;
     const state = this.state;
 
-    if (!data) {
+    if (!data && this.state.remoteConnection) {
       return (
-        <div></div>
+        <div style={{backgroundColor: '#AAA'}}>
+        <h1>Remote connection done!</h1>
+        <h2>{this.state.remoteConnectionMessage}</h2>
+        </div>
       );
     }
+
+
+    if (!data) {
+      return (
+        <Container2>
+          <RemoteContainer>
+            {
+              this.state.remoteConnectionData.remoteId ?
+                <span><FaSpinner className="icon-spin" style={{color: "#fff"}}></FaSpinner> Waiting to connect to remote ID: <b style={{color: "#fff"}}>{this.state.remoteConnectionData.remoteId}</b></span> :
+                <span><b>ECSY</b> not detected on this page.</span>
+            }
+            <br/>
+            <span>If you want to connect to a remote device, please enter its remote ID code:</span>
+            <span style={{display: "flex", justifyContent: "center", marginTop: "1em"}}>
+              <input ref="remoteId" placeholder="Remote connection ID"></input>
+              <button onClick={this.remoteConnect}>CONNECT</button>
+            </span>
+          </RemoteContainer>
+        </Container2>
+      );
+    }
+
+    const showGraphsStatus = this.state.showGraphsStatus;
 
     return (
       <Container>
@@ -370,19 +727,28 @@ class App extends Component {
             <ToggleButton title="Show Queries Panel" onClick={this.toggleQueries} disabled={!state.showQueries}>Q</ToggleButton>
             <ToggleButton
               onClick={this.toggleHighlightRelationships}
-              disabled={!this.state.highlight}
+              disabled={!this.state.showHighlight}
               title="Highlight relatinships">
               <FaProjectDiagram/>
             </ToggleButton>
             <ToggleButton
               onClick={this.toggleShowDebug}
-              disabled={!this.state.debug}
+              disabled={!this.state.showDebug}
               title="Show debug">
               <FaCode/>
             </ToggleButton>
+            {
+              this.state.remoteConnection &&
+              <ToggleButton
+                onClick={this.toggleShowConsole}
+                disabled={!this.state.showConsole}
+                title="Show remote console">
+                <FaTerminal/>
+              </ToggleButton>
+            }
             <ToggleButton
               onClick={this.toggleShowGraph}
-              disabled={!this.state.showGraphs}
+              disabled={!this.state.showGraphsStatus.all}
               title="Show charts">
               <FaChartArea/>
             </ToggleButton>
@@ -393,14 +759,34 @@ class App extends Component {
               <FaPercentage/>
             </ToggleButton>
           </div>
-          <div>ECSY v{this.state.ecsyVersion}</div>
+          <div>
+            {
+              this.state.remoteConnection &&
+              <span style={{marginRight: '10px'}}>
+              remote connection (ID: <b>{this.state.remoteConnectionData.remoteId}</b>)
+              </span>
+            }
+            ECSY v{this.state.ecsyVersion}
+          </div>
         </div>
         {
-          this.state.debug &&
+          this.state.showDebug &&
           <Code>
             <button onClick={this.dumpData}>dump to console ($data)</button><br/>
             {JSON.stringify(data, null, 2)}
           </Code>
+        }
+        {
+          this.state.remoteConnection && this.state.showConsole &&
+          <SectionHeader style={{marginRight: '20px', marginBottom: '10px'}}>
+            <TitleGroup>
+              <Title>REMOTE CONSOLE</Title>
+            </TitleGroup>
+            <ConsolePanel>
+              <ConsoleLog ref="consoleLog" rows="8" readOnly={true}></ConsoleLog>
+              <ConsoleInput type="text" placeholder="Enter command to be evaluated on the remote session and press <Enter> to execute" ref="remoteCommand" onKeyDown={this.onCommandKeyDown}></ConsoleInput>
+            </ConsolePanel>
+          </SectionHeader>
         }
         <Columns>
           {
@@ -411,7 +797,7 @@ class App extends Component {
                 <Entities
                   data={data}
                   numEntities={data.numEntities}
-                  showGraphs={this.state.showGraphs}
+                  showGraphs={showGraphsStatus.groups.entities}
                 />
               }
               {
@@ -421,7 +807,8 @@ class App extends Component {
                   components={data.components}
                   componentsPools={data.componentsPools}
                   overQueries={this.state.overQueries}
-                  showGraphs={this.state.showGraphs}
+                  showGraphs={showGraphsStatus.groups.components}
+                  showGraphsIndividuals={showGraphsStatus.individuals.components}
                 />
               }
             </Column>
@@ -436,7 +823,7 @@ class App extends Component {
                 prevOverQueries={this.state.prevOverQueries}
                 overComponents={this.state.overComponents}
                 prevOverComponents={this.state.prevOverComponents}
-                showGraphs={this.state.showGraphs}
+                showGraphs={showGraphsStatus.groups.queries}
               />
             </Column>
           }
@@ -448,7 +835,7 @@ class App extends Component {
               nextSystemToExecute={data.nextSystemToExecute}
               deferredRemoval={data.deferredRemoval}
               data={data}
-              showGraphs={this.state.showGraphs}
+              showGraphs={showGraphsStatus.groups.systems}
               graphConfig={this.state.graphConfig}
               overQueries={this.state.overQueries}
               prevOverQueries={this.state.prevOverQueries}

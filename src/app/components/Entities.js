@@ -22,23 +22,14 @@ export default class Entities extends React.Component {
   constructor(props) {
     super(props);
 
-    Events.on('toggleAllGraphs', value => {
-      this.setState({showGraphs: value});
-    });
-
     this.timeSeries = new TimeSeries({
       resetBounds: true,
       resetBoundsInterval: 3000
     });
-
-    this.state = {
-      showGraphs: false
-    };
   }
 
   toggleShowGraph = () => {
-    Events.emit('toggleGraphs', {group: 'entities', value: !this.state.showGraphs});
-    this.setState({showGraphs: !this.state.showGraphs});
+    Events.emit('toggleGraphs', {group: 'entities'});
   }
 
   updateGraph() {
@@ -47,14 +38,13 @@ export default class Entities extends React.Component {
 
   shouldComponentUpdate(nextProps, nextState) {
     this.updateGraph();
-    return nextProps.numEntities !== this.props.numEntities ||
+    return !isEqual(this.props, nextProps) ||
       !isEqual(this.state, nextState);
   }
 
   render() {
-    const { data/*, showGraphs*/ } = this.props;
+    const { data, showGraphs } = this.props;
     const numEntities = data.numEntities;
-    const showGraphs = this.state.showGraphs;
 
     return (
       <SectionContainer>

@@ -8,24 +8,15 @@ import isEqual from 'react-fast-compare';
 import Events from '../utils/Events';
 
 import {
-  FaPlay,
-  FaPause,
-  FaFastForward,
-  FaStepForward,
   FaChartArea,
-  FaPercent,
   FaPercentage,
-  FaChartBar,
   FaLink,
-  FaBoxes,
   FaChartLine,
-  FaChartPie
  } from 'react-icons/fa';
 
 export default class Components extends React.Component {
   toggleShowGraph = () => {
-    Events.emit('toggleGraphs', {group: 'components', value: !this.state.showGraphs});
-    this.setState({showGraphs: !this.state.showGraphs});
+    Events.emit('toggleGraphs', {group: 'components'});
   }
 
   toggleShowStats = () => {
@@ -44,10 +35,6 @@ export default class Components extends React.Component {
       this.setState({showStats: value});
     });
 
-    Events.on('toggleAllGraphs', value => {
-      this.setState({showGraphs: value});
-    });
-
     this.timeSeries = new TimeSeries({
       resetBounds: true,
       resetBoundsInterval: 3000
@@ -60,7 +47,6 @@ export default class Components extends React.Component {
         min: 0,
         max: 0
       },
-      showGraphs: false,
       showPoolGraph: false
     };
 
@@ -115,7 +101,7 @@ export default class Components extends React.Component {
   }
 
   render() {
-    const { components, componentsPools, overQueries } = this.props;
+    const { showGraphs, showGraphsIndividuals, components, componentsPools, overQueries } = this.props;
 
     if (!components) {
       return (
@@ -123,7 +109,6 @@ export default class Components extends React.Component {
       );
     }
 
-    const showGraphs = this.state.showGraphs;
     const numComponents = components ? Object.keys(components).length : 0;
     const numComponentInstances = components && Object.values(components).length > 0 ? Object.values(components).reduce((a, c) => a + c.count, 0) : undefined;
 
@@ -139,7 +124,7 @@ export default class Components extends React.Component {
         key={name}
         name={name}
         componentData={components[name]}
-        showGraphs={showGraphs}
+        showGraphs={showGraphs /*showGraphsIndividuals[name] || false*/}
         showStats={this.state.showStats}
         chartRange={this.state.chartRange}
         highlighted={highlighted}
@@ -157,7 +142,7 @@ export default class Components extends React.Component {
             <OptionsGroup>
               <ToggleButton
                 onClick={this.toggleShowGraph}
-                disabled={!this.state.showGraphs}
+                disabled={!showGraphs}
                 title="Show charts">
                 <FaChartArea/>
               </ToggleButton>

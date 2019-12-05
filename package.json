@@ -43,6 +43,7 @@
     "events": "^3.0.0",
     "express": "^4.17.1",
     "incremental-stats-lite": "^0.1.1",
+    "peerjs": "^1.1.0",
     "react": "^16.10.2",
     "react-dom": "^16.10.2",
     "react-fast-compare": "^2.0.4",

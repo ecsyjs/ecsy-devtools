@@ -27,17 +27,12 @@ export default class Queries extends React.Component {
       this.setState({showStats: value});
     });
 
-    Events.on('toggleAllGraphs', value => {
-      this.setState({showGraphs: value});
-    });
-
     this.state = {
       chartRange: {
         min: 0,
         max: 0
       },
       showStats: false,
-      showGraphs: false,
       linkMinMax: false
     };
 
@@ -52,7 +47,6 @@ export default class Queries extends React.Component {
   shouldComponentUpdate(nextProps, nextState) {
     return !isEqual(this.props, nextProps) ||
       !isEqual(this.state, nextState) ||
-      this.state.showGraphs != nextState.showGraphs ||
       this.state.linkMinMax != nextState.linkMinMax;
   }
 
@@ -84,14 +78,11 @@ export default class Queries extends React.Component {
   }
 
   toggleShowGraph = () => {
-    Events.emit('toggleGraphs', {group: 'queries', value: !this.state.showGraphs});
-    this.setState({showGraphs: !this.state.showGraphs});
+    Events.emit('toggleGraphs', {group: 'queries'});
   }
 
   render() {
-    const { queries,/* showGraphs,*/ overQueries, overComponents } = this.props;
-
-    const showGraphs = this.state.showGraphs;
+    const { queries, showGraphs, overQueries, overComponents } = this.props;
 
     let queriesHtml = queries.map(query => {
       const highlighted = query.components.included.find(c => overComponents.indexOf(c) !== -1)
@@ -118,7 +109,7 @@ export default class Queries extends React.Component {
           <OptionsGroup>
             <ToggleButton
               onClick={this.toggleShowGraph}
-              disabled={!this.state.showGraphs}
+              disabled={!showGraphs}
               title="Show charts">
               <FaChartArea/>
             </ToggleButton>

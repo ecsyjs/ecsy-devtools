@@ -96,6 +96,7 @@ div.system {
 li.component {
   display: flex;
   align-items: center;
+  position: relative;
 }
 
 div.systemData {
@@ -191,6 +192,7 @@ li.system .queries li {
 .SystemQueryName,
 .ComponentName {
   color: #27CEA5;
+  white-space: nowrap;
   background-color: #232A2C;
   font-size: 1em;
   padding: 6px 8px;
