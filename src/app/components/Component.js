@@ -56,6 +56,10 @@ export default class Component extends React.Component {
       }),
       new TimeSeries({})
     ];
+
+    this.state = {
+      id: 0
+    }
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -67,6 +71,7 @@ export default class Component extends React.Component {
       group: "components",
       elementName: this.props.name
     });
+    this.setState({id: this.state.id + 1});
   }
 
   onEnter = () => {
@@ -182,7 +187,10 @@ export default class Component extends React.Component {
           }
           </div>
         </Half>
-        <Toolbar>
+        <Button onClick={this.logComponent} title="Log components to the console">
+          <FaArrowDown></FaArrowDown>
+        </Button>
+        <Toolbar style={{display: "none"}}>
           <Button onClick={this.logComponent} title="Log components to the console">
             <FaArrowDown></FaArrowDown>
           </Button>

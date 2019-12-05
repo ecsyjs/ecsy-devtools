@@ -101,7 +101,7 @@ export default class Components extends React.Component {
   }
 
   render() {
-    const { showGraphs, components, componentsPools, overQueries } = this.props;
+    const { showGraphs, showGraphsIndividuals, components, componentsPools, overQueries } = this.props;
 
     if (!components) {
       return (
@@ -124,7 +124,7 @@ export default class Components extends React.Component {
         key={name}
         name={name}
         componentData={components[name]}
-        showGraphs={showGraphs}
+        showGraphs={showGraphs /*showGraphsIndividuals[name] || false*/}
         showStats={this.state.showStats}
         chartRange={this.state.chartRange}
         highlighted={highlighted}

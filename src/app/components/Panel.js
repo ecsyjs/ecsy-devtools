@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 
 //if (process.env.NODE_ENV !== 'production')
 {
-  //const {whyDidYouUpdate} = require('why-did-you-update');
-  //whyDidYouUpdate(React);
+  const {whyDidYouUpdate} = require('why-did-you-update');
+//  whyDidYouUpdate(React);
 }
 
 import Components from './Components';
@@ -117,7 +117,21 @@ const DEFAULT_SETTINGS = {
   showEntities: true,
   showQueries: true,
   showSystems: true,
-  showGraphs: false,
+  showGraphsStatus: {
+    all: false,
+    groups: {
+      systems: false,
+      components: false,
+      queries: false,
+      entities: false
+    },
+    individuals: {
+      systems: {},
+      components: {},
+      queries: {},
+      entities: {}
+    }
+  },
   showStats: false,
   showHighlight: true,
 };
@@ -135,13 +149,10 @@ class App extends Component {
           showEntities: settings.showEntities,
           showQueries: settings.showQueries,
           showSystems: settings.showSystems,
-          showGraphs: settings.showGraphs,
+          showGraphsStatus: settings.showGraphsStatus,
           showStats: settings.showStats,
           showHighlight: settings.showHighlight
       });
-
-      Events.emit('toggleAllStats', settings.showStats);
-      Events.emit('toggleAllGraphs', settings.showGraphs);
     });
   }
 
@@ -154,7 +165,7 @@ class App extends Component {
         showEntities: this.state.showEntities,
         showQueries: this.state.showQueries,
         showSystems: this.state.showSystems,
-        showGraphs: this.state.showGraphsStatus.all,
+        showGraphsStatus: this.state.showGraphsStatus,
         showStats: this.state.showStats,
         showHighlight: this.state.showHighlight
       }
@@ -323,14 +334,6 @@ class App extends Component {
       (document.head||document.documentElement).appendChild(script);
     }
 
-
-    this.graphStatus = {
-      systems: false,
-      components: false,
-      queries: false,
-      entities: false
-    }
-
     this.statsStatus = {
       systems: false,
       components: false,
@@ -347,8 +350,6 @@ class App extends Component {
     Events.on('toggleGraphs', detail => {
       if (detail.elementName) {
         this.toggleShowGraphOption(detail.group, detail.elementName, () => {
-          //type][key
-
           /*
           let allValue = Object.values(this.state.showGraphsStatus.groups).reduce((a,c) => a && c);
           if (this.state.showGraphsStatus.all !== allValue) {
@@ -718,7 +719,6 @@ class App extends Component {
 
     return (
       <Container>
-        <pre>>>>>> {JSON.stringify(showGraphsStatus, null ,2)}</pre>
         <div id="header">
           <div style={{display: "flex"}}>
             <ToggleButton title="Show Entities Panel" onClick={this.toggleEntities} disabled={!state.showEntities}>E</ToggleButton>
@@ -808,6 +808,7 @@ class App extends Component {
                   componentsPools={data.componentsPools}
                   overQueries={this.state.overQueries}
                   showGraphs={showGraphsStatus.groups.components}
+                  showGraphsIndividuals={showGraphsStatus.individuals.components}
                 />
               }
             </Column>
