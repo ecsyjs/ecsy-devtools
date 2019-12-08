@@ -14,7 +14,8 @@ import Queries from './Queries';
 import Entities from './Entities';
 import Events from '../utils/Events';
 import PerfStats from 'incremental-stats-lite';
-import { ToggleButton, SectionHeader, TitleGroup, Title } from './StyledComponents';
+import { ToggleButton, SectionHeader, TitleGroup, Title,
+  ConsolePanel, Container, Container2, RemoteContainer, ConsoleInput, ConsoleLog, Columns, Column, Code } from './StyledComponents';
 import {
   FaChartArea,
   FaCode,
@@ -25,90 +26,6 @@ import {
  } from 'react-icons/fa';
 
 var globalBrowser =  typeof chrome !== 'undefined' ? chrome : typeof browser !== 'undefined' ? browser : null;
-
-const ConsolePanel = styled.div`
-  width: 100%;
-  margin-top: 5px;
-`;
-
-const Container2 = styled.div`
-  background-color: #292929;
-  padding: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
-
-const RemoteContainer = styled.div`
- font-size: 1.3em;
- text-align: center;
- margin-bottom: 10px;
- background: #1E1E1E;
- padding: 20px 25px;
- display: flex;
- color: #AAA;
- flex-direction: column;
-
- input {
-   background-color: #111;
-   border: 1px solid #333;
-   color: #EEE;
- }
-
- button {
-   cursor: pointer;
-   border: 1px solid #4AF4FF;
-   background-color: #333;
-   color: #4AF4FF;
-   margin-left: 10px;
- }
-`;
-
-const ConsoleInput = styled.input`
- color: #ccc;
- background-color: #222;
- border: 1px solid #333;
- padding: 5px;
- width: 100%;
-`;
-
-const ConsoleLog = styled.textarea`
-  color: #ccc;
-  outline: none;
-  background-color: #222;
-  border: 1px solid #333;
-  padding: 5px;
-  width: 100%;
-`;
-
-const Container = styled.div`
-  background-color: #292929;
-  padding: 10px;
-  width: 100%;
-`;
-
-const Columns = styled.div`
-  display: grid;
-  flex-direction: row;
-  flex-wrap: wrap;
-  width: 100%;
-  grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
-`;
-
-const Column = styled.div`
-  display: flex;
-  flex-direction: column;
-  flex-basis: 100%;
-  flex: 1;
-  margin-right: 20px;
-`;
-
-
-const Code = styled.pre`
-  background-color: #1e1e1e;
-  color: #CCC;
-  padding: 0.5em;
-`;
 
 const DEFAULT_SETTINGS = {
   showDebug: false,
@@ -694,7 +611,6 @@ class App extends Component {
       );
     }
 
-
     if (!data) {
       return (
         <Container2>
@@ -702,7 +618,7 @@ class App extends Component {
             {
               this.state.remoteConnectionData.remoteId ?
                 <span><FaSpinner className="icon-spin" style={{color: "#fff"}}></FaSpinner> Waiting to connect to remote ID: <b style={{color: "#fff"}}>{this.state.remoteConnectionData.remoteId}</b></span> :
-                <span><b>ECSY</b> not detected on this page.</span>
+                <span><b>ECSY</b> not detected, or using an incompatible version, on this page.</span>
             }
             <br/>
             <span>If you want to connect to a remote device, please enter its remote ID code:</span>

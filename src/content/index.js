@@ -1,6 +1,21 @@
 'use strict';
 
 if( !window.__ECSY_DEVTOOLS_INJECTED ) {
+	function compareVersions(v1, v2) {
+    if (typeof v1 !== 'string') return false;
+    if (typeof v2 !== 'string') return false;
+    v1 = v1.split('.');
+    v2 = v2.split('.');
+    const k = Math.min(v1.length, v2.length);
+    for (let i = 0; i < k; ++ i) {
+        v1[i] = parseInt(v1[i], 10);
+        v2[i] = parseInt(v2[i], 10);
+        if (v1[i] > v2[i]) return 1;
+        if (v1[i] < v2[i]) return -1;
+    }
+    return v1.length == v2.length ? 0: (v1.length < v2.length ? -1 : 1);
+	}
+
 	function sendMessage( type, data ) {
 		if (window.__ECSY_REMOTE_DEVTOOLS_INJECTED && window.__ECSY_REMOTE_DEVTOOLS.connection) {
 			window.__ECSY_REMOTE_DEVTOOLS.connection.send({
@@ -25,6 +40,10 @@ if( !window.__ECSY_DEVTOOLS_INJECTED ) {
 
 		var world = e.detail.world;
 		var version = e.detail.version;
+		if (!version || compareVersions(version, "0.1.4") < 0) {
+			console.info("ECSY detected but this version is not compatible with the devtools installed");
+			return;
+		}
 
 		window.__ECSY_DEVTOOLS.worlds.push(world);
 		window.__ECSY_DEVTOOLS.ecsyVersion = version;

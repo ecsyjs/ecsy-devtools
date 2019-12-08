@@ -25,14 +25,14 @@ class Bindings {
     var string = `
       var systemManager = ${world}.systemManager;
       var nextSystem = systemManager._executeSystems[(systemManager._executeSystems.indexOf(systemManager.lastExecutedSystem)+1)%systemManager._executeSystems.length];
-      systemManager.executeSystem(nextSystem, 1/60, performance.now() / 1000);
+      systemManager.executeSystem(nextSystem, 1000/60, performance.now() / 1000);
     `;
     executeScript(string);
   }
   stepSystems () {
     var world = this.getWorld();
     var string = `
-      ${world}.systemManager.execute(1/60, performance.now() / 1000, true);
+      ${world}.systemManager.execute(1000/60, performance.now() / 1000, true);
       ${world}.entityManager.processDeferredRemoval();
     `;
     executeScript(string);
@@ -40,7 +40,7 @@ class Bindings {
   stepWorld () {
     var world = this.getWorld();
     var string = `
-      ${world}.systemManager.execute(1/60, performance.now() / 1000);
+      ${world}.systemManager.execute(1000/60, performance.now() / 1000);
       ${world}.entityManager.processDeferredRemoval();
     `;
     executeScript(string);
@@ -102,7 +102,7 @@ class Bindings {
     var world = this.getWorld();
     var string = `
       var system = ${world}.systemManager._systems.find(s => s.constructor.name === '${system.name}');
-      ${world}.systemManager.executeSystem(system, 1/60, performance.now() / 1000);
+      ${world}.systemManager.executeSystem(system, 1000/60, performance.now() / 1000);
     `;
     executeScript(string);
   }

@@ -121,3 +121,87 @@ export const ReactiveList = styled.li`
     color: #727272;
  }
 `;
+
+export const ConsolePanel = styled.div`
+  width: 100%;
+  margin-top: 5px;
+`;
+
+export const Container = styled.div`
+  background-color: #292929;
+  padding: 10px;
+  width: 100%;
+`;
+
+export const Container2 = styled.div`
+  background-color: #292929;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+export const RemoteContainer = styled.div`
+ font-size: 1.3em;
+ text-align: center;
+ margin-bottom: 10px;
+ background: #1E1E1E;
+ padding: 20px 25px;
+ display: flex;
+ color: #AAA;
+ flex-direction: column;
+
+ input {
+   background-color: #111;
+   border: 1px solid #333;
+   color: #EEE;
+ }
+
+ button {
+   cursor: pointer;
+   border: 1px solid #4AF4FF;
+   background-color: #333;
+   color: #4AF4FF;
+   margin-left: 10px;
+ }
+`;
+
+export const ConsoleInput = styled.input`
+ color: #ccc;
+ background-color: #222;
+ border: 1px solid #333;
+ padding: 5px;
+ width: 100%;
+`;
+
+export const ConsoleLog = styled.textarea`
+  color: #ccc;
+  outline: none;
+  background-color: #222;
+  border: 1px solid #333;
+  padding: 5px;
+  width: 100%;
+`;
+
+export const Columns = styled.div`
+  display: grid;
+  flex-direction: row;
+  flex-wrap: wrap;
+  width: 100%;
+  grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+`;
+
+export const Column = styled.div`
+  display: flex;
+  flex-direction: column;
+  flex-basis: 100%;
+  flex: 1;
+  margin-right: 20px;
+`;
+
+
+export const Code = styled.pre`
+  background-color: #1e1e1e;
+  color: #CCC;
+  padding: 0.5em;
+`;

@@ -4,8 +4,4 @@ var globalBrowser =  typeof chrome !== 'undefined' ? chrome : typeof browser !==
 globalBrowser.devtools.panels.create(
   "ECSY",
   "/assets/icon_128_detected.png",
-  "/src/app/index.html",
-  extensionPanel => {
-
-  }
-);
+  "/src/app/index.html");
