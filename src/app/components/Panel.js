@@ -56,37 +56,43 @@ const DEFAULT_SETTINGS = {
 class App extends Component {
 
   loadSettingsFromStorage() {
-    globalBrowser.storage.local.get(["settings"], (results) => {
-      var settings = results.settings;
-      settings = Object.assign({}, DEFAULT_SETTINGS, settings);
-      this.setState({
-          showDebug: settings.showDebug,
-          showConsole: settings.showConsole,
-          showComponents: settings.showComponents,
-          showEntities: settings.showEntities,
-          showQueries: settings.showQueries,
-          showSystems: settings.showSystems,
-          showGraphsStatus: settings.showGraphsStatus,
-          showStats: settings.showStats,
-          showHighlight: settings.showHighlight
+    // @todo Use localstorage if running from web?
+    if (globalBrowser.storage) {
+      globalBrowser.storage.local.get(["settings"], (results) => {
+        var settings = results.settings;
+        settings = Object.assign({}, DEFAULT_SETTINGS, settings);
+        this.setState({
+            showDebug: settings.showDebug,
+            showConsole: settings.showConsole,
+            showComponents: settings.showComponents,
+            showEntities: settings.showEntities,
+            showQueries: settings.showQueries,
+            showSystems: settings.showSystems,
+            showGraphsStatus: settings.showGraphsStatus,
+            showStats: settings.showStats,
+            showHighlight: settings.showHighlight
+        });
       });
-    });
+    }
   }
 
   saveSettingsToStorage() {
-    globalBrowser.storage.local.set({
-      settings: {
-        showDebug: this.state.showDebug,
-        showConsole: this.state.showConsole,
-        showComponents: this.state.showComponents,
-        showEntities: this.state.showEntities,
-        showQueries: this.state.showQueries,
-        showSystems: this.state.showSystems,
-        showGraphsStatus: this.state.showGraphsStatus,
-        showStats: this.state.showStats,
-        showHighlight: this.state.showHighlight
-      }
-    });
+    // @todo Use localstorage if running from web?
+    if (globalBrowser.storage) {
+      globalBrowser.storage.local.set({
+        settings: {
+          showDebug: this.state.showDebug,
+          showConsole: this.state.showConsole,
+          showComponents: this.state.showComponents,
+          showEntities: this.state.showEntities,
+          showQueries: this.state.showQueries,
+          showSystems: this.state.showSystems,
+          showGraphsStatus: this.state.showGraphsStatus,
+          showStats: this.state.showStats,
+          showHighlight: this.state.showHighlight
+        }
+      });
+    }
   }
 
   constructor() {
@@ -175,7 +181,21 @@ class App extends Component {
         window.__ECSY_REMOTE_DEVTOOLS = {};
 
         let connect = () => {
-          peer = new Peer();
+          peer = new Peer({
+            host: 'peerjs.92k.de',
+            secure: true,
+            port: 443,
+            config: {'iceServers': [
+                { url: 'stun:stun.l.google.com:19302' },
+                { url: 'stun:stun1.l.google.com:19302' },
+                { url: 'stun:stun2.l.google.com:19302' },
+                { url: 'stun:stun3.l.google.com:19302' },
+                { url: 'stun:stun4.l.google.com:19302' }
+              ]
+            },
+            debug: 3
+          });
+
           peer.on('open', id => {
             // console.log('My peer ID is: ' + id);
           });

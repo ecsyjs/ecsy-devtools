@@ -48,23 +48,18 @@ if( !window.__ECSY_DEVTOOLS_INJECTED ) {
 		window.__ECSY_DEVTOOLS.worlds.push(world);
 		window.__ECSY_DEVTOOLS.ecsyVersion = version;
 
-		var ori1 = world.execute;
-
 		var stats = {
 			processDeferredRemoval: 0
 		};
 
 		var _pools = {};
 
+		var oriWorldExecute = world.execute;
+
 		world.execute = function(delta, time) {
-			if (this.enabled) {
-				this.systemManager.execute(delta, time);
-				let t = performance.now();
-				this.entityManager.processDeferredRemoval();
-				stats.processDeferredRemoval = this.entityManager.deferredRemovalEnabled ? performance.now() - t : 0;
-			}
+			oriWorldExecute.apply(world, arguments);
 			window.__ECSY_DEVTOOLS.refreshStats();
-		}.bind(world);
+		}
 
 		window.__ECSY_DEVTOOLS.refreshStats = function() {
 			let startTime = performance.now();
@@ -105,8 +100,9 @@ if( !window.__ECSY_DEVTOOLS_INJECTED ) {
 
 			let componentsNum = world.componentsManager.numComponents;
 			let components = {};
-			for (name in componentsNum) {
-				var component = world.componentsManager.Components[name];
+			for (let id in componentsNum) {
+				var component = world.componentsManager.Components[id];
+				const name = component.getName ? component.getName() : id;
 
 				components[name] = {
 					count: componentsNum[name],
