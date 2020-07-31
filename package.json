@@ -12,14 +12,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/fernandojsg/ecsy-stats.git"
+    "url": "git+https://github.com/MozillaReality/ecsy-devtools.git"
   },
-  "author": "Fernando Serrano <fernandojsg@gmail.com> (http://fernandojsg.com)",
+  "author": "Mozilla Reality <mr-internal@mozilla.com> (https://mixedreality.mozilla.org)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/fernandojsg/ecsy-stats/issues"
+    "url": "https://github.com/MozillaReality/ecsy-devtools/issues"
   },
-  "homepage": "https://github.com/fernandojsg/ecsy-stats#readme",
+  "homepage": "https://github.com/MozillaReality/ecsy-devtools#readme",
   "devDependencies": {
     "@babel/core": "^7.6.4",
     "@babel/plugin-proposal-class-properties": "^7.5.5",
