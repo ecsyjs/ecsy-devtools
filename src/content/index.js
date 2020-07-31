@@ -105,7 +105,7 @@ if( !window.__ECSY_DEVTOOLS_INJECTED ) {
 				const name = component.getName ? component.getName() : id;
 
 				components[name] = {
-					count: componentsNum[name],
+					count: componentsNum[id],
 					type: component.isTagComponent ? 'tag' :
 								(component.isComponent ? 'component' :
 								(component.isSystemStateComponent ? 'systemstate' : 'none'))

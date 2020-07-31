@@ -182,9 +182,9 @@ class App extends Component {
 
         let connect = () => {
           peer = new Peer({
-            host: 'peerjs.92k.de',
-            secure: true,
-            port: 443,
+            host: 'peerjs.ecsy.io',
+            /*secure: true, */
+            port: 9000, /*443, */
             config: {'iceServers': [
                 { url: 'stun:stun.l.google.com:19302' },
                 { url: 'stun:stun1.l.google.com:19302' },
