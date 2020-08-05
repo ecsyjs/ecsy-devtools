@@ -4,7 +4,7 @@
   "description": "ECSY developer tool panel",
   "author": "Fernando Serrano",
   "homepage_url": "https://github.com/fernandojsg/ecsy-devtools",
-  "version": "0.1.1",
+  "version": "0.1.2",
 
   "icons": {
     "32": "assets/icon_32_detected.png",
