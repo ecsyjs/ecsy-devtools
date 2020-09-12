@@ -8,6 +8,7 @@
     "development": "webpack --mode development",
     "production": "webpack --mode production",
     "watch": "webpack --mode development --watch",
+    "prepare": "rimraf dist && mkdir dist",
     "sync": "webpack --mode development watch --sync"
   },
   "repository": {
@@ -32,6 +33,7 @@
     "file-loader": "^4.2.0",
     "prop-types": "^15.7.2",
     "react-svg-loader": "^3.0.3",
+    "rimraf": "^3.0.2",
     "style-loader": "^1.0.0",
     "webextension-polyfill": "^0.4.0",
     "webpack": "^4.41.2",

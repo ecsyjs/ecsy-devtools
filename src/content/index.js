@@ -121,16 +121,18 @@ if( !window.__ECSY_DEVTOOLS_INJECTED ) {
 				}
 
 				let pool = world.componentsManager._componentPool[name];
-				var cName = pool.T.name;
-				componentsPools[cName] = {
-					valid: pool.isObjectPool,
-					used: pool.totalUsed(),
-					free: pool.totalFree(),
-					size: pool.totalSize(),
-					increased: pool.totalSize() > _pools[name].lastPoolSize
+				if (pool !== undefined) {
+					var cName = pool.T.name;
+					componentsPools[cName] = {
+						valid: pool.isObjectPool,
+						used: pool.totalUsed(),
+						free: pool.totalFree(),
+						size: pool.totalSize(),
+						increased: pool.totalSize() > _pools[name].lastPoolSize
+					}
+	
+					_pools[name].lastPoolSize = pool.totalSize();	
 				}
-
-				_pools[name].lastPoolSize = pool.totalSize();
 			};
 
 			let data = {

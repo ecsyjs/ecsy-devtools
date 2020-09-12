@@ -111,15 +111,15 @@ export default class Component extends React.Component {
 
     const value = componentData.count;
 
-    const notPool = pool && pool.valid !== true;
-    const poolSize = pool ? pool.size : 0;
+    const notPool = pool === undefined || pool.valid !== true;
+    const poolSize = pool !== undefined ? pool.size : 0;
 
     this.timeSeries[0].append(new Date().getTime(), value);
     this.timeSeries[1].append(new Date().getTime(), poolSize);
 
     const classesPoolIncreased = classNames({
       poolIncreased: true,
-      hide: !pool || !pool.increased
+      hide: pool === undefined || !pool.increased
     });
 
     let opts = linkMinMax ? {minValue: graphConfig.globalMin, maxValue: graphConfig.globalMax} : {};
