@@ -37,7 +37,7 @@
     "style-loader": "^1.0.0",
     "webextension-polyfill": "^0.4.0",
     "webpack": "^4.41.2",
-    "webpack-cli": "^3.3.9",
+    "webpack-cli": "^3.3.12",
     "why-did-you-update": "^1.0.6"
   },
   "dependencies": {
